@@ -274,12 +274,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.adobe.granite</groupId>
-            <artifactId>com.adobe.granite.test.tooling</artifactId>
-            <version>1.0.8</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-testing</artifactId>
             <version>5.6.0</version>
