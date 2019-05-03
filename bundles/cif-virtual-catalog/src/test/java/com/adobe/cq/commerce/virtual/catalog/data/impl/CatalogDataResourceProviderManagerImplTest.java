@@ -29,6 +29,7 @@ import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -41,6 +42,7 @@ import com.adobe.granite.test.tooling.RepositoryBaseTest;
 import com.day.cq.commons.jcr.JcrUtil;
 import junitx.util.PrivateAccessor;
 
+@Ignore
 @SuppressWarnings("unchecked")
 public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTest {
     private static final String TEST_PROVIDER_FACTORY_ID = "TestProviderFactory";
@@ -51,7 +53,6 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
     private ComponentContext componentContext;
     private final AtomicInteger dataRootCounter = new AtomicInteger(1);
     private final AtomicInteger factoryCounter = new AtomicInteger(1);
-
 
     @Before
     public void beforeTest() throws Exception {

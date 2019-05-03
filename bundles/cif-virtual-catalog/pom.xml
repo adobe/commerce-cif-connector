@@ -276,7 +276,7 @@
         <dependency>
             <groupId>com.adobe.granite</groupId>
             <artifactId>com.adobe.granite.test.tooling</artifactId>
-            <version>1.0.26</version>
+            <version>1.0.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
