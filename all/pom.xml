@@ -52,9 +52,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.jackrabbit</groupId>
-                <artifactId>filevault-package-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <groupId>com.day.jcr.vault</groupId>
+                <artifactId>content-package-maven-plugin</artifactId>
+                <version>0.5.24</version>
                 <extensions>true</extensions>
                 <configuration>
                     <showImportPackageReport>false</showImportPackageReport>
@@ -94,11 +94,6 @@
                         </subPackage>
                     </subPackages>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.day.jcr.vault</groupId>
-                <artifactId>content-package-maven-plugin</artifactId>
-                <version>0.5.24</version>
             </plugin>
         </plugins>
     </build>
