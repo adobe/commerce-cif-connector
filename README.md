@@ -2,7 +2,9 @@
 
 # AEM Commerce connector for Magento and GraphQL
 
-This is an AEM Commerce connector for Magento and GraphQL, that provides some integration of Magento products and categories in the AEM Commerce console, and some authoring features like a product and category pickers. This connector only provides authoring features, this is not meant to be used to develop frontend components. To develop AEM frontend components, refer to the [AEM CIF Core Components](https://github.com/adobe/aem-core-cif-components) project.
+This is an AEM Commerce connector for Magento and GraphQL, that provides some integration of Magento products and categories in the AEM Commerce console, and some authoring features like product and category pickers.
+
+This connector only provides authoring features, this is not meant to be used to develop frontend components. To develop AEM frontend components, refer to the [AEM CIF Core Components](https://github.com/adobe/aem-core-cif-components) project.
 
 ## Modules
 
@@ -19,7 +21,7 @@ The main parts of the project are:
 
 ### Easy install with the "all" package
 
-You can easily install all the sub-projects of the connector and its required dependencies with the [all](all) content package. Just build all the sub-projects and install the `all` content package by simply running the following command at the root of the repository:
+You can easily install all the modules of the connector and also its required dependencies with the [all](all) content package. Just build all the modules and install the `all` content package by simply running the following command at the root of the repository:
 
 ```
 mvn clean install -PautoInstallAll
@@ -37,22 +39,28 @@ The CIF connector works with AEM 6.4.4 and AEM 6.5.
 
 The CIF Magento GraphQL AEM commerce connector has to be configured to access your Magento instance and bind the catalog data. Follow the steps below to configure the bundle: 
 
-1) Configuration of the Magento instance
+1) Configure the generic GraphQL instance
+    * Go to http://localhost:4502/system/console/configMgr
+    * Look for _CIF GraphQL Client Configuration Factory_
+    * Create a child configuration
+        * Keep the `default` service identifier or set something custom. Make sure to use the same value in step 2) below.
+        * For _GraphQL Service URL_ enter the URL of your Magento GraphQL endpoint (usually `https://hostname/graphql`)
+
+2) Configuration of the connector
     * Go to http://localhost:4502/system/console/configMgr
     * Look for _CIF Catalog Magento GraphQL Configuration Factory_
     * Create a child configuration
         * For _Magento GraphQL Service Identifier_ enter the ID of the GraphQL client you already configured (see "pre-requisites")
         * For _Magento root category id_ enter the ID of the default root category of your Magento instance
 
-2) Binding of product catalog to AEM resource tree
+3) Binding of product catalog to AEM resource tree
     * Go to AEM Commerce product console (http://localhost:4502/aem/products.html/var/commerce/products)
     * Click on Create > Bind Products
     * Enter Title, unique name and select `magento-graphql` as commerce provider
     * For "Project", you can select the ID of the Magento instance you created in the previous step
 
-3) AEM content editor product drag & drop
-To allow authors to drag & drop product assets from the AEM Assets Browser to a page a project specific configuration is needed to configure which component is used when dragging a product to a page.
-See AEM documentation about [Configuring a Paragraph System so that Dragging an Asset Creates a Component Instance](https://helpx.adobe.com/experience-manager/6-4/sites/developing/using/developing-components.html#ConfiguringaParagraphSystemsothatDragginganAssetCreatesaComponentInstance) for details.
+4) AEM content editor product drag & drop
+    * To allow authors to drag & drop product assets from the AEM Assets Browser to a page a project specific configuration is needed to configure which component is used when dragging a product to a page. See AEM documentation about [Configuring a Paragraph System so that Dragging an Asset Creates a Component Instance](https://helpx.adobe.com/experience-manager/6-4/sites/developing/using/developing-components.html#ConfiguringaParagraphSystemsothatDragginganAssetCreatesaComponentInstance) for details.
 
 ## Usage
 The project also provides product and category pickers to be used in any component dialog to select products or categories.
@@ -88,7 +96,7 @@ The category picker field supports the following optional properties:
 
 ### Pre-requisites
 
-If you build and install each sub-project manually, the [magento-graphql](https://github.com/adobe/commerce-cif-magento-graphql) and [graphql-client](https://github.com/adobe/commerce-cif-graphql-client) bundles have to be installed in your AEM instance. You MUST also configure an instance of the GraphQL client, see the instructions on the corresponding repository to setup the client.
+If you build and install each module manually, the [magento-graphql](https://github.com/adobe/commerce-cif-magento-graphql) and [graphql-client](https://github.com/adobe/commerce-cif-graphql-client) bundles have to be installed in your AEM instance. You MUST also configure an instance of the GraphQL client, see the instructions on the corresponding repository to setup the client.
 
 ### Building and installing
 

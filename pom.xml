@@ -21,7 +21,7 @@
     <version>0.1.0-SNAPSHOT</version>
 
     <name>CIF Connector Reactor</name>
-    <description>Maven Multi-module project for The CIF connector project</description>
+    <description>Maven Multi-module project for the CIF connector project</description>
 
     <modules>
         <module>content/cif-virtual-catalog</module>
