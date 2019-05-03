@@ -59,7 +59,6 @@
                 <configuration>
                     <showImportPackageReport>false</showImportPackageReport>
                     <allowIndexDefinitions>true</allowIndexDefinitions>
-                    <embeddedTarget>/apps/core/cif/install</embeddedTarget>
                     <embeddeds>
                         <embedded>
                             <groupId>${project.groupId}</groupId>
