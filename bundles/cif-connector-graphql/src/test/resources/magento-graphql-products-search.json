@@ -1,0 +1,916 @@
+{
+  "data": {
+    "products": {
+      "items": [
+        {
+          "__typename": "ConfigurableProduct",
+          "id": 1234,
+          "sku": "meskwielt",
+          "name": "El Gordo Down Jacket",
+          "description": {
+            "html": ""
+          },
+          "image": {
+            "url": null
+          },
+          "thumbnail": {
+            "url": null
+          },
+          "url_key": "el-gordo-down-jacket",
+          "updated_at": "2018-11-22 14:35:59",
+          "created_at": "2018-11-22 14:35:59",
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "currency": "USD",
+                "value": 119
+              }
+            }
+          },
+          "categories": [
+            {
+              "__typename": "CategoryTree",
+              "url_path": "men/coats"
+            }
+          ],
+          "variants": [
+            {
+              "product": {
+                "id": 1244,
+                "sku": "meskwielt-Purple-XS",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-xs",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1242,
+                "sku": "meskwielt-Purple-S",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-s",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1241,
+                "sku": "meskwielt-Purple-M",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-m",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1240,
+                "sku": "meskwielt-Purple-L",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-l",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1243,
+                "sku": "meskwielt-Purple-XL",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-xl",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1239,
+                "sku": "meskwielt-Green-XS",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-xs",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1237,
+                "sku": "meskwielt-Green-S",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-s",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1236,
+                "sku": "meskwielt-Green-M",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-m",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1235,
+                "sku": "meskwielt-Green-L",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-l",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1238,
+                "sku": "meskwielt-Green-XL",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-xl",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1249,
+                "sku": "meskwielt-Red-XS",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-xs",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1247,
+                "sku": "meskwielt-Red-S",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-s",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1246,
+                "sku": "meskwielt-Red-M",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-m",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1245,
+                "sku": "meskwielt-Red-L",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-l",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1248,
+                "sku": "meskwielt-Red-XL",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-xl",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "__typename": "ConfigurableProduct",
+          "id": 1302,
+          "sku": "wootwisot",
+          "name": "Sonja Insulated Jacket",
+          "description": {
+            "html": ""
+          },
+          "image": null,
+          "thumbnail": null,
+          "url_key": "sonja-insulated-jacket",
+          "updated_at": "2018-11-22 14:36:01",
+          "created_at": "2018-11-22 14:36:01",
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "currency": "USD",
+                "value": 189
+              }
+            }
+          },
+          "categories": [
+            {
+              "__typename": "CategoryTree",
+              "url_path": "women/coats"
+            }
+          ],
+          "variants": [
+            {
+              "product": {
+                "id": 1307,
+                "sku": "wootwisot-Green-XS",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "url_key": "wootwisot-green-xs",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1303,
+                "sku": "wootwisot-Green-L",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "url_key": "wootwisot-green-l",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1305,
+                "sku": "wootwisot-Green-S",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "url_key": "wootwisot-green-s",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1306,
+                "sku": "wootwisot-Green-XL",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "url_key": "wootwisot-green-xl",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1304,
+                "sku": "wootwisot-Green-M",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_green_2.jpg"
+                },
+                "url_key": "wootwisot-green-m",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1312,
+                "sku": "wootwisot-Purple-XS",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_6.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_6.jpg"
+                },
+                "url_key": "wootwisot-purple-xs",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1308,
+                "sku": "wootwisot-Purple-L",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_1_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_1_2.jpg"
+                },
+                "url_key": "wootwisot-purple-l",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1310,
+                "sku": "wootwisot-Purple-S",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_4_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_4_2.jpg"
+                },
+                "url_key": "wootwisot-purple-s",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1311,
+                "sku": "wootwisot-Purple-XL",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_3_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_3_2.jpg"
+                },
+                "url_key": "wootwisot-purple-xl",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1309,
+                "sku": "wootwisot-Purple-M",
+                "name": "Sonja Insulated Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_2_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/o/sonja_purple_2_2.jpg"
+                },
+                "url_key": "wootwisot-purple-m",
+                "updated_at": "2018-11-22 14:36:01",
+                "created_at": "2018-11-22 14:36:01",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 189
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "__typename": "ConfigurableProduct",
+          "id": 1220,
+          "sku": "meotwislt",
+          "name": "Slopeside Coat",
+          "description": {
+            "html": ""
+          },
+          "image": {
+            "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+          },
+          "thumbnail": {
+            "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+          },
+          "url_key": "slopeside-coat",
+          "updated_at": "2018-11-22 14:35:59",
+          "created_at": "2018-11-22 14:35:59",
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "currency": "USD",
+                "value": 139
+              }
+            }
+          },
+          "categories": [
+            {
+              "__typename": "CategoryTree",
+              "url_path": "men/coats"
+            }
+          ],
+          "variants": [
+            {
+              "product": {
+                "id": 1225,
+                "sku": "meotwislt-XS",
+                "name": "Slopeside Coat",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "url_key": "meotwislt-xs",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 139
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1223,
+                "sku": "meotwislt-S",
+                "name": "Slopeside Coat",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "url_key": "meotwislt-s",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 139
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1224,
+                "sku": "meotwislt-XL",
+                "name": "Slopeside Coat",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "url_key": "meotwislt-xl",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 139
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1221,
+                "sku": "meotwislt-L",
+                "name": "Slopeside Coat",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "url_key": "meotwislt-l",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 139
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1222,
+                "sku": "meotwislt-M",
+                "name": "Slopeside Coat",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                },
+                "url_key": "meotwislt-m",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 139
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

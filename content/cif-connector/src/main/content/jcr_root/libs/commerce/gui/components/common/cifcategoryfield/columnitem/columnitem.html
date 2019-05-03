@@ -1,0 +1,25 @@
+<!--
+
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+
+-->
+<sly data-sly-use.helper="libs.commerce.gui.components.common.cifcategoryfield.CIFCategoryFieldHelper"/>
+<coral-columnview-item data-sly-attribute.variant="${helper.hasChildren && 'drilldown'}"
+                       class="foundation-collection-item ${helper.isCategory && 'cq-commerce-picker-selectable'}"
+                       data-foundation-picker-collection-item-value="${helper.selectionId}"
+                       data-foundation-collection-item-id="${resource.path}">
+    <coral-columnview-item-thumbnail>
+        <coral-icon data-sly-test.needsCloudFolderIcon="${helper.isCloudFolder}" class="foundation-collection-item-thumbnail" icon="cloud"/>
+        <coral-icon data-sly-test.needsFolderIcon="${!needsCloudFolderIcon && helper.isFolder && !helper.thumbnailImageUrl}" class="foundation-collection-item-thumbnail" icon="folder"/>
+        <img data-sly-test.isFolder="${!needsFolderIcon && !needsCloudFolderIcon}" class="foundation-collection-item-thumbnail" src="${helper.thumbnailImageUrl}" alt="">
+    </coral-columnview-item-thumbnail>
+    <coral-columnview-item-content class="foundation-collection-item-title" title="${helper.title}">${helper.title}</coral-columnview-item-content>
+</coral-columnview-item>

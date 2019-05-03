@@ -1,0 +1,14 @@
+{
+  "errors": [
+    {
+      "message": "Cannot query field \"categoriess\" on type \"ProductInterface\".",
+      "category": "graphql",
+      "locations": [
+        {
+          "line": 23,
+          "column": 9
+        }
+      ]
+    }
+  ]
+}

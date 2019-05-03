@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="commerce/gui/components/common/cifproductfield/suggestion"
+    query="${param.query}">
+    <datasource
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="commerce/gui/components/common/productfield/datasources/children"
+        filter="${param.filter}"
+        limit="${empty requestPathInfo.selectors[1] ? &quot;10&quot; : requestPathInfo.selectors[1]}"
+        offset="${requestPathInfo.selectors[0]}"
+        query="${param.query}"
+        rootPath="${empty param.root ? &quot;/&quot; : param.root}"/>
+</jcr:root>

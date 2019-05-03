@@ -1,0 +1,1044 @@
+{
+  "data": {
+    "category": {
+      "products": {
+        "items": [
+          {
+            "__typename": "ConfigurableProduct",
+            "id": 1201,
+            "sku": "meotwibrt",
+            "name": "Brooklyn Coat",
+            "description": {
+              "html": ""
+            },
+            "image": {
+              "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+            },
+            "thumbnail": {
+              "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+            },
+            "url_key": "brooklyn-coat",
+            "updated_at": "2018-11-22 14:35:59",
+            "created_at": "2018-11-22 14:35:59",
+            "price": {
+              "regularPrice": {
+                "amount": {
+                  "currency": "USD",
+                  "value": 89
+                }
+              }
+            },
+            "categories": [
+              {
+                "__typename": "CategoryTree",
+                "url_path": "men/coats"
+              }
+            ],
+            "variants": [
+              {
+                "product": {
+                  "id": 1204,
+                  "sku": "meotwibrt-S",
+                  "name": "Brooklyn Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+                  },
+                  "url_key": "meotwibrt-s",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 89
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1205,
+                  "sku": "meotwibrt-XL",
+                  "name": "Brooklyn Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+                  },
+                  "url_key": "meotwibrt-xl",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 89
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1202,
+                  "sku": "meotwibrt-L",
+                  "name": "Brooklyn Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+                  },
+                  "url_key": "meotwibrt-l",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 89
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1203,
+                  "sku": "meotwibrt-M",
+                  "name": "Brooklyn Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/b/r/brooklyn_2.jpg"
+                  },
+                  "url_key": "meotwibrt-m",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 89
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "__typename": "ConfigurableProduct",
+            "id": 1210,
+            "sku": "meotwidot",
+            "name": "Double Breasted Raincoat",
+            "description": {
+              "html": ""
+            },
+            "image": {
+              "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+            },
+            "thumbnail": {
+              "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+            },
+            "url_key": "double-breasted-raincoat",
+            "updated_at": "2018-11-22 14:35:59",
+            "created_at": "2018-11-22 14:35:59",
+            "price": {
+              "regularPrice": {
+                "amount": {
+                  "currency": "USD",
+                  "value": 105
+                }
+              }
+            },
+            "categories": [
+              {
+                "__typename": "CategoryTree",
+                "url_path": "men/coats"
+              }
+            ],
+            "variants": [
+              {
+                "product": {
+                  "id": 1213,
+                  "sku": "meotwidot-S",
+                  "name": "Double Breasted Raincoat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+                  },
+                  "url_key": "meotwidot-s",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 105
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1214,
+                  "sku": "meotwidot-XL",
+                  "name": "Double Breasted Raincoat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+                  },
+                  "url_key": "meotwidot-xl",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 105
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1212,
+                  "sku": "meotwidot-M",
+                  "name": "Double Breasted Raincoat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+                  },
+                  "url_key": "meotwidot-m",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 105
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1211,
+                  "sku": "meotwidot-L",
+                  "name": "Double Breasted Raincoat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/d/o/double_2.jpg"
+                  },
+                  "url_key": "meotwidot-l",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 105
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "__typename": "ConfigurableProduct",
+            "id": 1215,
+            "sku": "meotwipot",
+            "name": "Portland Hooded Jacket",
+            "description": {
+              "html": ""
+            },
+            "image": {
+              "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+            },
+            "thumbnail": {
+              "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+            },
+            "url_key": "portland-hooded-jacket",
+            "updated_at": "2018-11-22 14:35:59",
+            "created_at": "2018-11-22 14:35:59",
+            "price": {
+              "regularPrice": {
+                "amount": {
+                  "currency": "USD",
+                  "value": 75
+                }
+              }
+            },
+            "categories": [
+              {
+                "__typename": "CategoryTree",
+                "url_path": "men/coats"
+              }
+            ],
+            "variants": [
+              {
+                "product": {
+                  "id": 1218,
+                  "sku": "meotwipot-S",
+                  "name": "Portland Hooded Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+                  },
+                  "url_key": "meotwipot-s",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 75
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1219,
+                  "sku": "meotwipot-XL",
+                  "name": "Portland Hooded Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+                  },
+                  "url_key": "meotwipot-xl",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 75
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1216,
+                  "sku": "meotwipot-L",
+                  "name": "Portland Hooded Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+                  },
+                  "url_key": "meotwipot-l",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 75
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1217,
+                  "sku": "meotwipot-M",
+                  "name": "Portland Hooded Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/p/o/portland_2.jpg"
+                  },
+                  "url_key": "meotwipot-m",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 75
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "__typename": "ConfigurableProduct",
+            "id": 1220,
+            "sku": "meotwislt",
+            "name": "Slopeside Coat",
+            "description": {
+              "html": ""
+            },
+            "image": {
+              "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+            },
+            "thumbnail": {
+              "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+            },
+            "url_key": "slopeside-coat",
+            "updated_at": "2018-11-22 14:35:59",
+            "created_at": "2018-11-22 14:35:59",
+            "price": {
+              "regularPrice": {
+                "amount": {
+                  "currency": "USD",
+                  "value": 139
+                }
+              }
+            },
+            "categories": [
+              {
+                "__typename": "CategoryTree",
+                "url_path": "men/coats"
+              }
+            ],
+            "variants": [
+              {
+                "product": {
+                  "id": 1225,
+                  "sku": "meotwislt-XS",
+                  "name": "Slopeside Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "url_key": "meotwislt-xs",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 139
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1223,
+                  "sku": "meotwislt-S",
+                  "name": "Slopeside Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "url_key": "meotwislt-s",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 139
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1224,
+                  "sku": "meotwislt-XL",
+                  "name": "Slopeside Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "url_key": "meotwislt-xl",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 139
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1221,
+                  "sku": "meotwislt-L",
+                  "name": "Slopeside Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "url_key": "meotwislt-l",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 139
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1222,
+                  "sku": "meotwislt-M",
+                  "name": "Slopeside Coat",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/s/l/slopeside_2.jpg"
+                  },
+                  "url_key": "meotwislt-m",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 139
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "__typename": "ConfigurableProduct",
+            "id": 1234,
+            "sku": "meskwielt",
+            "name": "El Gordo Down Jacket",
+            "description": {
+              "html": ""
+            },
+            "image": {
+              "url": null
+            },
+            "thumbnail": {
+              "url": null
+            },
+            "url_key": "el-gordo-down-jacket",
+            "updated_at": "2018-11-22 14:35:59",
+            "created_at": "2018-11-22 14:35:59",
+            "price": {
+              "regularPrice": {
+                "amount": {
+                  "currency": "USD",
+                  "value": 119
+                }
+              }
+            },
+            "categories": [
+              {
+                "__typename": "CategoryTree",
+                "url_path": "men/coats"
+              }
+            ],
+            "variants": [
+              {
+                "product": {
+                  "id": 1244,
+                  "sku": "meskwielt-Purple-XS",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "url_key": "meskwielt-purple-xs",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1242,
+                  "sku": "meskwielt-Purple-S",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "url_key": "meskwielt-purple-s",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1241,
+                  "sku": "meskwielt-Purple-M",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "url_key": "meskwielt-purple-m",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1240,
+                  "sku": "meskwielt-Purple-L",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "url_key": "meskwielt-purple-l",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 130
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1243,
+                  "sku": "meskwielt-Purple-XL",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                  },
+                  "url_key": "meskwielt-purple-xl",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 130
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1239,
+                  "sku": "meskwielt-Green-XS",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "url_key": "meskwielt-green-xs",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1237,
+                  "sku": "meskwielt-Green-S",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "url_key": "meskwielt-green-s",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1236,
+                  "sku": "meskwielt-Green-M",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "url_key": "meskwielt-green-m",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1235,
+                  "sku": "meskwielt-Green-L",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "url_key": "meskwielt-green-l",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 130
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1238,
+                  "sku": "meskwielt-Green-XL",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                  },
+                  "url_key": "meskwielt-green-xl",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 130
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1249,
+                  "sku": "meskwielt-Red-XS",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "url_key": "meskwielt-red-xs",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1247,
+                  "sku": "meskwielt-Red-S",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "url_key": "meskwielt-red-s",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1246,
+                  "sku": "meskwielt-Red-M",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "url_key": "meskwielt-red-m",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 119
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1245,
+                  "sku": "meskwielt-Red-L",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "url_key": "meskwielt-red-l",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 130
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "product": {
+                  "id": 1248,
+                  "sku": "meskwielt-Red-XL",
+                  "name": "El Gordo Down Jacket",
+                  "description": {
+                    "html": ""
+                  },
+                  "image": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "thumbnail": {
+                    "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                  },
+                  "url_key": "meskwielt-red-xl",
+                  "updated_at": "2018-11-22 14:35:59",
+                  "created_at": "2018-11-22 14:35:59",
+                  "price": {
+                    "regularPrice": {
+                      "amount": {
+                        "currency": "USD",
+                        "value": 130
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

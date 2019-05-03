@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:rep="internal"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+    jcr:mixinTypes="[rep:AccessControllable]"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        jcr:primaryType="nt:unstructured"
+        jcr:title="Product Picker"
+        consoleId="cq-commerce-promotionpicker"
+        sling:resourceType="granite/ui/components/coral/foundation/page">
+        <head jcr:primaryType="nt:unstructured">
+            <viewport
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/admin/page/viewport"/>
+            <meta
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/meta"
+                content="chrome=1"
+                name="X-UA-Compatible"/>
+            <favicon
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/page/favicon"/>
+            <clientlibs
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
+                categories="[coralui3,granite.ui.coral.foundation,commerce.gui.productpicker]"/>
+        </head>
+        <title
+            jcr:primaryType="nt:unstructured"
+            jcr:title="Product Picker"
+            sling:resourceType="granite/ui/components/shell/title"/>
+            <body
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="commerce/gui/components/common/basepathswrapper"
+                    wrappedResourceType="granite/ui/components/coral/foundation/collection/action"
+                    granite:class="cq-commerce-productpickerframe-activator"
+                    granite:hidden="false">
+                <data
+                        jcr:primaryType="nt:unstructured"
+                        filter="${param.filter}"
+                        href.uritemplate="#"
+                        root="${commerceProductsBasePath}"
+                        selectionCount="${param.selectionCount}"/>
+            </body>
+    </jcr:content>
+    <rep:policy/>
+</jcr:root>

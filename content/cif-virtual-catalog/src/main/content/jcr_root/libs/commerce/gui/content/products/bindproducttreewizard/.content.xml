@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content
+            jcr:primaryType="nt:unstructured"
+            jcr:title="AEM Products | Bind Products"
+            sling:resourceType="granite/ui/components/coral/foundation/page">
+        <head jcr:primaryType="nt:unstructured">
+            <viewport
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/admin/page/viewport"/>
+            <meta
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/meta"
+                    content="chrome=1"
+                    name="X-UA-Compatible"/>
+            <favicon
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/page/favicon"/>
+            <clientlibs
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
+                    categories="[coralui3,granite.ui.coral.foundation,commerce.gui.products.bindproducttreewizard]"/>
+        </head>
+        <body
+                granite:id="cq-commerce-products-bindproducttree"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/page/body">
+            <items jcr:primaryType="nt:unstructured">
+                <form
+                        granite:class="form"
+                        granite:id="cq-commerce-products-bindproducttree-form"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form"
+                        action="${requestPathInfo.suffix}"
+                        foundationForm="{Boolean}true"
+                        maximized="{Boolean}true"
+                        method="post"
+                        novalidate="{Boolean}true"
+                        style="vertical">
+                    <items jcr:primaryType="nt:unstructured">
+                        <charset
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                name="_charset_"
+                                value="utf-8"/>
+                        <wizard
+                                jcr:primaryType="nt:unstructured"
+                                jcr:title="Bind Products"
+                                sling:resourceType="granite/ui/components/coral/foundation/wizard"
+                                cancelHref="${empty header.Referer ? granite:concat(&quot;/aem/products.html&quot;, granite:encodeURIPath(requestPathInfo.suffix)) : header.Referer}">
+                            <items jcr:primaryType="nt:unstructured">
+                                <step1
+                                        jcr:primaryType="nt:unstructured"
+                                        jcr:title="Properties"
+                                        sling:resourceType="granite/ui/components/coral/foundation/container"
+                                        maximized="{Boolean}true">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <fixedcolumn
+                                                jcr:primaryType="nt:unstructured"
+                                                margin="true"
+                                                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                                            <items jcr:primaryType="nt:unstructured">
+                                                <column jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                                                    <items jcr:primaryType="nt:unstructured">
+                                                        <title
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                                fieldLabel="Title"
+                                                                name="./jcr:title"
+                                                                renderReadOnly="{Boolean}false"/>
+                                                        <name
+                                                                granite:id="cq-commerce-products-bindproducttree-name"
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                                fieldLabel="Name"
+                                                                name=":name"
+                                                                required="{Boolean}true"/>
+                                                        <commerceprovider
+                                                                granite:id="cq-commerce-products-bindproducttree-provider-select"
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                                                fieldLabel="Commerce provider"
+                                                                name="./cq:catalogDataResourceProviderFactory"
+                                                                required="{Boolean}true"
+                                                                emptyText="Select commerce provider"
+                                                                fieldDescription="The commerce provider. If this list is empty check the configurations of the CIF Connector Configuration Service ">>
+                                                            <datasource
+                                                                    jcr:primaryType="nt:unstructured"
+                                                                    sling:resourceType="commerce/gui/components/admin/products/bindproducttreewizard/commerceproviderdatasource"/>
+
+                                                        </commerceprovider>
+
+                                                        <catalogidentifier
+                                                                granite:id="cq-commerce-products-bindproducttree-catalog-select"
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                                                fieldLabel="Project"
+                                                                name="./cq:catalogIdentifier"
+                                                                emptyText="Select project"
+                                                                disabled="{Boolean}true">
+                                                        </catalogidentifier>
+
+                                                        <catalogidentifierdata
+                                                                granite:id="cq-commerce-products-bindproducttree-catalog-select-data"
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                                                required="{Boolean}false"
+                                                                disabled="{Boolean}true">
+                                                            <datasource
+                                                                    jcr:primaryType="nt:unstructured"
+                                                                    sling:resourceType="commerce/gui/components/admin/products/bindproducttreewizard/catalogidentifierdatasource"/>
+
+                                                        </catalogidentifierdata>
+                                                        
+                                                        <language
+                                                                emptyText="Select"
+                                                                fieldLabel="Language"
+                                                                granite:class="language"
+                                                                jcr:primaryType="nt:unstructured"
+                                                                name="./jcr:language"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/select">
+                                                            <datasource
+                                                                    jcr:primaryType="nt:unstructured"
+                                                                    sling:resourceType="cq/gui/components/common/datasources/languages"/>
+                                                        </language>
+
+                                                        <node-type
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                                                name="./jcr:primaryType"
+                                                                value="sling:Folder"/>
+                                                    </items>
+                                                </column>
+                                            </items>
+                                        </fixedcolumn>
+                                    </items>
+                                    <parentConfig jcr:primaryType="nt:unstructured">
+                                        <next
+                                                granite:class="foundation-wizard-control"
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/button"
+                                                disabled="{Boolean}true"
+                                                text="Bind"
+                                                type="submit"
+                                                variant="primary">
+                                            <granite:data
+                                                    jcr:primaryType="nt:unstructured"
+                                                    foundation-wizard-control-action="next"/>
+                                        </next>
+                                    </parentConfig>
+                                </step1>
+                            </items>
+                        </wizard>
+                    </items>
+                </form>
+            </items>
+        </body>
+    </jcr:content>
+</jcr:root>
