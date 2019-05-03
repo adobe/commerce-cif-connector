@@ -324,7 +324,7 @@
             </build>
         </profile>
         <profile>
-            <id>autoInstallAll</id>
+            <id>autoInstall</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>

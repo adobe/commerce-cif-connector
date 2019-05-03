@@ -28,6 +28,7 @@
         <module>bundles/cif-virtual-catalog</module>
         <module>content/cif-connector</module>
         <module>bundles/cif-connector-graphql</module>
+        <module>all</module>
     </modules>
 
     <scm>
