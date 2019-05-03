@@ -17,9 +17,17 @@ The main parts of the project are:
 
 ## Installation
 
-### Pre-requisites
+### Easy install with the "all" package
 
-The connector requires that the [magento-graphql](https://github.com/adobe/commerce-cif-magento-graphql) and [graphql-client](https://github.com/adobe/commerce-cif-graphql-client) bundles are installed in your AEM instance. You MUST also configure an instance of the GraphQL client, see the instructions on the corresponding repository to setup the client.
+You can easily install all the sub-projects of the connector and its required dependencies with the [all](all) content package. Just build all the sub-projects and install the `all` content package by simply running the following command at the root of the repository:
+
+```
+mvn clean install -PautoInstallAll
+```
+This installs everything by default to `localhost:4502` without any context path. You can also configure the install location with the following maven properties:
+* `aem.host`: the name of the AEM instance
+* `aem.port`: the port number of the AEM instance
+* `aen.contextPath`: the context path of your AEM instance (if not `/`)
 
 ### AEM Support
 
@@ -78,7 +86,11 @@ The category picker field supports the following optional properties:
  
 ## Building and installing from source
 
-### Content package
+### Pre-requisites
+
+If you build and install each sub-project manually, the [magento-graphql](https://github.com/adobe/commerce-cif-magento-graphql) and [graphql-client](https://github.com/adobe/commerce-cif-graphql-client) bundles have to be installed in your AEM instance. You MUST also configure an instance of the GraphQL client, see the instructions on the corresponding repository to setup the client.
+
+### Building and installing
 
 To build all the modules run in the project root directory the following command with Maven 3:
 
@@ -86,10 +98,10 @@ To build all the modules run in the project root directory the following command
 mvn clean install
 ```
 
-If you have a running AEM instance, you can also build and deploy all projects into AEM with
+If you have a running AEM instance, you can also build and deploy all sub-projects into AEM with
 
 ```
-mvn clean install -PautoInstallAll
+mvn clean install -PautoInstall
 ```
 This installs everything by default to `localhost:4502` without any context path. You can also configure the install location with the following maven properties:
 * `aem.host`: the name of the AEM instance

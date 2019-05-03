@@ -1,0 +1,59 @@
+<!--
+
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+
+-->
+<sly data-sly-use.helper="libs.commerce.gui.components.common.cifproductfield.ViewHelper"/>
+<sly data-sly-use.cifhelper="libs.commerce.gui.components.common.cifproductfield.CIFProductFieldHelper"/>
+
+<coral-masonry-item class="foundation-collection-item" data-foundation-collection-item-id="${resource.path}"
+                    data-foundation-picker-collection-item-value="${cifhelper.selectionId}"
+                    data-granite-collection-item-id="${resource.path}">
+<!--/*
+    Product card
+*/-->
+<coral-card data-sly-test.product="${helper.product}" data-foundation-collection-item-id="${resource.path}"
+        data-sly-attribute.class="${helper.product && 'cq-commerce-picker-selectable'}"
+        data-path="${resource.path}" data-type="product" data-timeline="true" data-title="${helper.title}">
+    <coral-card-asset>
+        <img data-sly-test="${helper.cardImageUrl}" src="${helper.cardImageUrl}"/>
+    </coral-card-asset>
+    <coral-card-info data-sly-test="${helper.new}"><coral-tag color="blue" class="u-coral-pullRight">${"New" @ i18n}</coral-tag></coral-card-info>
+    <coral-card-content>
+        <coral-card-title class="foundation-collection-item-title">${helper.title}</coral-card-title>
+        <coral-card-propertylist>
+            <coral-card-property title="${'SKU' @ i18n}">${helper.sku}</coral-card-property>
+        </coral-card-propertylist>
+        <coral-card-propertylist>
+            <coral-card-property icon="edit" title="${'Modified' @ i18n}">
+                <foundation-time type="datetime" value="${helper.modifiedTime}"></foundation-time>
+            </coral-card-property>
+        </coral-card-propertylist>
+    </coral-card-content>
+</coral-card>
+<coral-quickactions data-sly-test="${product}" target="_prev" alignmy="left top" alignat="left top">
+    <coral-quickactions-item icon="check" class="foundation-collection-item-activator">${"Select" @ i18n}</coral-quickactions-item>
+</coral-quickactions>
+<!--/*
+    Folder card
+*/-->
+<coral-card data-sly-test="${!product}" class="foundation-collection-navigator" data-foundation-collection-item-id="${resource.path}"
+            data-path="${resource.path}" variant="inverted">
+    <coral-card-asset  data-sly-test="${helper.cardImageUrl}"><img src="${helper.cardImageUrl}"/></coral-card-asset>
+    <coral-card-info data-sly-test="${helper.new}"><coral-tag color="blue" class="u-coral-pullRight">${"New" @ i18n}</coral-tag></coral-card-info>
+    <coral-card-content>
+        <coral-card-context data-sly-test.cloudFolder="${cifhelper.isCloudFolder}">${"Cloud Products" @ i18n}</coral-card-context>
+        <coral-card-context data-sly-test="${!cloudFolder}">${"Folder" @ i18n}</coral-card-context>
+        <coral-card-title class="foundation-collection-item-title">${helper.title}</coral-card-title>
+    </coral-card-content>
+</coral-card>
+
+</coral-masonry-item>

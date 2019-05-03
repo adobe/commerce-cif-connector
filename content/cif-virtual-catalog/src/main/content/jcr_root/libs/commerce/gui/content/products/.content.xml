@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content
+            jcr:mixinTypes="[sling:VanityPath]"
+            jcr:primaryType="nt:unstructured"
+            jcr:title="AEM Products"
+            sling:resourceType="granite/ui/components/shell/collectionpage"
+            sling:vanityOrder="{Long}100"
+            sling:vanityPath="/aem/products"
+            contentPath="${requestPathInfo.suffix}"
+            currentView="${state[&quot;products.shell.collectionpage.layoutId&quot;].string}"
+            modeGroup="cq-commerce-products-admin-childpages"
+            pageURITemplate="/libs/commerce/gui/content/products.html{+id}"
+            targetCollection=".cq-commerce-products-admin-childpages"
+            omnisearchLocationPath="/libs/granite/omnisearch/content/metadata/product"
+            consoleId="cq-commerce-products">
+        <actions jcr:primaryType="nt:unstructured">
+            <secondary jcr:primaryType="nt:unstructured">
+                <create
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/pulldown"
+                        text="Create"
+                        variant="primary">
+                    <items jcr:primaryType="nt:unstructured">
+                        <bindproducttree
+                                granite:rel="cq-commerce-products-bindproducttree-activator"
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/collection/actionlink"
+                                action="foundation.link"
+                                relScope="collection"
+                                target=".cq-commerce-products-admin-childpages"
+                                text="Bind Products">
+                            <data
+                                    jcr:primaryType="nt:unstructured"
+                                    href.uritemplate="/mnt/overlay/commerce/gui/content/products/bindproducttreewizard.html{+id}/"/>
+                        </bindproducttree>
+                    </items>
+                </create>
+            </secondary>
+        </actions>
+    </jcr:content>
+</jcr:root>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="commerce/gui/components/common/basepathswrapper"
+          path="${empty requestPathInfo.suffix ? (empty param.root ? commerceProductsBasePath : param.root) : requestPathInfo.suffix}"
+          rootPath="${empty param.root ? commerceProductsBasePath : param.root}"
+          selectionCount="${empty param.selectionCount ? &quot;single&quot; : param.selectionCount}"
+          targetCollection="#cq-commerce-product-picker-collection"
+          wrappedResourceType="granite/ui/components/coral/foundation/picker">
+    <actions jcr:primaryType="nt:unstructured">
+        <primary jcr:primaryType="nt:unstructured">
+            <clientlibs
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
+                categories="[cq.commerce.gui.common.picker]"/>
+        </primary>
+    </actions>
+    <search
+            jcr:primaryType="nt:unstructured"
+            name="fulltext"
+            targetCollection="#cq-commerce-product-picker-search-collection">
+        <views jcr:primaryType="nt:unstructured">
+            <card
+                    granite:id="cq-commerce-product-picker-search-collection"
+                    jcr:primaryType="nt:unstructured"
+                    jcr:title="Card View"
+                    sling:resourceType="granite/ui/components/coral/foundation/masonry"
+                    granite:class="cq-commerce-picker-collection"
+                    icon="viewCard"
+                    limit="{Long}20"
+                    selectionCount="${requestPathInfo.selectors[1]}"
+                    selectionMode="{Boolean}true"
+                    renderItemElement="{Boolean}false"
+                    size="${empty requestPathInfo.selectors[3] ? &quot;20&quot; : requestPathInfo.selectors[3]}"
+                    src="/mnt/overlay/commerce/gui/content/common/cifproductfield/picker/search/views/card.result.${requestPathInfo.selectors[1]}{.offset,limit}.html?${querystring}">
+                <datasource
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="commerce/gui/components/common/cifproductfield/datasources/search"
+                        itemResourceType="commerce/gui/components/common/cifproductfield/carditem"
+                        limit="${empty requestPathInfo.selectors[3] ? &quot;21&quot; : requestPathInfo.selectors[3] + 1}"
+                        offset="${requestPathInfo.selectors[2]}"/>
+            </card>
+        </views>
+    </search>
+    <views jcr:primaryType="nt:unstructured">
+        <column
+                granite:id="cq-commerce-product-picker-collection"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Column View"
+                sling:resourceType="granite/ui/components/coral/foundation/columnview"
+                granite:class="cq-commerce-picker-collection"
+                icon="viewColumn"
+                limit="{Long}40"
+                loadAncestors="{Boolean}true"
+                path="${empty requestPathInfo.suffix ? (empty param.root ? commerceProductsBasePath : param.root) : requestPathInfo.suffix}"
+                rootPath="${empty param.root ? commerceProductsBasePath : param.root}"
+                selectionCount="${empty param.selectionCount ? &quot;single&quot; : param.selectionCount}"
+                size="${empty requestPathInfo.selectors[1] ? &quot;40&quot; : requestPathInfo.selectors[1]}"
+                previewSrc="/mnt/overlay/commerce/gui/content/common/cifproductfield/columnpreview.html{+id}"
+                src="/mnt/overlay/commerce/gui/content/common/cifproductfield/picker/views/column{.offset,limit}.html{+id}?root=${granite:encodeURIComponent(empty param.root ? commerceProductsBasePath : param.root)}&amp;filter=${granite:encodeURIComponent(param.filter)}&amp;selectionCount=${granite:encodeURIComponent(param.selectionCount)}&amp;selectionId=${granite:encodeURIComponent(param.selectionId)}">
+            <datasource
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="commerce/gui/components/common/productfield/datasources/children"
+                    filter="${paramValues.filter[0]}"
+                    itemResourceType="commerce/gui/components/common/cifproductfield/columnitem"
+                    limit="${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}"
+                    offset="${requestPathInfo.selectors[0]}"
+                    path="${empty requestPathInfo.suffix ? (empty param.root ? commerceProductsBasePath : param.root) : requestPathInfo.suffix}"/>
+        </column>
+        <card
+                granite:id="cq-commerce-product-picker-collection"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Card View"
+                sling:resourceType="granite/ui/components/coral/foundation/masonry"
+                granite:class="cq-commerce-picker-collection"
+                metaResourceType="cq/gui/components/coral/admin/page/meta"
+                icon="viewCard"
+                limit="{Long}40"
+                loadAncestors="{Boolean}true"
+                renderItemElement="{Boolean}false"
+                path="${empty requestPathInfo.suffix ? (empty param.root ? commerceProductsBasePath : param.root) : requestPathInfo.suffix}"
+                rootPath="${empty param.root ? commerceProductsBasePath : param.root}"
+                selectionCount="${empty param.selectionCount ? &quot;single&quot; : param.selectionCount}"
+                size="${empty requestPathInfo.selectors[1] ? &quot;20&quot; : requestPathInfo.selectors[1]}"
+                src="/mnt/overlay/commerce/gui/content/common/cifproductfield/picker/views/card{.offset,limit}.html{+id}?root=${granite:encodeURIComponent(empty param.root ? commerceProductsBasePath : param.root)}&amp;filter=${granite:encodeURIComponent(param.filter)}&amp;selectionCount=${granite:encodeURIComponent(param.selectionCount)}&amp;selectionId=${granite:encodeURIComponent(param.selectionId)}">
+            <datasource
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="commerce/gui/components/common/productfield/datasources/children"
+                    filter="${paramValues.filter[0]}"
+                    itemResourceType="commerce/gui/components/common/cifproductfield/carditem"
+                    limit="${empty requestPathInfo.selectors[1] ? &quot;21&quot; : requestPathInfo.selectors[1] + 1}"
+                    offset="${requestPathInfo.selectors[0]}"
+                    path="${empty requestPathInfo.suffix ? (empty param.root ? commerceProductsBasePath : param.root) : requestPathInfo.suffix}"/>
+        </card>
+        <list
+                granite:id="cq-commerce-product-picker-collection"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="List View"
+                sling:resourceType="granite/ui/components/coral/foundation/table"
+                granite:class="cq-commerce-picker-collection"
+                metaResourceType="cq/gui/components/coral/admin/page/meta"
+                icon="viewList"
+                layoutId="list"
+                limit="{Long}40"
+                path="${empty requestPathInfo.suffix ? (empty param.root ? commerceProductsBasePath : param.root) : requestPathInfo.suffix}"
+                rootPath="${empty param.root ? commerceProductsBasePath : param.root}"
+                rowReorderAction="/bin/wcmcommand?cmd=movePage&amp;srcPath={item}&amp;destPath={item}&amp;before={before}&amp;_charset_=utf-8&amp;"
+                selectionCount="${empty param.selectionCount ? &quot;single&quot; : param.selectionCount}"
+                selectionMode="row"
+                sortMode="remote"
+                size="${empty requestPathInfo.selectors[1] ? &quot;40&quot; : requestPathInfo.selectors[1]}"
+                src="/mnt/overlay/commerce/gui/content/common/cifproductfield/picker/views/list{.offset,limit}.html{+id}?root=${granite:encodeURIComponent(empty param.root ? commerceProductsBasePath : param.root)},sortName,sortDir&amp;filter=${granite:encodeURIComponent(param.filter)}&amp;selectionCount=${granite:encodeURIComponent(param.selectionCount)}&amp;selectionId=${granite:encodeURIComponent(param.selectionId)}">
+            <columns jcr:primaryType="nt:unstructured">
+                <select
+                        jcr:primaryType="nt:unstructured"
+                        select="{Boolean}true"/>
+                <title
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Title"
+                        sortable="{Boolean}true"/>
+                <modified
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Modified"
+                        sortable="{Boolean}true"
+                        sortType="date"/>
+                <order
+                        jcr:primaryType="nt:unstructured"
+                        order="{Boolean}true"/>
+            </columns>
+            <datasource
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="commerce/gui/components/common/productfield/datasources/children"
+                    filter="${paramValues.filter[0]}"
+                    itemResourceType="commerce/gui/components/common/cifproductfield/listitem"
+                    limit="${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}"
+                    offset="${requestPathInfo.selectors[0]}"
+                    path="${requestPathInfo.suffix}"/>
+        </list>
+    </views>
+</jcr:root>

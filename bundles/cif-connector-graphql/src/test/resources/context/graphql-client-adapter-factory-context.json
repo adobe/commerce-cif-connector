@@ -1,0 +1,28 @@
+{
+  "pageA": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType":"cq:PageContent",
+      "cq:catalogIdentifier": "my-catalog"
+    }
+  },
+  "pageB": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType":"cq:PageContent",
+      "cq:catalogIdentifier": "my-catalog"
+    },
+    "pageC": {
+      "jcr:primaryType": "cq:Page",
+      "jcr:content": {
+        "jcr:primaryType":"cq:PageContent"
+      }
+    }
+  },
+  "pageD": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType":"cq:PageContent"
+    }
+  }
+}

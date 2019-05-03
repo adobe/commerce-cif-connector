@@ -1,0 +1,35 @@
+<!--
+
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+
+-->
+<sly data-sly-use.helper="libs.commerce.gui.components.common.cifproductfield.ViewHelper"/>
+<sly data-sly-use.cifhelper="libs.commerce.gui.components.common.cifproductfield.CIFProductFieldHelper"/>
+<tr class="foundation-collection-item ${helper.product ? 'cq-commerce-picker-selectable' : 'foundation-collection-navigator'}"
+    data-foundation-collection-item-id="${resource.path}" data-path="${resource.path}" data-type="product"
+    data-foundation-picker-collection-item-value="${cifhelper.selectionId}"
+    data-timeline="true" is="coral-table-row" data-title="${helper.title}">
+    <td is="coral-table-cell" coral-table-rowselect data-sly-attribute.coral-table-rowselect="${helper.product}">
+        <coral-icon data-sly-test.needsCloudFolderIcon="${cifhelper.isCloudFolder}" class="foundation-collection-item-thumbnail" icon="cloud"/>
+        <coral-icon data-sly-test.needsFolderIcon="${!needsCloudFolderIcon && helper.isFolder && !helper.thumbnailImageUrl}" class="foundation-collection-item-thumbnail" icon="folder"/>
+        <img data-sly-test.isFolder="${!needsFolderIcon && !needsCloudFolderIcon}" class="foundation-collection-item-thumbnail" src="${helper.thumbnailImageUrl}" alt="">
+    </td>
+    <td is="coral-table-cell" value="${helper.title}">
+        <span class="foundation-collection-item-title" >${helper.title}</span>
+        <div class="foundation-layout-util-subtletext">${helper.sku}</div>
+    </td>
+    <td is="coral-table-cell" value="${helper.modifiedTimeMillis}">
+        <foundation-time type="datetime" data-sly-test="${helper.modifiedTime}" value="${helper.modifiedTime}"></foundation-time>
+    </td>
+    <td is="coral-table-cell" alignment="right">
+        <button is="coral-button" variant="minimal" icon="dragHandle" coral-table-roworder></button>
+    </td>
+</tr>
