@@ -29,7 +29,7 @@ mvn clean install -PautoInstallAll
 This installs everything by default to `localhost:4502` without any context path. You can also configure the install location with the following maven properties:
 * `aem.host`: the name of the AEM instance
 * `aem.port`: the port number of the AEM instance
-* `aen.contextPath`: the context path of your AEM instance (if not `/`)
+* `aem.contextPath`: the context path of your AEM instance (if not `/`)
 
 ### AEM Support
 
@@ -114,7 +114,7 @@ mvn clean install -PautoInstall
 This installs everything by default to `localhost:4502` without any context path. You can also configure the install location with the following maven properties:
 * `aem.host`: the name of the AEM instance
 * `aem.port`: the port number of the AEM instance
-* `aen.contextPath`: the context path of your AEM instance (if not `/`)
+* `aem.contextPath`: the context path of your AEM instance (if not `/`)
 
 ### Contributing
  
