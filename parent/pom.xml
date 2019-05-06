@@ -22,7 +22,7 @@
     <version>0.1.0-SNAPSHOT</version>
 
     <name>CIF Connector - Parent project</name>
-    <description>Maven multi-module parent project for the CIF connector</description>
+    <description>Parent project for the CIF connector</description>
     <url>https://github.com/adobe/commerce-cif-connector</url>
 
     <scm>
