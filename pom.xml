@@ -166,6 +166,9 @@
                     <version>0.12</version>
                     <configuration>
                         <addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
+                        <excludes>
+                            <exclude>target/*</exclude>
+                        </excludes>
                     </configuration>
                     <executions>
                         <execution>

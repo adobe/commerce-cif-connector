@@ -115,8 +115,6 @@
                 <configuration>
                     <addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
                     <excludes combine.children="append">
-                        <!-- don't check anything in target -->
-                        <exclude>target/*</exclude>
                         <exclude>**/*.xml</exclude>
                         <exclude>**/META-INF/**/*</exclude>
                     </excludes>

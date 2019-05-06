@@ -94,8 +94,6 @@
                 <artifactId>apache-rat-plugin</artifactId>
                 <configuration>
                     <excludes combine.children="append">
-                        <!-- don't check anything in target -->
-                        <exclude>target/*</exclude>
                         <exclude>src/test/resources/**/*</exclude>
                     </excludes>
                 </configuration>
