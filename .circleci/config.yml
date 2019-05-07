@@ -74,13 +74,13 @@ jobs:
     executor: cif_executor
     steps:
       - release:
-          folder: "content/cif-connector-content"
+          folder: "content/cif-connector"
             
   release_cif_virtual_catalog_content:
     executor: cif_executor
     steps:
       - release:
-          folder: "content/cif-virtual-catalog-content"
+          folder: "content/cif-virtual-catalog"
             
   release_cif_connector_all:
     executor: cif_executor
