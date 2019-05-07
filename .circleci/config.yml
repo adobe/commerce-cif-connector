@@ -22,11 +22,15 @@ commands:
             cd << parameters.folder >>
             mvn -B -s /home/circleci/project/.circleci/settings.xml clean deploy -P release-sign-artifacts
             rm -rf /home/circleci/.gnupg
-        
-jobs:
-  build:
+
+executors:
+  cif_executor:
     docker:
       - image: circleci/openjdk:8-jdk
+
+jobs:
+  build:
+    executor: cif_executor
     steps:
       - checkout
       - restore_cache:
@@ -49,43 +53,37 @@ jobs:
           path: target/surefire-reports
           
   release_cif_connector_parent:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    executor: cif_executor
     steps:
       - release:
           folder: "parent"
           
   release_cif_connector_graphql:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    executor: cif_executor
     steps:
       - release:
           folder: "bundles/cif-connector-graphql"
             
   release_cif_virtual_catalog:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    executor: cif_executor
     steps:
       - release:
           folder: "bundles/cif-virtual-catalog"
             
   release_cif_connector_content:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    executor: cif_executor
     steps:
       - release:
           folder: "content/cif-connector-content"
             
   release_cif_virtual_catalog_content:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    executor: cif_executor
     steps:
       - release:
           folder: "content/cif-virtual-catalog-content"
             
   release_cif_connector_all:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    executor: cif_executor
     steps:
       - release:
           folder: "all"
