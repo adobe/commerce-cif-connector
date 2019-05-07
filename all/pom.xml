@@ -127,7 +127,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-virtual-catalog</artifactId>
-            <version>${project.version}</version>
+            <version>0.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
