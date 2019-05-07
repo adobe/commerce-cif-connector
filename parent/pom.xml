@@ -75,6 +75,7 @@
                         <goals>deploy</goals>
                         <projectVersionPolicyId>OddEvenVersionPolicy</projectVersionPolicyId>
                         <autoVersionSubmodules>false</autoVersionSubmodules>
+                        <pushChanges>false</pushChanges>
                     </configuration>
                 </plugin>
 
