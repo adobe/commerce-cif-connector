@@ -104,7 +104,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^cif-connector-parent-.*/
+              only: /^cif-connector-parent-\d+\.\d+\.\d+$/
               
       - release_cif_connector_graphql:
           requires:
@@ -113,7 +113,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^cif-connector-graphql-.*/
+              only: /^cif-connector-graphql-\d+\.\d+\.\d+$/
               
       - release_cif_virtual_catalog:
           requires:
@@ -122,7 +122,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^cif-virtual-catalog-.*/
+              only: /^cif-virtual-catalog-\d+\.\d+\.\d+$/
               
       - release_cif_connector_content:
           requires:
@@ -131,7 +131,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^cif-connector-content-.*/
+              only: /^cif-connector-content-\d+\.\d+\.\d+$/
               
       - release_cif_virtual_catalog_content:
           requires:
@@ -140,7 +140,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^cif-virtual-catalog-content-.*/
+              only: /^cif-virtual-catalog-content-\d+\.\d+\.\d+$/
               
       - release_cif_connector_all:
           requires:
@@ -149,4 +149,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^cif-connector-all-.*/
+              only: /^cif-connector-all-\d+\.\d+\.\d+$/

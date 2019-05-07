@@ -121,7 +121,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-connector-graphql</artifactId>
-            <version>${project.version}</version>
+            <version>0.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -140,7 +140,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-virtual-catalog-content</artifactId>
-            <version>${project.version}</version>
+            <version>0.1.0</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
