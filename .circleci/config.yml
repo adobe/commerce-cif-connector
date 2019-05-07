@@ -1,8 +1,36 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+
+# This is a reusable command to perform a maven release
+commands:
+  release:
+    description: "Performs a maven release in the specified folder"
+    parameters:
+      folder:
+        type: string
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
+      - run:
+          name: Release
+          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
+          # already checks out the git tag like 'mvn release:perform' would do. 
+          command: |
+            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
+            cd << parameters.folder >>
+            mvn -B -s /home/circleci/project/.circleci/settings.xml clean deploy -P release-sign-artifacts
+            rm -rf /home/circleci/.gnupg
+
+executors:
+  cif_executor:
     docker:
       - image: circleci/openjdk:8-jdk
+
+jobs:
+  build:
+    executor: cif_executor
     steps:
       - checkout
       - restore_cache:
@@ -23,8 +51,43 @@ jobs:
           path: target/surefire-reports
       - store_artifacts:
           path: target/surefire-reports
+          
+  release_cif_connector_parent:
+    executor: cif_executor
+    steps:
+      - release:
+          folder: "parent"
+          
+  release_cif_connector_graphql:
+    executor: cif_executor
+    steps:
+      - release:
+          folder: "bundles/cif-connector-graphql"
+            
+  release_cif_virtual_catalog:
+    executor: cif_executor
+    steps:
+      - release:
+          folder: "bundles/cif-virtual-catalog"
+            
+  release_cif_connector_content:
+    executor: cif_executor
+    steps:
+      - release:
+          folder: "content/cif-connector-content"
+            
+  release_cif_virtual_catalog_content:
+    executor: cif_executor
+    steps:
+      - release:
+          folder: "content/cif-virtual-catalog-content"
+            
+  release_cif_connector_all:
+    executor: cif_executor
+    steps:
+      - release:
+          folder: "all"
 
-# TODO: add 'release' workflow
 workflows:
   version: 2
   build-and-release:
@@ -33,3 +96,57 @@ workflows:
           filters:
             tags:
               only: /.*/
+              
+      - release_cif_connector_parent:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^cif-connector-parent-.*/
+              
+      - release_cif_connector_graphql:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^cif-connector-graphql-.*/
+              
+      - release_cif_virtual_catalog:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^cif-virtual-catalog-.*/
+              
+      - release_cif_connector_content:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^cif-connector-content-.*/
+              
+      - release_cif_virtual_catalog_content:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^cif-virtual-catalog-content-.*/
+              
+      - release_cif_connector_all:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^cif-connector-all-.*/
