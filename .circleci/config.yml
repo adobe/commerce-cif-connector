@@ -1,4 +1,28 @@
-version: 2
+version: 2.1
+
+# This is a reusable command to perform a maven release
+commands:
+  release:
+    description: "Performs a maven release in the specified folder"
+    parameters:
+      folder:
+        type: string
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
+      - run:
+          name: Release
+          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
+          # already checks out the git tag like 'mvn release:perform' would do. 
+          command: |
+            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
+            cd << parameters.folder >>
+            mvn -B -s /home/circleci/project/.circleci/settings.xml clean deploy -P release-sign-artifacts
+            rm -rf /home/circleci/.gnupg
+        
 jobs:
   build:
     docker:
@@ -28,115 +52,43 @@ jobs:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-      - run:
-          name: Release
-          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
-          # already checks out the git tag like 'mvn release:perform' would do. 
-          command: |
-            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            cd parent
-            mvn -B -s ../.circleci/settings.xml clean deploy -P release-sign-artifacts
-            rm -rf /home/circleci/.gnupg
+      - release:
+          folder: "parent"
           
   release_cif_connector_graphql:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-      - run:
-          name: Release
-          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
-          # already checks out the git tag like 'mvn release:perform' would do. 
-          command: |
-            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            cd bundles/cif-connector-graphql
-            mvn -B -s ../../.circleci/settings.xml clean deploy -P release-sign-artifacts
-            rm -rf /home/circleci/.gnupg
+      - release:
+          folder: "bundles/cif-connector-graphql"
             
   release_cif_virtual_catalog:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-      - run:
-          name: Release
-          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
-          # already checks out the git tag like 'mvn release:perform' would do. 
-          command: |
-            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            cd bundles/cif-virtual-catalog
-            mvn -B -s ../../.circleci/settings.xml clean deploy -P release-sign-artifacts
-            rm -rf /home/circleci/.gnupg
+      - release:
+          folder: "bundles/cif-virtual-catalog"
             
   release_cif_connector_content:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-      - run:
-          name: Release
-          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
-          # already checks out the git tag like 'mvn release:perform' would do. 
-          command: |
-            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            cd content/cif-connector-content
-            mvn -B -s ../../.circleci/settings.xml clean deploy -P release-sign-artifacts
-            rm -rf /home/circleci/.gnupg
+      - release:
+          folder: "content/cif-connector-content"
             
   release_cif_virtual_catalog_content:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-      - run:
-          name: Release
-          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
-          # already checks out the git tag like 'mvn release:perform' would do. 
-          command: |
-            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            cd content/cif-virtual-catalog-content
-            mvn -B -s ../../.circleci/settings.xml clean deploy -P release-sign-artifacts
-            rm -rf /home/circleci/.gnupg
+      - release:
+          folder: "content/cif-virtual-catalog-content"
             
   release_cif_connector_all:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-      - run:
-          name: Release
-          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
-          # already checks out the git tag like 'mvn release:perform' would do. 
-          command: |
-            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            cd all
-            mvn -B -s ../.circleci/settings.xml clean deploy -P release-sign-artifacts
-            rm -rf /home/circleci/.gnupg
+      - release:
+          folder: "all"
 
 workflows:
   version: 2
