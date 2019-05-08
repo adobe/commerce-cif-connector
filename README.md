@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/adobe/commerce-cif-connector.svg?style=svg)](https://circleci.com/gh/adobe/commerce-cif-connector)
+[![Maven Central](https://img.shields.io/maven-central/v/com.adobe.commerce.cif/cif-connector-all.svg)](https://search.maven.org/search?q=g:com.adobe.commerce.cif%20AND%20a:cif-connector-all)
 
 # AEM Commerce connector for Magento and GraphQL
 
@@ -21,7 +22,9 @@ The main parts of the project are:
 
 ### Easy install with the "all" package
 
-You can easily install all the modules of the connector and also its required dependencies with the [all](all) content package. Just build all the modules and install the `all` content package by simply running the following command at the root of the repository:
+You can easily install all the modules of the connector and also its required dependencies with the [all](all) content package. If you want to use the latest released version, just download it with the Maven Central link located at the top of this README and install it in your running AEM instance.
+
+If you want to build it yourself, just build all the modules and install the `all` content package by simply running the following command at the root of the repository:
 
 ```
 mvn clean install -PautoInstallAll
@@ -31,9 +34,13 @@ This installs everything by default to `localhost:4502` without any context path
 * `aem.port`: the port number of the AEM instance
 * `aem.contextPath`: the context path of your AEM instance (if not `/`)
 
-### AEM Support
+## System Requirements
 
-The CIF connector works with AEM 6.4.4 and AEM 6.5.
+For simplicity, we only provide the version requirements of the `all` package. If you need to check the versions of other modules, simply checkout the corresponding `cif-connector-all-x.y.z` tag and check the versions of other modules in the corresponding POM files or in the POM of the `all` project.
+
+| CIF Connector All   | AEM 6.4 | AEM 6.5 | Magento | Java |
+|---------------------|---------|---------|---------|------|
+| 0.1.0               | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
 
 ## CIF Magento GraphQL Configuration
 
@@ -115,6 +122,12 @@ This installs everything by default to `localhost:4502` without any context path
 * `aem.host`: the name of the AEM instance
 * `aem.port`: the port number of the AEM instance
 * `aem.contextPath`: the context path of your AEM instance (if not `/`)
+
+## Releases to Maven Central
+
+Releases are triggered by manually running `mvn release:prepare release:clean` on the `master` branch in one of the modules/subprojects of this repository. Once you choose the release and the next snapshot versions, this commits the change along with a release git tag like for example `cif-connector-all-x.y.z`. Note that the commits are not automatically pushed to the git repository, so you have some time to check your changes and then manually push them. The push then triggers a dedicated `CircleCI` build that performs the deployment of the tagged artifact to Maven Central.
+
+Important: do **not** trigger releases from the reactor (top-level) project because we release each module independently.
 
 ### Contributing
  
