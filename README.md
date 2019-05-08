@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/adobe/commerce-cif-connector.svg?style=svg)](https://circleci.com/gh/adobe/commerce-cif-connector)
+[![codecov](https://codecov.io/gh/adobe/commerce-cif-connector/branch/master/graph/badge.svg)](https://codecov.io/gh/adobe/commerce-cif-connector)
 [![Maven Central](https://img.shields.io/maven-central/v/com.adobe.commerce.cif/cif-connector-all.svg)](https://search.maven.org/search?q=g:com.adobe.commerce.cif%20AND%20a:cif-connector-all)
 
 # AEM Commerce connector for Magento and GraphQL
