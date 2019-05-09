@@ -78,7 +78,7 @@ class ProductResource extends SyntheticResource {
         Map<String, Object> map = new HashMap<>();
         map.put(JcrConstants.JCR_TITLE, product.getName());
         map.put(JcrConstants.JCR_PRIMARYTYPE, JcrConstants.NT_UNSTRUCTURED);
-        map.put(JcrConstants.JCR_DESCRIPTION, product.getDescription());
+        map.put(JcrConstants.JCR_DESCRIPTION, product.getDescription().getHtml());
         map.put(PRODUCT_IDENTIFIER, product.getId());
         map.put(SKU, activeVariantSku != null ? activeVariantSku : product.getSku());
         map.put(SLUG, product.getUrlKey());
