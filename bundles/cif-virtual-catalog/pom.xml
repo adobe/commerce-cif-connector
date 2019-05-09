@@ -17,8 +17,8 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
-        <relativePath />
+        <version>0.1.1</version>
+        <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     
     <modelVersion>4.0.0</modelVersion>
