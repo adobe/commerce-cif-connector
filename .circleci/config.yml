@@ -47,10 +47,18 @@ jobs:
           paths:
             - ~/.m2
           key: maven-repo-v1-{{ checksum "pom.xml" }}
+      - run:
+          name: Collect and save all test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
       - store_test_results:
-          path: target/surefire-reports
+          path: ~/test-results
       - store_artifacts:
-          path: target/surefire-reports
+          path: ~/test-results/junit
+      - run:
+          name: Upload Code Coverage
+          command: bash <(curl -s https://codecov.io/bash)
           
   release_cif_connector_parent:
     executor: cif_executor
