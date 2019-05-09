@@ -40,30 +40,35 @@ public class GraphqlProductViewHandlerTest {
     RequestPathInfo requestPathInfo;
     OmniSearchHandler omniSearchHandler;
     SearchResult searchResult;
+    GraphqlProductViewHandler viewHandler;
 
     @Before
     public void setUp() {
         servletRequest = Mockito.mock(SlingHttpServletRequest.class);
         resourceResolver = Mockito.mock(ResourceResolver.class);
         Mockito.when(servletRequest.getResourceResolver()).thenReturn(resourceResolver);
+
         tagManager = Mockito.mock(TagManager.class);
         Mockito.when(resourceResolver.adaptTo(TagManager.class)).thenReturn(tagManager);
+
         commerceBasePathsService = Mockito.mock(CommerceBasePathsService.class);
         Mockito.when(resourceResolver.adaptTo(CommerceBasePathsService.class)).thenReturn(commerceBasePathsService);
         Mockito.when(commerceBasePathsService.getProductsBasePath()).thenReturn("/var/commerce/products");
+
         requestPathInfo = Mockito.mock(RequestPathInfo.class);
         Mockito.when(servletRequest.getRequestPathInfo()).thenReturn(requestPathInfo);
         Mockito.when(requestPathInfo.getSuffix()).thenReturn("/var/commerce/products");
+
         omniSearchHandler = Mockito.mock(OmniSearchHandler.class);
         searchResult = Mockito.mock(SearchResult.class);
 
+        viewHandler = new GraphqlProductViewHandler();
+        viewHandler.omniSearchHandler = omniSearchHandler;
+        Mockito.when(omniSearchHandler.getResults(resourceResolver, null, 0, 0)).thenReturn(searchResult);
     }
 
     @Test
     public void testCreateTagSearchQuery() throws RepositoryException {
-        GraphqlProductViewHandler viewHandler = new GraphqlProductViewHandler();
-        viewHandler.omniSearchHandler = omniSearchHandler;
-        Mockito.when(omniSearchHandler.getResults(resourceResolver, null, 0, 0)).thenReturn(searchResult);
         ViewQuery viewQuery = viewHandler.createQuery(servletRequest, null, "tag:me");
         PredicateGroup predicateGroup = ((GraphqlProductViewHandler.GQLViewQuery) viewQuery).predicateGroup;
         Assert.assertNotNull(predicateGroup.getByName("1_tagsearch"));
@@ -71,19 +76,22 @@ public class GraphqlProductViewHandlerTest {
 
     @Test
     public void testCreateTextSearchQuery() throws RepositoryException {
-        GraphqlProductViewHandler viewHandler = new GraphqlProductViewHandler();
-        viewHandler.omniSearchHandler = omniSearchHandler;
-        Mockito.when(omniSearchHandler.getResults(resourceResolver, null, 0, 0)).thenReturn(searchResult);
         ViewQuery viewQuery = viewHandler.createQuery(servletRequest, null, "query=trail");
         PredicateGroup predicateGroup = ((GraphqlProductViewHandler.GQLViewQuery) viewQuery).predicateGroup;
         Assert.assertTrue(((PredicateGroup) predicateGroup.get(0)).get(0).getType().equals("fulltext"));
     }
 
     @Test
+    public void testCreateEmptySearchQueryWithLimit() throws RepositoryException {
+        Mockito.when(servletRequest.getParameter("limit")).thenReturn("0..20");
+        ViewQuery viewQuery = viewHandler.createQuery(servletRequest, null, "");
+        PredicateGroup predicateGroup = ((GraphqlProductViewHandler.GQLViewQuery) viewQuery).predicateGroup;
+        Assert.assertEquals("0", predicateGroup.get("offset"));
+        Assert.assertEquals("20", predicateGroup.get("limit"));
+    }
+
+    @Test
     public void testCreateRatingSearchQuery() throws RepositoryException {
-        GraphqlProductViewHandler viewHandler = new GraphqlProductViewHandler();
-        viewHandler.omniSearchHandler = omniSearchHandler;
-        Mockito.when(omniSearchHandler.getResults(resourceResolver, null, 0, 0)).thenReturn(searchResult);
         ViewQuery viewQuery = viewHandler.createQuery(servletRequest, null, "rating:5");
         PredicateGroup predicateGroup = ((GraphqlProductViewHandler.GQLViewQuery) viewQuery).predicateGroup;
         Assert.assertEquals(predicateGroup.getByName("1_property").get("property"), "rating");
