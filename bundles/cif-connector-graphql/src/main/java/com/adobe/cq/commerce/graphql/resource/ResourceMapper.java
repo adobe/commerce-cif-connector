@@ -56,14 +56,14 @@ class ResourceMapper<T> {
     private volatile Map<Integer, String> categoryPathsById;
 
     private Scheduler scheduler;
-    private GraphqlDataService graphqlClient;
+    private GraphqlDataService graphqlDataService;
     private GraphqlDataServiceConfiguration config;
 
-    ResourceMapper(String root, GraphqlDataService graphqlClient, Scheduler scheduler) {
+    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler) {
         this.root = root;
         this.scheduler = scheduler;
-        this.graphqlClient = graphqlClient;
-        this.config = graphqlClient.getConfiguration();
+        this.graphqlDataService = graphqlDataService;
+        this.config = graphqlDataService.getConfiguration();
 
         if (config.catalogCachingEnabled() && config.catalogCachingSchedulerEnabled()) {
             scheduleCacheRefresh();
@@ -80,7 +80,7 @@ class ResourceMapper<T> {
             }
         };
 
-        long period = graphqlClient.getConfiguration().catalogCachingTimeMinutes() * 60;
+        long period = graphqlDataService.getConfiguration().catalogCachingTimeMinutes() * 60;
         ScheduleOptions opts = scheduler.NOW(-1, period).name("ResourceMapper.refreshCache");
         scheduler.schedule(cacheRefreshJob, opts);
     }
@@ -131,7 +131,7 @@ class ResourceMapper<T> {
      * This method builds various category caches used to lookup categories and products in a faster way.
      */
     private void buildAllCategoryPaths() {
-        CategoryTree categoryTree = graphqlClient.getCategoryTree(config.rootCategoryId());
+        CategoryTree categoryTree = graphqlDataService.getCategoryTree(config.rootCategoryId());
         if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
             LOGGER.error("The Magento catalog is null or empty");
             return;
@@ -232,7 +232,7 @@ class ResourceMapper<T> {
             // --> and use the 2nd part (if any) to select the right variant
 
             String sku = productParts.get(0);
-            ProductInterface product = graphqlClient.getProductBySku(sku);
+            ProductInterface product = graphqlDataService.getProductBySku(sku);
             if (product != null && product.getId() != null) {
                 boolean isVariant = productParts.size() > 1;
                 return new ProductResource(ctx.getResourceResolver(), path, product, isVariant ? productParts.get(1) : null);
@@ -250,7 +250,7 @@ class ResourceMapper<T> {
         List<String> productParts = resolveProductParts(productPath);
         try {
             String sku = productParts.size() == 1 ? productParts.get(0) : productParts.get(1);
-            ProductInterface product = graphqlClient.getProductBySku(sku);
+            ProductInterface product = graphqlDataService.getProductBySku(sku);
             if (product != null) {
                 String imageUrl = product.getImage().getUrl();
                 if (imageUrl == null && product instanceof ConfigurableProduct) {
@@ -324,7 +324,7 @@ class ResourceMapper<T> {
 
         if (children.isEmpty()) {
             try {
-                List<ProductInterface> products = graphqlClient.getCategoryProducts(Integer.valueOf(parentCifId));
+                List<ProductInterface> products = graphqlDataService.getCategoryProducts(Integer.valueOf(parentCifId));
                 if (products != null && !products.isEmpty()) {
                     for (ProductInterface product : products) {
                         String path = parentPath + "/" + product.getSku();
@@ -346,7 +346,7 @@ class ResourceMapper<T> {
         String parentPath = parent.getPath();
 
         try {
-            ProductInterface productInterface = graphqlClient.getProductBySku(sku);
+            ProductInterface productInterface = graphqlDataService.getProductBySku(sku);
             if (productInterface != null && productInterface instanceof ConfigurableProduct) {
                 ConfigurableProduct product = (ConfigurableProduct) productInterface;
                 List<ConfigurableVariant> variants = product.getVariants();

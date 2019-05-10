@@ -150,50 +150,48 @@ public class GraphqlProductViewHandler extends ViewHandler {
                                     Session session, String queryString) throws RepositoryException {
 
         PredicateGroup gqlPredicateGroup = new PredicateGroup();
-        if (StringUtils.isNotEmpty(queryString)) { // only create predicate group if query is set, empty search does not work on CIF
-            queryString = preserveWildcards(queryString);
+        queryString = preserveWildcards(queryString);
 
-            gqlPredicateGroup = PredicateConverter.createPredicatesFromGQL(queryString);
-            tagManager = request.getResourceResolver().adaptTo(TagManager.class);
-            Set<String> predicateSet = customizePredicateGroup(gqlPredicateGroup);
+        gqlPredicateGroup = PredicateConverter.createPredicatesFromGQL(queryString);
+        tagManager = request.getResourceResolver().adaptTo(TagManager.class);
+        Set<String> predicateSet = customizePredicateGroup(gqlPredicateGroup);
 
-            // set default start path
-            RequestPathInfo pathInfo = request.getRequestPathInfo();
-            final CommerceBasePathsService cbps = request.getResourceResolver().adaptTo(CommerceBasePathsService.class);
-            String defaultStartPath = cbps.getProductsBasePath();
-            String startPath = (pathInfo.getSuffix() != null && pathInfo.getSuffix().startsWith(defaultStartPath)) ? pathInfo.getSuffix()
-                : defaultStartPath;
-            if (!predicateSet.contains(PathPredicateEvaluator.PATH)) {
-                gqlPredicateGroup.add(new Predicate(PathPredicateEvaluator.PATH).set(PathPredicateEvaluator.PATH, startPath));
-            }
-
-            // append node type constraint to match product data index /etc/commerce/oak:index/commerce
-            gqlPredicateGroup.add(new Predicate(TypePredicateEvaluator.TYPE).set(TypePredicateEvaluator.TYPE, NT_UNSTRUCTURED));
-
-            // append limit constraint
-            if (gqlPredicateGroup.get(Predicate.PARAM_LIMIT) == null) {
-                String limit = request.getParameter(LIMIT);
-                if ((limit != null) && (!limit.equals(""))) {
-                    int offset = Integer.parseInt(StringUtils.substringBefore(limit, ".."));
-                    int total = Integer.parseInt(StringUtils.substringAfter(limit, ".."));
-                    gqlPredicateGroup.set(Predicate.PARAM_LIMIT, Long.toString(total - offset));
-                    gqlPredicateGroup.set(Predicate.PARAM_OFFSET, Long.toString(offset));
-                } else {
-                    gqlPredicateGroup.set(Predicate.PARAM_LIMIT, Long.toString(DEFAULT_LIMIT));
-                }
-            }
-            // add product property constraint
-            addProductConstraint(gqlPredicateGroup);
-
-            // append order constraint
-            if (!predicateSet.contains(Predicate.ORDER_BY)) {
-                gqlPredicateGroup.add(new Predicate(Predicate.ORDER_BY).set(Predicate.ORDER_BY, "@" + JCR_LASTMODIFIED)
-                    .set(Predicate.PARAM_SORT, Predicate.SORT_DESCENDING));
-            }
+        // set default start path
+        RequestPathInfo pathInfo = request.getRequestPathInfo();
+        final CommerceBasePathsService cbps = request.getResourceResolver().adaptTo(CommerceBasePathsService.class);
+        String defaultStartPath = cbps.getProductsBasePath();
+        String startPath = (pathInfo.getSuffix() != null && pathInfo.getSuffix().startsWith(defaultStartPath)) ? pathInfo.getSuffix()
+            : defaultStartPath;
+        if (!predicateSet.contains(PathPredicateEvaluator.PATH)) {
+            gqlPredicateGroup.add(new Predicate(PathPredicateEvaluator.PATH).set(PathPredicateEvaluator.PATH, startPath));
         }
 
-        return new GQLViewQuery(request.getResourceResolver(), omniSearchHandler, xssAPI,
-            gqlPredicateGroup);
+        // append node type constraint to match product data index /etc/commerce/oak:index/commerce
+        gqlPredicateGroup.add(new Predicate(TypePredicateEvaluator.TYPE).set(TypePredicateEvaluator.TYPE, NT_UNSTRUCTURED));
+
+        // append limit constraint
+        if (gqlPredicateGroup.get(Predicate.PARAM_LIMIT) == null) {
+            String limit = request.getParameter(LIMIT);
+            if ((limit != null) && (!limit.equals(""))) {
+                int offset = Integer.parseInt(StringUtils.substringBefore(limit, ".."));
+                int total = Integer.parseInt(StringUtils.substringAfter(limit, ".."));
+                gqlPredicateGroup.set(Predicate.PARAM_LIMIT, Long.toString(total - offset));
+                gqlPredicateGroup.set(Predicate.PARAM_OFFSET, Long.toString(offset));
+            } else {
+                gqlPredicateGroup.set(Predicate.PARAM_LIMIT, Long.toString(DEFAULT_LIMIT));
+            }
+        }
+        // add product property constraint
+        addProductConstraint(gqlPredicateGroup);
+
+        // append order constraint
+        if (!predicateSet.contains(Predicate.ORDER_BY)) {
+            gqlPredicateGroup.add(new Predicate(Predicate.ORDER_BY)
+                .set(Predicate.ORDER_BY, "@" + JCR_LASTMODIFIED)
+                .set(Predicate.PARAM_SORT, Predicate.SORT_DESCENDING));
+        }
+
+        return new GQLViewQuery(request.getResourceResolver(), omniSearchHandler, xssAPI, gqlPredicateGroup);
     }
 
     /**

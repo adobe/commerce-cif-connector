@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -151,12 +152,20 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return searchProductsImpl(text, currentPage, pageSize);
     }
 
-    private List<ProductInterface> searchProductsImpl(String text, Integer offset, Integer limit) {
+    private List<ProductInterface> searchProductsImpl(String text, Integer currentPage, Integer pageSize) {
 
         LOGGER.debug("Performing product search with '" + text + "'");
 
         // Search parameters
-        ProductsArgumentsDefinition searchArgs = s -> s.search(text).currentPage(offset).pageSize(limit);
+        ProductsArgumentsDefinition searchArgs;
+        if (StringUtils.isNotEmpty(text)) {
+            searchArgs = s -> s.search(text).currentPage(currentPage).pageSize(pageSize);
+        } else {
+            // If the search is empty, we perform a "dummy" search (sku != null) that matches all products
+            FilterTypeInput input = new FilterTypeInput().setNotnull("");
+            ProductFilterInput filter = new ProductFilterInput().setSku(input);
+            searchArgs = s -> s.filter(filter).currentPage(currentPage).pageSize(pageSize);
+        }
 
         // Main query
         ProductsQueryDefinition queryArgs = q -> q.items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY);

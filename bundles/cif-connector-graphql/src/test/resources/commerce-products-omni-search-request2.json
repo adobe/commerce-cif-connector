@@ -1,0 +1,17 @@
+{
+    "path": "/var/commerce/products",
+    "p.guessTotal": [
+        "true"
+    ],
+    "property.value": "product",
+    "_commerce_limit": "10",
+    "fulltext": [
+        "gloves"
+    ],
+    "property": "cq:commerceType",
+    "type": "nt:unstructured",
+    "_commerce_offset": "0",
+    "_": [
+        "1511171777780"
+    ]
+}

@@ -49,12 +49,12 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
     static final String LIMIT_PARAMETER = "_commerce_limit";
 
     private ResourceMapper<T> resourceMapper;
-    private GraphqlDataService graphqlClient;
+    private GraphqlDataService graphqlDataService;
     private ObjectMapper jsonMapper;
 
-    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlClient) {
+    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlDataService) {
         this.resourceMapper = resourceMapper;
-        this.graphqlClient = graphqlClient;
+        this.graphqlDataService = graphqlDataService;
         jsonMapper = new ObjectMapper();
     }
 
@@ -81,10 +81,10 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
         // We assume that offset % limit = 0
         Integer currentPage = Integer.valueOf(1); // Magento paging starts with page 1
         if (offset != null && limit != null && offset.intValue() > 0 && limit.intValue() > 0) {
-            currentPage = offset.intValue() / limit.intValue();
+            currentPage = (offset.intValue() / limit.intValue()) + 1;
         }
 
-        List<ProductInterface> products = graphqlClient.searchProducts(fulltext, currentPage, limit);
+        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, currentPage, limit);
         List<Resource> resources = new ArrayList<>();
         for (ProductInterface product : products) {
             List<CategoryInterface> categories = product.getCategories();

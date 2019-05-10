@@ -42,10 +42,10 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
     private ResourceMapper<T> resourceMapper;
     private GraphqlQueryLanguageProvider<T> queryLanguageProvider;
 
-    GraphqlResourceProvider(String root, GraphqlDataService graphqlClient, Scheduler scheduler) {
+    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler) {
         this.root = root;
-        resourceMapper = new ResourceMapper<T>(root, graphqlClient, scheduler);
-        queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlClient);
+        resourceMapper = new ResourceMapper<T>(root, graphqlDataService, scheduler);
+        queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlDataService);
     }
 
     @Override
