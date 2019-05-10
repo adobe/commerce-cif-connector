@@ -4,5 +4,6 @@
 .project
 .settings
 **/target/**/*
+*.iml
 pom.xml.releaseBackup
 release.properties
