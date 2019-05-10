@@ -213,6 +213,12 @@
             <version>2.16.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.adobe.granite</groupId>
+            <artifactId>com.adobe.granite.test.tooling</artifactId>
+            <version>1.0.26</version>
+            <scope>test</scope>
+        </dependency>
         
     </dependencies>
     
