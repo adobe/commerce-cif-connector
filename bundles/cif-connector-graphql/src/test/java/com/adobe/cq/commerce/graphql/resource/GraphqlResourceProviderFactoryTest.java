@@ -14,9 +14,6 @@
 
 package com.adobe.cq.commerce.graphql.resource;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.Assert;
@@ -26,7 +23,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.adobe.cq.commerce.graphql.magento.GraphqlAemContext;
-import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl;
 import com.adobe.cq.commerce.graphql.magento.MockGraphqlDataServiceConfiguration;
 import io.wcm.testing.mock.aem.junit.AemContext;
@@ -37,19 +33,19 @@ public class GraphqlResourceProviderFactoryTest {
     public final AemContext context = GraphqlAemContext.createContext("/context/graphql-client-adapter-factory-context.json");
 
     private GraphqlResourceProviderFactory<?> factory;
+    private GraphqlDataServiceImpl client;
 
     @Before
     public void setUp() throws Exception {
         factory = new GraphqlResourceProviderFactory<>();
-        Map<String, GraphqlDataService> map = new HashMap<>();
 
-        GraphqlDataServiceImpl client = Mockito.mock(GraphqlDataServiceImpl.class);
+        client = Mockito.mock(GraphqlDataServiceImpl.class);
         MockGraphqlDataServiceConfiguration config = Mockito.spy(new MockGraphqlDataServiceConfiguration());
         Mockito.when(config.catalogCachingSchedulerEnabled()).thenReturn(false);
         Mockito.when(client.getConfiguration()).thenReturn(config);
-        map.put("my-catalog", client);
+        Mockito.when(client.getIdentifier()).thenReturn("my-catalog");
 
-        factory.clients = map;
+        factory.bindGraphqlDataService(client, null);
     }
 
     @Test
@@ -75,6 +71,18 @@ public class GraphqlResourceProviderFactoryTest {
         // Get page without catalog identifier
         Resource root = context.resourceResolver().getResource("/content/pageD");
 
+        ResourceProvider<?> provider = factory.createResourceProvider(root);
+        Assert.assertNull(provider);
+    }
+
+    @Test
+    public void testBindings() {
+        Assert.assertEquals(1, factory.getAllCatalogIdentifiers().size());
+        factory.unbindGraphqlDataService(client, null);
+        Assert.assertEquals(0, factory.getAllCatalogIdentifiers().size());
+
+        // Get page which has the catalog identifier in its jcr:content node
+        Resource root = context.resourceResolver().getResource("/content/pageA");
         ResourceProvider<?> provider = factory.createResourceProvider(root);
         Assert.assertNull(provider);
     }

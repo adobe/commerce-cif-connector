@@ -17,8 +17,10 @@ package com.adobe.cq.commerce.graphql.testing;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
@@ -60,6 +62,37 @@ public class Utils {
             }
         }
 
+    }
+
+    /**
+     * Matcher class used to check that the headers are properl passed to the HTTP client.
+     */
+    public static class HeadersMatcher extends ArgumentMatcher<HttpUriRequest> {
+
+        private List<Header> headers;
+
+        public HeadersMatcher(List<Header> headers) {
+            this.headers = headers;
+        }
+
+        @Override
+        public boolean matches(Object obj) {
+            if (!(obj instanceof HttpUriRequest) && !(obj instanceof HttpEntityEnclosingRequest)) {
+                return false;
+            }
+            HttpEntityEnclosingRequest req = (HttpEntityEnclosingRequest) obj;
+            try {
+                for (Header header : headers) {
+                    Header reqHeader = req.getFirstHeader(header.getName());
+                    if (reqHeader == null || !reqHeader.getValue().equals(header.getValue())) {
+                        return false;
+                    }
+                }
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
     }
 
     /**
