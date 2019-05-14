@@ -65,7 +65,7 @@ public class Utils {
     }
 
     /**
-     * Matcher class used to check that the headers are properl passed to the HTTP client.
+     * Matcher class used to check that the headers are properly passed to the HTTP client.
      */
     public static class HeadersMatcher extends ArgumentMatcher<HttpUriRequest> {
 
