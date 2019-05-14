@@ -14,6 +14,7 @@
 
 package com.adobe.cq.commerce.graphql.magento;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +22,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -33,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import com.adobe.cq.commerce.graphql.client.GraphqlClient;
 import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
+import com.adobe.cq.commerce.graphql.client.RequestOptions;
+import com.adobe.cq.commerce.graphql.resource.Constants;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.CategoryTreeQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.FilterTypeInput;
@@ -58,6 +63,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     // We cannot extend GraphqlClientImpl because it's not OSGi-exported so we use "object composition"
     protected GraphqlClient baseClient;
+    private RequestOptions requestOptions;
     private GraphqlDataServiceConfiguration configuration;
 
     // We maintain some caches to speed up all lookups
@@ -107,10 +113,16 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
                 .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
                 .build(CacheLoader.from(id -> getCategoryProductsImpl(id)));
         }
+
+        requestOptions = new RequestOptions().withGson(QueryDeserializer.getGson());
+        if (!GraphqlDataServiceConfiguration.STORE_CODE_DEFAULT.equals(configuration.storeCode())) {
+            Header storeHeader = new BasicHeader(Constants.STORE_HEADER, configuration.storeCode());
+            requestOptions.withHeaders(Collections.singletonList(storeHeader));
+        }
     }
 
     protected GraphqlResponse<Query, Error> execute(String query) {
-        return baseClient.execute(new GraphqlRequest(query), Query.class, Error.class, QueryDeserializer.getGson());
+        return baseClient.execute(new GraphqlRequest(query), Query.class, Error.class, requestOptions);
     }
 
     @Override

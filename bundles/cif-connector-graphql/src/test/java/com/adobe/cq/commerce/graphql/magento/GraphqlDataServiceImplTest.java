@@ -16,11 +16,14 @@ package com.adobe.cq.commerce.graphql.magento;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.message.BasicHeader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -30,6 +33,7 @@ import com.adobe.cq.commerce.graphql.client.GraphqlClient;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
 import com.adobe.cq.commerce.graphql.testing.Utils;
+import com.adobe.cq.commerce.graphql.testing.Utils.HeadersMatcher;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
@@ -51,6 +55,7 @@ public class GraphqlDataServiceImplTest {
     private static final String ROOT_CATEGORY_NAME = "Default Category";
 
     private static final Integer MEN_COATS_CATEGORY_ID = 19;
+    private static final String STORE_CODE = "Something";
 
     private GraphqlDataServiceImpl dataService;
     private HttpClient httpClient;
@@ -63,7 +68,9 @@ public class GraphqlDataServiceImplTest {
         Whitebox.setInternalState(baseClient, "gson", new Gson());
         Whitebox.setInternalState(baseClient, "client", httpClient);
 
-        GraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
+        MockGraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
+        config.setStoreCode(STORE_CODE);
+
         dataService = new GraphqlDataServiceImpl();
         dataService.clients.put("default", baseClient);
         dataService.activate(config);
@@ -190,5 +197,16 @@ public class GraphqlDataServiceImplTest {
             exception = e;
         }
         assertNotNull(exception);
+    }
+
+    @Test
+    public void testStoreCodeHeader() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        dataService.execute("{dummy}");
+
+        // Check that the HTTP client is sending the custom request headers
+        List<Header> headers = Collections.singletonList(new BasicHeader("Store", STORE_CODE));
+        HeadersMatcher matcher = new HeadersMatcher(headers);
+        Mockito.verify(httpClient, Mockito.times(1)).execute(Mockito.argThat(matcher));
     }
 }

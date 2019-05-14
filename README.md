@@ -49,17 +49,18 @@ The CIF Magento GraphQL AEM commerce connector has to be configured to access yo
 
 1) Configure the generic GraphQL instance
     * Go to http://localhost:4502/system/console/configMgr
-    * Look for _CIF GraphQL Client Configuration Factory_
+    * Look for `CIF GraphQL Client Configuration Factory`
     * Create a child configuration
         * Keep the `default` service identifier or set something custom. Make sure to use the same value in step 2) below.
         * For _GraphQL Service URL_ enter the URL of your Magento GraphQL endpoint (usually `https://hostname/graphql`)
 
 2) Configuration of the connector
     * Go to http://localhost:4502/system/console/configMgr
-    * Look for _CIF Catalog Magento GraphQL Configuration Factory_
+    * Look for `CIF Catalog Magento GraphQL Configuration Factory`
     * Create a child configuration
-        * For _Magento GraphQL Service Identifier_ enter the ID of the GraphQL client you already configured (see "pre-requisites")
-        * For _Magento root category id_ enter the ID of the default root category of your Magento instance
+        * For `Magento GraphQL Service Identifier` enter the ID of the GraphQL client you already configured (see "pre-requisites")
+        * For `Magento root category id` enter the ID of the default root category of your Magento instance
+        * For `Magento store view` enter the code of the Magento store view you want to use or keep "default"
 
 3) Binding of product catalog to AEM resource tree
     * Go to AEM Commerce product console (http://localhost:4502/aem/products.html/var/commerce/products)
