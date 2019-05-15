@@ -137,14 +137,13 @@ public class GraphqlDataServiceImplTest {
         // It ensures that all changes made to the GraphQL queries are backed up by tests
         String query = getResource("graphql-queries/root-category.txt");
 
-        // This is the JSON response of Magento 2.3.0 including the bug https://github.com/magento/graphql-ce/issues/246
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.0.json", httpClient, HttpStatus.SC_OK, query);
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, query);
 
         CategoryTree categoryTree = dataService.getCategoryTree(ROOT_CATEGORY_ID);
         assertEquals(ROOT_CATEGORY_ID, categoryTree.getId());
         assertEquals(ROOT_CATEGORY_NAME, categoryTree.getName());
 
-        assertEquals(3, categoryTree.getChildren().size());
+        assertEquals(4, categoryTree.getChildren().size());
         assertEquals("21", categoryTree.getChildrenCount());
     }
 

@@ -122,8 +122,7 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testFactoryInitMethod() throws InterruptedException, IOException {
-        // This is the JSON response of Magento 2.3.0 including the bug https://github.com/magento/graphql-ce/issues/246
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.0.json", httpClient, HttpStatus.SC_OK);
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
 
         ResourceMapper resourceMapper = new ResourceMapper(CATALOG_ROOT_PATH, dataService, scheduler);
         ResourceMapper spy = spy(resourceMapper);
@@ -147,8 +146,7 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testCategoryTree() throws IOException {
-        // This is the JSON response of Magento 2.3.0 including the bug https://github.com/magento/graphql-ce/issues/246
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.0.json", httpClient, HttpStatus.SC_OK);
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
 
         GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         Resource root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
@@ -192,8 +190,7 @@ public class GraphqlResourceProviderTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testProductResource() throws IOException, CommerceException {
-        // This is the JSON response of Magento 2.3.0 including the bug https://github.com/magento/graphql-ce/issues/246
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.0.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
         GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
@@ -235,8 +232,7 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testMasterVariantResource() throws IOException, CommerceException {
-        // This is the JSON response of Magento 2.3.0 including the bug https://github.com/magento/graphql-ce/issues/246
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.0.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
         GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
@@ -250,8 +246,7 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testImageResource() throws IOException, CommerceException {
-        // This is the JSON response of Magento 2.3.0 including the bug https://github.com/magento/graphql-ce/issues/246
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.0.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
         GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
@@ -262,8 +257,7 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testQueryLanguageProvider() throws IOException {
-        // This is the JSON response of Magento 2.3.0 including the bug https://github.com/magento/graphql-ce/issues/246
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.0.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-products-search.json", httpClient, HttpStatus.SC_OK, "{product");
 
         // The search request coming from com.adobe.cq.commerce.impl.omnisearch.ProductsOmniSearchHandler is serialized in JSON

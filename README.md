@@ -23,12 +23,12 @@ The main parts of the project are:
 
 ### Easy install with the "all" package
 
-You can easily install all the modules of the connector and also its required dependencies with the [all](all) content package. If you want to use the latest released version, just download it with the Maven Central link located at the top of this README and install it in your running AEM instance.
+You can easily install all the modules of the connector and also its required dependencies with the [all](all) content package. If you want to use the latest **released** version, just download it with the Maven Central link located at the top of this README and install it in your running AEM instance. You can also install the latest `all` content package with `mvn clean install -PautoInstallAll`.
 
-If you want to build it yourself, just build all the modules and install the `all` content package by simply running the following command at the root of the repository:
+If you want to build all the modules yourself and get all the latest (yet) **unreleased** changes, just build and install all the modules with the following command at the root of the repository (see "Building and installing from source" below for more details):
 
 ```
-mvn clean install -PautoInstallAll
+mvn clean install -PautoInstall
 ```
 This installs everything by default to `localhost:4502` without any context path. You can also configure the install location with the following maven properties:
 * `aem.host`: the name of the AEM instance

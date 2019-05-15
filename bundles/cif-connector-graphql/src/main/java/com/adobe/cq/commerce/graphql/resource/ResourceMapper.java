@@ -18,12 +18,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -141,6 +139,16 @@ class ResourceMapper<T> {
         Map<String, CategoryTree> categoryByPathsMap = new HashMap<>();
         Map<Integer, String> categoryPathsByIdMap = new HashMap<>();
 
+        // We make sure that the root doesn't have a child category without url path or name
+        Iterator<CategoryTree> it = categoryTree.getChildren().iterator();
+        while (it.hasNext()) {
+            CategoryTree child = it.next();
+            if (StringUtils.isAnyBlank(child.getName(), child.getUrlPath())) {
+                LOGGER.warn("Ignoring top-level category " + child.getId() + " with null or empty url path and/or name");
+                it.remove();
+            }
+        }
+
         // We insert the root with an empty path
         categoryByPathsMap.put("", categoryTree);
         categoryPathsByIdMap.put(categoryTree.getId(), "");
@@ -150,48 +158,24 @@ class ResourceMapper<T> {
             buildAllCategoryPathsFor(child, categoryByPathsMap, categoryPathsByIdMap);
         }
 
-        // Because of a bug in Magento 2.3.0 GraphQL "categories" query, we fix the tree of categories
-        checkMagentoCategoryTreeMap(categoryByPathsMap);
-
         categoryByPaths = categoryByPathsMap;
         categoryPathsById = categoryPathsByIdMap;
     }
 
-    private void checkMagentoCategoryTreeMap(Map<String, CategoryTree> categoryByPathsMap) {
-        // We first add each category in its right parent
-        for (CategoryTree categoryTree : categoryByPathsMap.values()) {
-            if (StringUtils.contains(categoryTree.getUrlPath(), "/")) {
-                String parentUrlPath = StringUtils.substringBeforeLast(categoryTree.getUrlPath(), "/");
-                CategoryTree parent = categoryByPathsMap.get(parentUrlPath);
-                if (parent != null) {
-                    if (parent.getChildren() == null) {
-                        List<CategoryTree> children = new LinkedList<>();
-                        children.add(categoryTree);
-                        parent.setChildren(children);
-                    } else if (!parent.getChildren().stream().anyMatch(c -> c.getId().equals(categoryTree.getId()))) {
-                        parent.getChildren().add(categoryTree);
-                    }
-
-                }
-            }
-        }
-
-        // We then filter all the children
-        for (CategoryTree categoryTree : categoryByPathsMap.values()) {
-            List<CategoryTree> children = categoryTree.getChildren();
-            if (CollectionUtils.isNotEmpty(children) && StringUtils.isNotEmpty(categoryTree.getUrlPath())) {
-                categoryTree.setChildren(children.stream().filter(c -> c.getUrlPath().startsWith(categoryTree.getUrlPath())).collect(
-                    Collectors.toList()));
-            }
-        }
-    }
-
     private void buildAllCategoryPathsFor(CategoryTree categoryTree, Map<String, CategoryTree> categoryByPathsMap,
         Map<Integer, String> categoryPathsByIdMap) {
+
         LOGGER.debug("Adding cached category " + categoryTree.getId() + " --> " + categoryTree.getUrlPath());
         categoryByPathsMap.put(categoryTree.getUrlPath(), categoryTree);
         categoryPathsByIdMap.put(categoryTree.getId(), categoryTree.getUrlPath());
-        for (CategoryTree child : categoryTree.getChildren()) {
+
+        Iterator<CategoryTree> it = categoryTree.getChildren().iterator();
+        while (it.hasNext()) {
+            CategoryTree child = it.next();
+            if (StringUtils.isAnyBlank(child.getName(), child.getUrlPath())) {
+                LOGGER.warn("Ignoring category " + child.getId() + " with null or empty url path and/or name");
+                it.remove();
+            }
             buildAllCategoryPathsFor(child, categoryByPathsMap, categoryPathsByIdMap);
         }
     }
