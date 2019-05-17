@@ -39,11 +39,13 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlResourceProvider.class);
 
     private String root;
+    private Integer rootCategoryId;
     private ResourceMapper<T> resourceMapper;
     private GraphqlQueryLanguageProvider<T> queryLanguageProvider;
 
     GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler) {
         this.root = root;
+        rootCategoryId = graphqlDataService.getConfiguration().rootCategoryId();
         resourceMapper = new ResourceMapper<T>(root, graphqlDataService, scheduler);
         queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlDataService);
     }
@@ -53,8 +55,13 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
         LOGGER.debug("getResource called for " + path);
 
         if (path.equals(root)) {
-            return ctx.getParentResourceProvider().getResource(
-                (ResolveContext) ctx.getParentResolveContext(), path, resourceContext, parent);
+            Resource resource = ctx.getParentResourceProvider().getResource(
+                    (ResolveContext) ctx.getParentResolveContext(), path, resourceContext, parent);
+            if (resource == null) {
+                return null;
+            } else {
+                return new RootCategoryResource(resource, rootCategoryId);
+            }
         }
 
         if (path.contains(JcrConstants.JCR_CONTENT) || path.endsWith(".jpg") ||

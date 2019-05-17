@@ -68,10 +68,9 @@ public class children extends SlingSafeMethodsServlet {
 
         final String parentPath;
         final String searchName;
+        final String rootPath = ex.getString(dsCfg.get("rootPath", cbps.getProductsBasePath()));
 
         if (query != null) {
-            final String rootPath = ex.getString(dsCfg.get("rootPath", cbps.getProductsBasePath()));
-
             final int slashIndex = query.lastIndexOf('/');
             if (slashIndex < 0) {
                 parentPath = rootPath;
@@ -131,6 +130,13 @@ public class children extends SlingSafeMethodsServlet {
                 list = IteratorUtils.toList(new FilterIterator(categoryFinder.categories.iterator(), predicate));
             } else {
                 list =IteratorUtils.toList(new FilterIterator(parent.listChildren(), predicate));
+            }
+
+            //force reloading the children of the root node to hit the virtual resource provider
+            if (rootPath.equals(parentPath)) {
+                for (int i = 0; i < list.size(); i++) {
+                    list.set(i, request.getResourceResolver().getResource(list.get(i).getPath()));
+                }
             }
 
             @SuppressWarnings("unchecked")
