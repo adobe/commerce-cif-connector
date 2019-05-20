@@ -50,11 +50,17 @@ import com.day.cq.commons.DownloadResource;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.google.gson.Gson;
 
+import static com.adobe.cq.commerce.api.CommerceConstants.PN_COMMERCE_TYPE;
+import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
+import static com.adobe.cq.commerce.graphql.resource.Constants.CIF_ID;
 import static com.adobe.cq.commerce.graphql.resource.Constants.LEAF_CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.MAGENTO_GRAPHQL_PROVIDER;
 import static com.adobe.cq.commerce.graphql.resource.Constants.PRODUCT;
 import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.VIRTUAL_PRODUCT_QUERY_LANGUAGE;
+import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
+import static org.apache.sling.jcr.resource.api.JcrResourceConstants.NT_SLING_FOLDER;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -142,6 +148,21 @@ public class GraphqlResourceProviderTest {
 
         // With caching enabled, refreshCache() should be called only once by the 1st thread
         Mockito.verify(spy, Mockito.times(1)).refreshCache();
+    }
+
+    @Test
+    public void testRootCategory() {
+        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
+        Resource root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
+
+        assertNotNull(root);
+
+        ValueMap valueMap = root.adaptTo(ValueMap.class);
+
+        //check special properties
+        assertEquals(MockGraphqlDataServiceConfiguration.ROOT_CATEGORY_ID, valueMap.get(CIF_ID));
+        assertEquals(CATEGORY, valueMap.get(PN_COMMERCE_TYPE));
+        assertEquals(NT_SLING_FOLDER, valueMap.get(PROPERTY_RESOURCE_TYPE));
     }
 
     @Test
