@@ -157,7 +157,7 @@ public class GraphqlResourceProviderTest {
 
         assertNotNull(root);
 
-        ValueMap valueMap = root.getValueMap();
+        ValueMap valueMap = root.adaptTo(ValueMap.class);
 
         //check special properties
         assertEquals(MockGraphqlDataServiceConfiguration.ROOT_CATEGORY_ID, valueMap.get(CIF_ID));
