@@ -56,7 +56,7 @@ public class CommerceTestBase {
 
     public static List<Header> NO_CACHE_HEADERS = new ArrayList<Header>() {{ add(new BasicHeader("Cache-Control", "no-cache, no-store, must-revalidate")); }};
 
-    public static final String GRAPHQL_CLIENT_BUNDLE = "com.adobe.cq.commerce.graphql-client";
+    public static final String GRAPHQL_CLIENT_BUNDLE = "com.adobe.commerce.cif.graphql-client";
     public static final String GRAPHQL_CLIENT_FACTORY_PID = "com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl";
 
     public static CQAuthorClassRule cqBaseClassRule = new CQAuthorClassRule();
@@ -66,7 +66,7 @@ public class CommerceTestBase {
 
     private static final String CONSOLE_URL="/system/console";
     private static final String CONFIGURATION_CONSOLE_URL=CONSOLE_URL + "/configMgr";
-    private static final String VIRTUAL_CATALOG_BUNDLE_NAME = "com.adobe.cq.commerce.cif-cloud-virtual-catalog";
+    private static final String VIRTUAL_CATALOG_BUNDLE_NAME = "com.adobe.commerce.cif.virtual-catalog";
 
 
     @ClassRule
