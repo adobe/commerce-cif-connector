@@ -43,6 +43,14 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+
+    <properties>
+        <granite.it.author.url>http://localhost:4502</granite.it.author.url>
+        <granite.it.publish.url>http://localhost:4503</granite.it.publish.url>
+        <sling.junit.core.version>1.0.12</sling.junit.core.version>
+        <sling.testing.tools.version>1.0.8</sling.testing.tools.version>
+        <cq.java.version>8</cq.java.version>
+    </properties>
     
     <build>
         <plugins>
@@ -67,6 +75,55 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Run every available integration test. -->
+        <profile>
+            <id>test-all</id>
+
+            <activation>
+                <property>
+                    <name>it</name>
+                </property>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/*IT.java</include>
+                                        <include>**/*SST.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>default-verify</id>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <!-- AEM Uber JAR -->
