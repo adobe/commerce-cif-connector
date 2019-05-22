@@ -23,7 +23,7 @@
     
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cif-connector-all</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>content-package</packaging>
 
     <name>CIF Connector - All content package</name>
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-connector-graphql</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-connector-content</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>

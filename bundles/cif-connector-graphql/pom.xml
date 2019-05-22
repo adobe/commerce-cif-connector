@@ -23,7 +23,7 @@
     
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cif-connector-graphql</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
     
     <name>CIF Connector - GraphQL Bundle</name>
