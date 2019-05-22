@@ -54,6 +54,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
             .addParameter(":name", "graphql")
             .addParameter("./cq:catalogDataResourceProviderFactory", "magento-graphql")
             .addParameter("./cq:catalogIdentifier", "default")
+            .addParameter("./jcr:language", "en_us")
             .addParameter("./jcr:primaryType", "sling:Folder")
             .build();
         cAdminAuthor.doPost("/var/commerce/products/", params, SC_CREATED);
