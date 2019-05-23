@@ -26,8 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Rules that matches a given request and sends out a response.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 public class RequestResponseRule implements Rule {
 
@@ -129,8 +127,6 @@ public class RequestResponseRule implements Rule {
 
     /**
      * Builder for {@link RequestResponseRule}.
-     *
-     * @author Mark J. Becker {@literal <mabecker@adobe.com>}
      * @see RequestResponseRule
      */
     public static class Builder implements Rule.Builder {

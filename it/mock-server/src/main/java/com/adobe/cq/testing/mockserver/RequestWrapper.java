@@ -21,8 +21,6 @@ import java.io.IOException;
 
 /**
  * RequestWrapper wraps a HttpServletRequest to enable multiple caching of the request body.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 public class RequestWrapper {
 

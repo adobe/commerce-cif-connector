@@ -18,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Defines behavior of the mock server via the generic servlet.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 public interface Rule {
 
@@ -54,8 +52,6 @@ public interface Rule {
 
     /**
      * Generic interface for a Rule builder.
-     *
-     * @author Mark J. Becker {@literal <mabecker@adobe.com>}
      */
     interface Builder {
 

@@ -16,8 +16,6 @@ package com.adobe.cq.testing.mockserver;
 
 /**
  * Generic interface for string comparison functions.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 @FunctionalInterface
 public interface StringComparator {

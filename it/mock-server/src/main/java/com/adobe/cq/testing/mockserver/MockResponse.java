@@ -27,8 +27,6 @@ import java.util.*;
 
 /**
  * MockResponse contains the data that is sent in a HTTP response within a {@link RequestResponseRule}.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 public class MockResponse implements Response {
 
@@ -243,7 +241,6 @@ public class MockResponse implements Response {
     /**
      * Builder for {@link MockResponse}.
      *
-     * @author Mark J. Becker {@literal <mabecker@adobe.com>}
      * @see MockResponse
      */
     public static class Builder implements Response.Builder {

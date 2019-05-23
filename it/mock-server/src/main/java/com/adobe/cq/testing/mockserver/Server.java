@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Server provides a mock server implementation.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 public class Server {
 
@@ -154,8 +152,6 @@ public class Server {
 
     /**
      * Builder for {@link Server}.
-     *
-     * @author Mark J. Becker {@literal <mabecker@adobe.com>}
      * @see Server
      */
     public static class Builder {

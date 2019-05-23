@@ -21,8 +21,6 @@ import org.junit.rules.ExternalResource;
 
 /**
  * Rule wrapper for the mock server to be used in JUnit.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 public class ServerRule extends ExternalResource {
 

@@ -28,8 +28,6 @@ import java.util.List;
 /**
  * Generic servlet for the mock server.
  * The behavior of the servlet is defined by a set of rules that have to be added.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 public class Servlet extends HttpServlet {
 

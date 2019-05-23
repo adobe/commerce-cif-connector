@@ -31,9 +31,7 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * MockRequest contains the data that is used to match a {@link RequestResponseRule} against an incoming HTTP request.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
+ * MockRequest contains the data that is used to match a {@link RequestResponseRule} against an incoming HTTP request
  */
 public class MockRequest implements Request {
 
@@ -421,7 +419,6 @@ public class MockRequest implements Request {
     /**
      * Builder for {@link MockRequest}.
      *
-     * @author Mark J. Becker {@literal <mabecker@adobe.com>}
      * @see MockRequest
      */
     @JsonIgnoreProperties(value = {"bodyComparator"})

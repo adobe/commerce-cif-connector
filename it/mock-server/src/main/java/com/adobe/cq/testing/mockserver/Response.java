@@ -18,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Generic interface that extends {@link RequestResponseRule} to include additional methods for mocking.
- *
- * @author Mark J. Becker {@literal <mabecker@adobe.com>}
  */
 public interface Response extends HttpServletResponse {
 
@@ -32,8 +30,6 @@ public interface Response extends HttpServletResponse {
 
     /**
      * Generic interface for a Response builder.
-     *
-     * @author Mark J. Becker {@literal <mabecker@adobe.com>}
      */
     interface Builder {
 
