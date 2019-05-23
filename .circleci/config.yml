@@ -58,7 +58,7 @@ jobs:
           path: ~/test-results/junit
       - run:
           name: Upload Code Coverage
-          command: bash <(curl -s https://codecov.io/bash)
+          command: bash <(curl -s https://codecov.io/bash) -F unittests
           
   release_cif_connector_parent:
     executor: cif_executor

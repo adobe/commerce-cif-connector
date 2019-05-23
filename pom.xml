@@ -31,6 +31,9 @@
         <module>content/cif-connector</module>
         <module>bundles/cif-connector-graphql</module>
         <module>all</module>
+        <module>it/content</module>
+        <module>it/http</module>
+        <module>it/mock-server</module>
     </modules>
 
     <scm>

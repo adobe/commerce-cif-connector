@@ -125,6 +125,14 @@ This installs everything by default to `localhost:4502` without any context path
 * `aem.port`: the port number of the AEM instance
 * `aem.contextPath`: the context path of your AEM instance (if not `/`)
 
+## Integration Tests
+Integration tests are located in `it/http` and rely on additional test content from the test content package in `it/content`. Instead of communicating directly with a commerce backend, the integration tests use the mock server in `it/mock-server`.
+
+To run the integration tests, first install the connector and the test content package. Then execute the following command and point to your running AEM author instance:
+```bash
+mvn clean verify -Ptest-all -Dsling.it.instance.url.1=http://localhost:4502 -Dsling.it.instance.runmode.1=author -Dsling.it.instances=1
+```
+
 ## Releases to Maven Central
 
 Releases are triggered by manually running `mvn release:prepare release:clean` on the `master` branch in one of the modules/subprojects of this repository. Once you choose the release and the next snapshot versions, this commits the change along with a release git tag like for example `cif-connector-all-x.y.z`. Note that the commits are not automatically pushed to the git repository, so you have some time to check your changes and then manually push them. The push then triggers a dedicated `CircleCI` build that performs the deployment of the tagged artifact to Maven Central.
