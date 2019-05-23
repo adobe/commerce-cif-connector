@@ -1,0 +1,448 @@
+{
+  "data": {
+    "products": {
+      "total_count": 1,
+      "items": [
+        {
+          "__typename": "ConfigurableProduct",
+          "id": 1234,
+          "sku": "meskwielt",
+          "name": "El Gordo Down Jacket",
+          "description": {
+            "html": "A nice jacket"
+          },
+          "image": {
+            "url": null
+          },
+          "thumbnail": {
+            "url": null
+          },
+          "url_key": "el-gordo-down-jacket",
+          "updated_at": "2018-11-22 14:35:59",
+          "created_at": "2018-11-22 14:35:59",
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "currency": "USD",
+                "value": 119
+              }
+            }
+          },
+          "categories": [
+            {
+              "__typename": "CategoryTree",
+              "url_path": "men/coats"
+            }
+          ],
+          "variants": [
+            {
+              "product": {
+                "id": 1244,
+                "sku": "meskwielt-Purple-XS",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-xs",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1242,
+                "sku": "meskwielt-Purple-S",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-s",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1241,
+                "sku": "meskwielt-Purple-M",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-m",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1240,
+                "sku": "meskwielt-Purple-L",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-l",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1243,
+                "sku": "meskwielt-Purple-XL",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_purple_2.jpg"
+                },
+                "url_key": "meskwielt-purple-xl",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1239,
+                "sku": "meskwielt-Green-XS",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-xs",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1237,
+                "sku": "meskwielt-Green-S",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-s",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1236,
+                "sku": "meskwielt-Green-M",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-m",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1235,
+                "sku": "meskwielt-Green-L",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-l",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1238,
+                "sku": "meskwielt-Green-XL",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_green_2.jpg"
+                },
+                "url_key": "meskwielt-green-xl",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1249,
+                "sku": "meskwielt-Red-XS",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-xs",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1247,
+                "sku": "meskwielt-Red-S",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-s",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1246,
+                "sku": "meskwielt-Red-M",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-m",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 119
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1245,
+                "sku": "meskwielt-Red-L",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-l",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "product": {
+                "id": 1248,
+                "sku": "meskwielt-Red-XL",
+                "name": "El Gordo Down Jacket",
+                "description": {
+                  "html": ""
+                },
+                "image": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "thumbnail": {
+                  "url": "https://hostname/media/catalog/product/e/l/el_gordo_red_2.jpg"
+                },
+                "url_key": "meskwielt-red-xl",
+                "updated_at": "2018-11-22 14:35:59",
+                "created_at": "2018-11-22 14:35:59",
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "currency": "USD",
+                      "value": 130
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

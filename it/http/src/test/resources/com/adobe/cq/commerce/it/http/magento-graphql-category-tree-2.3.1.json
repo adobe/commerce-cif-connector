@@ -1,0 +1,200 @@
+{
+  "data": {
+    "category": {
+      "id": 4,
+      "name": "Default Category",
+      "url_path": null,
+      "product_count": 0,
+      "children_count": "21",
+      "children": [
+        {
+          "id": 42,
+          "name": "Will be ignored by sling resource provider because of null url_path",
+          "url_path": null,
+          "product_count": 0,
+          "children_count": "0",
+          "children": []
+        },
+        {
+          "id": 5,
+          "name": "Equipment",
+          "url_path": "equipment",
+          "product_count": 0,
+          "children_count": "6",
+          "children": [
+            {
+              "id": 4242,
+              "name": "Will be ignored by sling resource provider because of null url_path",
+              "url_path": null,
+              "product_count": 0,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 6,
+              "name": "Running",
+              "url_path": "equipment/running",
+              "product_count": 5,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 10,
+              "name": "Hiking",
+              "url_path": "equipment/hiking",
+              "product_count": 2,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 11,
+              "name": "Biking",
+              "url_path": "equipment/biking",
+              "product_count": 6,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 12,
+              "name": "Surfing",
+              "url_path": "equipment/surfing",
+              "product_count": 5,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 13,
+              "name": "Water Sports",
+              "url_path": "equipment/water-sports",
+              "product_count": 6,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 14,
+              "name": "Winter Sport",
+              "url_path": "equipment/winter-sport",
+              "product_count": 1,
+              "children_count": "0",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "name": "Women",
+          "url_path": "women",
+          "product_count": 0,
+          "children_count": "5",
+          "children": [
+            {
+              "id": 8,
+              "name": "Gloves",
+              "url_path": "women/gloves",
+              "product_count": 1,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 9,
+              "name": "Pants",
+              "url_path": "women/pants",
+              "product_count": 2,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 23,
+              "name": "Shorts",
+              "url_path": "women/shorts",
+              "product_count": 4,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 24,
+              "name": "Shirts",
+              "url_path": "women/shirts",
+              "product_count": 3,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 25,
+              "name": "Coats",
+              "url_path": "women/coats",
+              "product_count": 2,
+              "children_count": "0",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "name": "Men",
+          "url_path": "men",
+          "product_count": 0,
+          "children_count": "7",
+          "children": [
+            {
+              "id": 16,
+              "name": "Shorts",
+              "url_path": "men/shorts",
+              "product_count": 5,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 17,
+              "name": "Shirts",
+              "url_path": "men/shirts",
+              "product_count": 4,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 18,
+              "name": "Pants",
+              "url_path": "men/pants",
+              "product_count": 3,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 19,
+              "name": "Coats",
+              "url_path": "men/coats",
+              "product_count": 5,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 20,
+              "name": "Gloves",
+              "url_path": "men/gloves",
+              "product_count": 2,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 21,
+              "name": "Footwear",
+              "url_path": "men/footwear",
+              "product_count": 1,
+              "children_count": "0",
+              "children": []
+            },
+            {
+              "id": 22,
+              "name": "Scarfs",
+              "url_path": "men/scarfs",
+              "product_count": 1,
+              "children_count": "0",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
