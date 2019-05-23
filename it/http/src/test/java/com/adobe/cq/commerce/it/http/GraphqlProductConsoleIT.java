@@ -78,7 +78,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
                     .withBody(s -> s.startsWith("{\"query\":\"{category(id:4)")))
             .send(response()
                     .withStatus(HttpStatus.OK_200)
-                    .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-category-tree-2.3.0.json")
+                    .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-category-tree-2.3.1.json")
                     .withContentType("application/json; charset=utf-8"));
 
     public static RequestResponseRule.Builder SEARCH_PRODUCTS_IN_CATEGORY = rule()
