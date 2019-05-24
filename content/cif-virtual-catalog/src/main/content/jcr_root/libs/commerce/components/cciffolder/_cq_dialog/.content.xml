@@ -35,44 +35,20 @@
                                         cq-msm-lockable="jcr:title"
                                         disabled="{Boolean}true"
                                         fieldLabel="Title"
-                                        name="./jcr:title"
+                                        name="jcr:title"
+                                        renderReadOnly="{Boolean}true"
+                                        required="{Boolean}true"/>
+                                    <id
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                        cq-msm-lockable="cifId"
+                                        disabled="{Boolean}true"
+                                        fieldLabel="Category ID"
+                                        name="cifId"
                                         renderReadOnly="{Boolean}true"
                                         required="{Boolean}true"/>
                                 </items>
                             </properties>
-                            <systemprops
-                                jcr:primaryType="nt:unstructured"
-                                jcr:title="Additional Properties"
-                                sling:resourceType="granite/ui/components/foundation/form/fieldset">
-                                <items jcr:primaryType="nt:unstructured">
-                                    <orderable
-                                        jcr:primaryType="nt:unstructured"
-                                        sling:resourceType="granite/ui/components/foundation/form/checkbox"
-                                        checked="{Boolean}false"
-                                        deleteHint="{Boolean}false"
-                                        disabled="{Boolean}true"
-                                        name="./jcr:primaryType"
-                                        renderReadOnly="{Boolean}true"
-                                        text="Orderable"
-                                        value="sling:OrderedFolder"/>
-                                    <orderable_default
-                                        jcr:primaryType="nt:unstructured"
-                                        sling:resourceType="granite/ui/components/foundation/form/hidden"
-                                        name="./jcr:primaryType@DefaultValue"
-                                        value="sling:Folder"/>
-                                    <orderable_defaultwhenmissing
-                                        jcr:primaryType="nt:unstructured"
-                                        sling:resourceType="granite/ui/components/foundation/form/hidden"
-                                        name="./jcr:primaryType@UseDefaultWhenMissing"
-                                        value="{Boolean}true"/>
-                                    <charset
-                                        jcr:primaryType="nt:unstructured"
-                                        sling:resourceType="granite/ui/components/foundation/form/hidden"
-                                        ignoreData="{Boolean}true"
-                                        name="_charset_"
-                                        value="utf-8"/>
-                                </items>
-                            </systemprops>
                         </items>
                     </props>
                 </items>

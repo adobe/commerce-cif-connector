@@ -22,6 +22,7 @@ import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -174,8 +175,13 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Document doc = Jsoup.parse(response.getContent());
 
         Assert.assertEquals("Close", doc.select("a[id=shell-propertiespage-closeactivator]").text());
-        Assert.assertTrue(doc.select("input[name=./jcr:title]").hasAttr("disabled"));
-        Assert.assertTrue(doc.select("input[name=./jcr:primaryType]").hasAttr("disabled"));
+        Elements title = doc.select("input[name=jcr:title]");
+        Assert.assertTrue(title.hasAttr("disabled"));
+        Assert.assertEquals("Men", title.val());
+
+        Elements categoryId = doc.select("input[name=cifId]");
+        Assert.assertTrue(title.hasAttr("disabled"));
+        Assert.assertEquals("15", categoryId.val());
     }
 
     @Test
