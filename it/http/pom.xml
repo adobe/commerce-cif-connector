@@ -50,7 +50,7 @@
         <sling.junit.core.version>1.0.12</sling.junit.core.version>
         <sling.testing.tools.version>1.0.8</sling.testing.tools.version>
         <cq.java.version>8</cq.java.version>
-        <formatter.config>../../parent/eclipse-java-google-style.xml</formatter.config>
+        <formatter.config>../../parent/eclipse-formatter.xml</formatter.config>
     </properties>
     
     <build>

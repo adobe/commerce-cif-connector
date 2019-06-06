@@ -257,7 +257,7 @@
     </profiles>
 
     <properties>
-        <formatter.config>../../parent/eclipse-java-google-style.xml</formatter.config>
+        <formatter.config>../../parent/eclipse-formatter.xml</formatter.config>
     </properties>
 
 </project>
