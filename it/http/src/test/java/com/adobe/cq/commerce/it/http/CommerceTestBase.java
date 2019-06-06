@@ -47,6 +47,7 @@ import com.adobe.cq.testing.mockserver.Server;
 import com.adobe.cq.testing.mockserver.junit.ServerRule;
 
 import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
+
 public class CommerceTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(CommerceTestBase.class);
@@ -54,7 +55,11 @@ public class CommerceTestBase {
     protected static CommerceClient cAdminAuthor;
     protected static CommerceClient cAuthorAuthor;
 
-    public static List<Header> NO_CACHE_HEADERS = new ArrayList<Header>() {{ add(new BasicHeader("Cache-Control", "no-cache, no-store, must-revalidate")); }};
+    public static List<Header> NO_CACHE_HEADERS = new ArrayList<Header>() {
+        {
+            add(new BasicHeader("Cache-Control", "no-cache, no-store, must-revalidate"));
+        }
+    };
 
     public static final String GRAPHQL_CLIENT_BUNDLE = "com.adobe.commerce.cif.graphql-client";
     public static final String GRAPHQL_CLIENT_FACTORY_PID = "com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl";
@@ -64,10 +69,9 @@ public class CommerceTestBase {
 
     public static GraphqlOSGiConfig graphqlOsgiConfig = new GraphqlOSGiConfig();
 
-    private static final String CONSOLE_URL="/system/console";
-    private static final String CONFIGURATION_CONSOLE_URL=CONSOLE_URL + "/configMgr";
+    private static final String CONSOLE_URL = "/system/console";
+    private static final String CONFIGURATION_CONSOLE_URL = CONSOLE_URL + "/configMgr";
     private static final String VIRTUAL_CATALOG_BUNDLE_NAME = "com.adobe.commerce.cif.virtual-catalog";
-
 
     @ClassRule
     public static TestRule chain = RuleChain.outerRule(cqBaseClassRule).around(mockServerRule);
@@ -99,7 +103,7 @@ public class CommerceTestBase {
      * @throws ClientException
      */
     private static String getConfigurationPid(OsgiConsoleClient osgiClient, String factoryPID) throws ClientException {
-        SlingHttpResponse resp = osgiClient.doGet(CONFIGURATION_CONSOLE_URL+ "/*.json");
+        SlingHttpResponse resp = osgiClient.doGet(CONFIGURATION_CONSOLE_URL + "/*.json");
         JsonNode json = JsonUtils.getJsonNodeFromString(resp.getContent());
         Iterator<JsonNode> it = json.getElements();
         while (it.hasNext()) {
@@ -148,7 +152,8 @@ public class CommerceTestBase {
         Thread.sleep(2000);
     }
 
-    private static void restartVirtualCatalogBundle(OsgiConsoleClient osgiConsoleClient) throws ClientException, TimeoutException, InterruptedException {
+    private static void restartVirtualCatalogBundle(OsgiConsoleClient osgiConsoleClient) throws ClientException, TimeoutException,
+        InterruptedException {
         osgiConsoleClient.stopBundle(VIRTUAL_CATALOG_BUNDLE_NAME);
         osgiConsoleClient.waitStartBundle(VIRTUAL_CATALOG_BUNDLE_NAME, 2000, 20);
     }
@@ -185,11 +190,16 @@ public class CommerceTestBase {
      * @return
      */
     protected String getValue(Element e) {
-        if (e.tagName().equals("meta")) return e.attr("content");
-        if (e.tagName().equals("a")) return e.attr("href");
-        if (e.tagName().equals("link")) return e.attr("href");
-        if (e.tagName().equals("img")) return e.attr("src");
-        if (e.tagName().equals("input")) return e.attr("value");
+        if (e.tagName().equals("meta"))
+            return e.attr("content");
+        if (e.tagName().equals("a"))
+            return e.attr("href");
+        if (e.tagName().equals("link"))
+            return e.attr("href");
+        if (e.tagName().equals("img"))
+            return e.attr("src");
+        if (e.tagName().equals("input"))
+            return e.attr("value");
         return e.text();
     }
 

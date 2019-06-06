@@ -30,7 +30,6 @@ import static com.adobe.cq.commerce.graphql.resource.Constants.CIF_ID;
 import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
 import static org.apache.sling.jcr.resource.api.JcrResourceConstants.NT_SLING_FOLDER;
 
-
 /**
  * Resource implementation for the root category node of the product tree.
  * This node has a special status because it's backed by a JCR node and still served by the resource provider of the
@@ -54,7 +53,7 @@ class RootCategoryResource extends ResourceWrapper {
     public ValueMap getValueMap() {
         Map<String, Object> map = new HashMap<>(super.getValueMap());
 
-        //add special properties not available in the JCR node
+        // add special properties not available in the JCR node
         map.put(PROPERTY_RESOURCE_TYPE, NT_SLING_FOLDER);
         map.put(PN_COMMERCE_TYPE, CATEGORY);
         map.put(CIF_ID, rootCategoryId);

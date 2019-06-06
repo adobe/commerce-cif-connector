@@ -48,16 +48,18 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 /**
  * A {@link DataSource} implementation that retrieves a list of catalog identifiers
  */
-@Component(immediate = true,
-        service = Servlet.class,
-        property = { "sling.servlet.resourceTypes=commerce/gui/components/admin/products/bindproducttreewizard/catalogidentifierdatasource" })
+@Component(
+    immediate = true,
+    service = Servlet.class,
+    property = { "sling.servlet.resourceTypes=commerce/gui/components/admin/products/bindproducttreewizard/catalogidentifierdatasource" })
 public class CatalogIdentifierDatasource extends SlingSafeMethodsServlet {
 
-    @Reference(policy = ReferencePolicy.DYNAMIC,
-            policyOption = ReferencePolicyOption.GREEDY,
-            cardinality = ReferenceCardinality.OPTIONAL,
-            bind = "bindCatalogIdentifierService",
-            unbind = "unbindCatalogIdentifierService" )
+    @Reference(
+        policy = ReferencePolicy.DYNAMIC,
+        policyOption = ReferencePolicyOption.GREEDY,
+        cardinality = ReferenceCardinality.OPTIONAL,
+        bind = "bindCatalogIdentifierService",
+        unbind = "unbindCatalogIdentifierService")
     private CatalogIdentifierService catalogIdentifierService;
 
     protected void bindCatalogIdentifierService(CatalogIdentifierService service, Map<String, String> props) {
@@ -69,7 +71,8 @@ public class CatalogIdentifierDatasource extends SlingSafeMethodsServlet {
     }
 
     @Override
-    protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException,
+        IOException {
         DataSource ds;
 
         if (catalogIdentifierService == null) {
@@ -91,28 +94,28 @@ public class CatalogIdentifierDatasource extends SlingSafeMethodsServlet {
     }
 
     protected List<Resource> generateResources(ResourceResolver resolver, List<String> properties) {
-        return properties.stream().map( property -> {
+        return properties.stream().map(property -> {
             Map<String, Object> resourceProperties = new HashMap<String, Object>() {
                 {
                     put("text", property);
                     put("value", property);
                 }
             };
-            ValueMapResource syntheticResource = new ValueMapResource(resolver, new ResourceMetadata(), "", new ValueMapDecorator(resourceProperties));
+            ValueMapResource syntheticResource = new ValueMapResource(resolver, new ResourceMetadata(), "", new ValueMapDecorator(
+                resourceProperties));
             return syntheticResource;
         }).collect(Collectors.toList());
     }
 
     protected List<String> flattenMapToList(Map<String, Collection<String>> mapOfCollections) {
-         List<String> flatList = new ArrayList<>();
+        List<String> flatList = new ArrayList<>();
 
-        mapOfCollections.forEach( (provider, identifiers) -> {
-            identifiers.stream().forEach( identifier -> flatList.add(provider +":" + identifier));
+        mapOfCollections.forEach((provider, identifiers) -> {
+            identifiers.stream().forEach(identifier -> flatList.add(provider + ":" + identifier));
         });
 
         return flatList;
     }
-
 
     protected DataSource toDataSource(List<Resource> resources) {
         return resources.isEmpty() ? EmptyDataSource.instance() : new SimpleDataSource(resources.iterator());

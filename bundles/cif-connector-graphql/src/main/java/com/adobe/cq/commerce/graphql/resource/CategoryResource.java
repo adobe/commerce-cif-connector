@@ -71,8 +71,7 @@ class CategoryResource extends SyntheticResource {
     public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
         if (type == ValueMap.class) {
             return (AdapterType) values;
-        }
-        else if (type == Product.class) {
+        } else if (type == Product.class) {
             // important because of /libs/commerce/gui/components/admin/products/childdatasource/childdatasource.jsp
             return null;
         }

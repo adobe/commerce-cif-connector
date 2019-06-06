@@ -26,7 +26,7 @@ public interface CatalogIdentifierService {
      * Get all catalog identifiers for all cloud commerce provider implementations.
      *
      * @return A map where the keys are the names of the commerce providers and the values are a collection of all
-     * catalog identifiers for that specific commerce provider.
+     *         catalog identifiers for that specific commerce provider.
      */
     Map<String, Collection<String>> getCatalogIdentifiersForAllCommerceProviders();
 }

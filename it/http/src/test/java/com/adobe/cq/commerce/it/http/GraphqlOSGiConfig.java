@@ -41,12 +41,12 @@ public class GraphqlOSGiConfig {
         config.put("url", url);
         return this;
     }
-    
+
     public GraphqlOSGiConfig withAcceptSelfSignedCertificates(boolean acceptSelfSignedCertificates) {
         config.put("acceptSelfSignedCertificates", Boolean.valueOf(acceptSelfSignedCertificates).toString());
         return this;
     }
-    
+
     public GraphqlOSGiConfig withCatalogCachingSchedulerEnabled(boolean enableScheduler) {
         config.put("catalogCachingSchedulerEnabled", Boolean.valueOf(enableScheduler).toString());
         return this;

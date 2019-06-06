@@ -36,11 +36,11 @@ public class CatalogIdentifierServiceImpl implements CatalogIdentifierService {
     private Map<String, Collection<String>> map = new ConcurrentHashMap<>();
 
     @Reference(
-            service = CatalogIdentifier.class,
-            bind = "bindCatalogIdentifier",
-            unbind = "unbindCatalogIdentifier",
-            cardinality = ReferenceCardinality.AT_LEAST_ONE,
-            policy = ReferencePolicy.DYNAMIC)
+        service = CatalogIdentifier.class,
+        bind = "bindCatalogIdentifier",
+        unbind = "unbindCatalogIdentifier",
+        cardinality = ReferenceCardinality.AT_LEAST_ONE,
+        policy = ReferencePolicy.DYNAMIC)
     protected void bindCatalogIdentifier(CatalogIdentifier identifier, Map<?, ?> properties) {
         map.put(identifier.getCommerceProviderName(), identifier.getAllCatalogIdentifiers());
     }
@@ -48,7 +48,6 @@ public class CatalogIdentifierServiceImpl implements CatalogIdentifierService {
     protected void unbindCatalogIdentifier(CatalogIdentifier identifier, Map<?, ?> properties) {
         map.remove(identifier.getCommerceProviderName());
     }
-
 
     @Override
     public Map<String, Collection<String>> getCatalogIdentifiersForAllCommerceProviders() {

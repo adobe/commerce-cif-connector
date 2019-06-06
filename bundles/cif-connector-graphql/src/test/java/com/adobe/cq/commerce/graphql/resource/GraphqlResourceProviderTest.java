@@ -159,7 +159,7 @@ public class GraphqlResourceProviderTest {
 
         ValueMap valueMap = root.adaptTo(ValueMap.class);
 
-        //check special properties
+        // check special properties
         assertEquals(MockGraphqlDataServiceConfiguration.ROOT_CATEGORY_ID, valueMap.get(CIF_ID));
         assertEquals(CATEGORY, valueMap.get(PN_COMMERCE_TYPE));
         assertEquals(NT_SLING_FOLDER, valueMap.get(PROPERTY_RESOURCE_TYPE));

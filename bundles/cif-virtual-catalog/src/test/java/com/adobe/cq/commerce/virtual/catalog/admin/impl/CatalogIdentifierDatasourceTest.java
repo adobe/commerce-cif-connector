@@ -62,26 +62,30 @@ public class CatalogIdentifierDatasourceTest {
     public void setUp() {
         classUnderTest = new CatalogIdentifierDatasource();
 
-        Map<String, Collection<String>> testData = new HashMap<String, Collection<String>>(){{
-            put("key1", Arrays.asList(new String[] {"value1","value2"}));
-            put("key2", Arrays.asList(new String[] {"value3","value4"}));
-        }};
+        Map<String, Collection<String>> testData = new HashMap<String, Collection<String>>() {
+            {
+                put("key1", Arrays.asList(new String[] { "value1", "value2" }));
+                put("key2", Arrays.asList(new String[] { "value3", "value4" }));
+            }
+        };
         mockCatalogIdentifierService = Mockito.mock(CatalogIdentifierService.class);
         Mockito.when(mockCatalogIdentifierService.getCatalogIdentifiersForAllCommerceProviders()).thenReturn(testData);
         Whitebox.setInternalState(classUnderTest, "catalogIdentifierService", mockCatalogIdentifierService);
 
-        mockRequest = new MockSlingHttpServletRequest(context.resourceResolver(),context.bundleContext());
+        mockRequest = new MockSlingHttpServletRequest(context.resourceResolver(), context.bundleContext());
         mockResponse = new MockSlingHttpServletResponse();
     }
 
     @Test
     public void testFlattenMap() {
-        Map<String, Collection<String>> testData = new HashMap<String, Collection<String>>(){{
-            put("key1", Arrays.asList(new String[] {"value1","value2"}));
-            put("key2", Arrays.asList(new String[] {"value3","value4"}));
-        }};
+        Map<String, Collection<String>> testData = new HashMap<String, Collection<String>>() {
+            {
+                put("key1", Arrays.asList(new String[] { "value1", "value2" }));
+                put("key2", Arrays.asList(new String[] { "value3", "value4" }));
+            }
+        };
         String[] expectedResult = new String[] {
-                "key1:value1","key1:value2","key2:value3","key2:value4"
+            "key1:value1", "key1:value2", "key2:value3", "key2:value4"
         };
 
         List<String> flattenData = classUnderTest.flattenMapToList(testData);
@@ -90,33 +94,34 @@ public class CatalogIdentifierDatasourceTest {
 
     @Test
     public void testGenerateResources() {
-        List<String> testData = Arrays.asList("key1:value1","key1:value2","key2:value3","key2:value4");
+        List<String> testData = Arrays.asList("key1:value1", "key1:value2", "key2:value3", "key2:value4");
         List<Resource> results = classUnderTest.generateResources(Mockito.mock(ResourceResolver.class), testData);
 
         Assert.assertEquals("The list has the correct number of elements", testData.size(), results.size());
-        testData.stream().forEach( testProperty -> {
+        testData.stream().forEach(testProperty -> {
             Resource resourceToCheck = results.get(testData.indexOf(testProperty));
             ValueMap resourceProperties = resourceToCheck.getValueMap();
 
-            Assert.assertEquals("The value of property [text] is [" + testProperty+ "]", testProperty,resourceProperties.get("text"));
-            Assert.assertEquals("The value of property [value] is [" + testProperty+ "]", testProperty,resourceProperties.get("value"));
+            Assert.assertEquals("The value of property [text] is [" + testProperty + "]", testProperty, resourceProperties.get("text"));
+            Assert.assertEquals("The value of property [value] is [" + testProperty + "]", testProperty, resourceProperties.get("value"));
         });
     }
 
     @Test
     public void testDoGetWithData() throws ServletException, IOException {
 
-        List<String> testResourceProperties = Arrays.asList("key1:value1","key1:value2","key2:value3","key2:value4");
+        List<String> testResourceProperties = Arrays.asList("key1:value1", "key1:value2", "key2:value3", "key2:value4");
 
         classUnderTest.doGet(mockRequest, mockResponse);
         DataSource result = (DataSource) mockRequest.getAttribute(DataSource.class.getName());
         List<Resource> elementsInDatsource = new ArrayList<>();
 
-        result.iterator().forEachRemaining( resourceToCheck -> {
+        result.iterator().forEachRemaining(resourceToCheck -> {
             elementsInDatsource.add(resourceToCheck);
         });
 
-        Assert.assertEquals("The datasource contains the correct number of elements", testResourceProperties.size(), elementsInDatsource.size());
+        Assert.assertEquals("The datasource contains the correct number of elements", testResourceProperties.size(), elementsInDatsource
+            .size());
     }
 
     @Test
@@ -124,10 +129,10 @@ public class CatalogIdentifierDatasourceTest {
         Mockito.when(mockCatalogIdentifierService.getCatalogIdentifiersForAllCommerceProviders()).thenReturn(new HashMap<>());
 
         classUnderTest.doGet(mockRequest, mockResponse);
-        DataSource result = (DataSource)mockRequest.getAttribute(DataSource.class.getName());
+        DataSource result = (DataSource) mockRequest.getAttribute(DataSource.class.getName());
         List<Resource> elementsInDatsource = new ArrayList<>();
 
-        result.iterator().forEachRemaining( resourceToCheck -> {
+        result.iterator().forEachRemaining(resourceToCheck -> {
             elementsInDatsource.add(resourceToCheck);
         });
         Assert.assertEquals("The datasource contains no elements", 0, elementsInDatsource.size());
@@ -138,12 +143,13 @@ public class CatalogIdentifierDatasourceTest {
 
         CatalogIdentifierDatasource datasourceToTest = new CatalogIdentifierDatasource();
         datasourceToTest.doGet(mockRequest, mockResponse);
-        DataSource result = (DataSource)mockRequest.getAttribute(DataSource.class.getName());
+        DataSource result = (DataSource) mockRequest.getAttribute(DataSource.class.getName());
         List<Resource> elementsInDatsource = new ArrayList<>();
 
-        result.iterator().forEachRemaining( resourceToCheck -> {
+        result.iterator().forEachRemaining(resourceToCheck -> {
             elementsInDatsource.add(resourceToCheck);
         });
-        Assert.assertEquals("The datasource contains no elements when the CatalogIdentifierService reference is not satisfied", 0, elementsInDatsource.size());
+        Assert.assertEquals("The datasource contains no elements when the CatalogIdentifierService reference is not satisfied", 0,
+            elementsInDatsource.size());
     }
 }

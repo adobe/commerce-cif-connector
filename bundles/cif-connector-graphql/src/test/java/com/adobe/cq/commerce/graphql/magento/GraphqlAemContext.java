@@ -31,8 +31,7 @@ public final class GraphqlAemContext {
                 // Load page structure
                 context.load().json(contentPath, "/content");
             },
-            ResourceResolverType.JCR_MOCK
-        );
+            ResourceResolverType.JCR_MOCK);
     }
 
 }

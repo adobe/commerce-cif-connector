@@ -33,7 +33,6 @@ import com.day.cq.commons.jcr.JcrConstants;
 import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.PRODUCT;
 
-
 class GraphqlResourceProvider<T> extends ResourceProvider<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlResourceProvider.class);
@@ -56,7 +55,7 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
 
         if (path.equals(root)) {
             Resource resource = ctx.getParentResourceProvider().getResource(
-                    (ResolveContext) ctx.getParentResolveContext(), path, resourceContext, parent);
+                (ResolveContext) ctx.getParentResolveContext(), path, resourceContext, parent);
             if (resource == null) {
                 return null;
             } else {
