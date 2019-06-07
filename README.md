@@ -125,6 +125,12 @@ This installs everything by default to `localhost:4502` without any context path
 * `aem.port`: the port number of the AEM instance
 * `aem.contextPath`: the context path of your AEM instance (if not `/`)
 
+## Code Formatting
+You can find the code formatting rules in `/parent`. The code formatting is automatically checked for each build. To automatically format your code, please run:
+```bash
+mvn clean install -Pformat-code
+```
+
 ## Integration Tests
 Integration tests are located in `it/http` and rely on additional test content from the test content package in `it/content`. Instead of communicating directly with a commerce backend, the integration tests use the mock server in `it/mock-server`.
 

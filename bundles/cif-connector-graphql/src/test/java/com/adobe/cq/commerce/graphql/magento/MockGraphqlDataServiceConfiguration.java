@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
 public class MockGraphqlDataServiceConfiguration implements Annotation, GraphqlDataServiceConfiguration {
 
     public static final int ROOT_CATEGORY_ID = 4;
-    
+
     private String storeCode;
 
     @Override

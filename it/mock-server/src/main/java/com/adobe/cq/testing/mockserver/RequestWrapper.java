@@ -14,10 +14,11 @@
 
 package com.adobe.cq.testing.mockserver;
 
-import org.apache.commons.io.IOUtils;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * RequestWrapper wraps a HttpServletRequest to enable multiple caching of the request body.

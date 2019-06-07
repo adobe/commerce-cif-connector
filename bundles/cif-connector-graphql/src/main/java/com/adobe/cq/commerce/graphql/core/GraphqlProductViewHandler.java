@@ -62,11 +62,13 @@ import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED;
 /**
  * A ViewHandler servlet for products.
  */
-@Component(service = Servlet.class, name = "GraphqlProductViewHandler", immediate = true,
+@Component(
+    service = Servlet.class,
+    name = "GraphqlProductViewHandler",
+    immediate = true,
     property = {
         "sling.servlet.paths=/bin/wcm/contentfinder/cifproduct/view"
-    }
-)
+    })
 public class GraphqlProductViewHandler extends ViewHandler {
 
     private static final String PROPERTY_STEP = "*/";
@@ -147,7 +149,7 @@ public class GraphqlProductViewHandler extends ViewHandler {
 
     @Override
     protected ViewQuery createQuery(SlingHttpServletRequest request,
-                                    Session session, String queryString) throws RepositoryException {
+        Session session, String queryString) throws RepositoryException {
 
         PredicateGroup gqlPredicateGroup = new PredicateGroup();
         queryString = preserveWildcards(queryString);
@@ -225,8 +227,8 @@ public class GraphqlProductViewHandler extends ViewHandler {
      * Modifies the given predicate as per need and set back to parentGroup at given index
      *
      * @param parentGroup root PredicateGroup containing predicate
-     * @param predicate   predicate to be modified
-     * @param index       index at which predicate is present in parentGroup
+     * @param predicate predicate to be modified
+     * @param index index at which predicate is present in parentGroup
      */
     private void modifyPredicate(PredicateGroup parentGroup, Predicate predicate, int index) {
         String property = predicate.get("property");
@@ -301,7 +303,6 @@ public class GraphqlProductViewHandler extends ViewHandler {
                 parameters,
                 NumberUtils.toInt(predicateGroup.get("limit"), 0),
                 NumberUtils.toInt(predicateGroup.get("offset"), 20));
-
 
             // filter/prepare the result set
             Resource resource;

@@ -51,7 +51,6 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
     private final AtomicInteger dataRootCounter = new AtomicInteger(1);
     private final AtomicInteger factoryCounter = new AtomicInteger(1);
 
-
     @Before
     public void beforeTest() throws Exception {
         getRepository().getDefaultWorkspace();
@@ -62,8 +61,8 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         manager = new CatalogDataResourceProviderManagerImpl();
         PrivateAccessor.setField(manager, "resolverFactory", getResourceResolverFactory());
         BundleContext bundleContext = Mockito.mock(BundleContext.class);
-        Mockito.when(bundleContext.registerService((Class)Mockito.any(), (ResourceProvider) Mockito.any(), Mockito.any())).
-                thenAnswer((Answer<ServiceRegistration>) invocation -> Mockito.mock(ServiceRegistration.class));
+        Mockito.when(bundleContext.registerService((Class) Mockito.any(), (ResourceProvider) Mockito.any(), Mockito.any())).thenAnswer(
+            (Answer<ServiceRegistration>) invocation -> Mockito.mock(ServiceRegistration.class));
 
         componentContext = Mockito.mock(ComponentContext.class);
         Mockito.when(componentContext.getBundleContext()).thenReturn(bundleContext);
@@ -243,8 +242,6 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertTrue(manager.getProviderFactories().values().isEmpty());
     }
 
-
-
     private void testBindFactoryWithExistingRoots(int rootCount) throws Exception {
         FactoryConfig factoryConfig = createFactoryConfig();
 
@@ -338,7 +335,8 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
 
         FactoryConfig() {
             CatalogDataResourceProviderFactory providerFactory = Mockito.mock(CatalogDataResourceProviderFactory.class);
-            Mockito.when(providerFactory.createResourceProvider(Mockito.any())).thenAnswer((Answer<ResourceProvider>) invocation -> Mockito.mock(ResourceProvider.class));
+            Mockito.when(providerFactory.createResourceProvider(Mockito.any())).thenAnswer((Answer<ResourceProvider>) invocation -> Mockito
+                .mock(ResourceProvider.class));
             factory = providerFactory;
 
             factoryId = TEST_PROVIDER_FACTORY_ID + factoryCounter.getAndIncrement();

@@ -17,7 +17,7 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
 
@@ -50,6 +50,7 @@
         <sling.junit.core.version>1.0.12</sling.junit.core.version>
         <sling.testing.tools.version>1.0.8</sling.testing.tools.version>
         <cq.java.version>8</cq.java.version>
+        <formatter.config>../../parent/eclipse-formatter.xml</formatter.config>
     </properties>
     
     <build>
@@ -72,6 +73,14 @@
                         <exclude>src/test/resources/**/*.json</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

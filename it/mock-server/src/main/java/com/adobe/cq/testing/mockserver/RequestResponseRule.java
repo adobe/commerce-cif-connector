@@ -64,7 +64,8 @@ public class RequestResponseRule implements Rule {
      * @param request HTTP request object
      * @return true if the request matched the given HTTP request.
      */
-    @Override public boolean match(RequestWrapper request) {
+    @Override
+    public boolean match(RequestWrapper request) {
         return this.expectedRequest.match(request);
     }
 
@@ -97,10 +98,12 @@ public class RequestResponseRule implements Rule {
     /**
      * Verify that the number of expected calls equals the actual number of calls.
      */
-    @Override public void verify() throws Exception {
+    @Override
+    public void verify() throws Exception {
         if (this.expectedCalls > 0) {
             if (this.expectedCalls != this.called.get()) {
-                throw new Exception("Rule " + this.toString() + " was not called as many times as expected. " + String.valueOf(this.called.get()) + " calls received, but " + String.valueOf(this.expectedCalls) + " calls expected.");
+                throw new Exception("Rule " + this.toString() + " was not called as many times as expected. " + String.valueOf(this.called
+                    .get()) + " calls received, but " + String.valueOf(this.expectedCalls) + " calls expected.");
             }
         }
     }
@@ -108,7 +111,8 @@ public class RequestResponseRule implements Rule {
     /**
      * Reset the number of actual calls to 0.
      */
-    @Override public void reset() {
+    @Override
+    public void reset() {
         this.called = new AtomicInteger();
     }
 
@@ -121,12 +125,14 @@ public class RequestResponseRule implements Rule {
         return new RequestResponseRule.Builder();
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "RequestResponseRule{" + expectedRequest.getRequestURI() + '}';
     }
 
     /**
      * Builder for {@link RequestResponseRule}.
+     * 
      * @see RequestResponseRule
      */
     public static class Builder implements Rule.Builder {
@@ -213,7 +219,8 @@ public class RequestResponseRule implements Rule {
             return mapper.writeValueAsString(this);
         }
 
-        @Override public Rule build() {
+        @Override
+        public Rule build() {
             RequestResponseRule r = new RequestResponseRule();
 
             r.expectedCalls = this.expectedCalls;

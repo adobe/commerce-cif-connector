@@ -73,7 +73,8 @@ public class Server {
         sslContextFactory.setKeyStorePath(Server.class.getResource(KEY_STORE_PATH).toExternalForm());
         sslContextFactory.setKeyStorePassword(KEY_STORE_PASSWORD);
         sslContextFactory.setKeyManagerPassword(KEY_STORE_PASSWORD);
-        this.httpsConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
+        this.httpsConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"),
+            new HttpConnectionFactory(https));
         this.httpsConnector.setPort(httpsPort);
         server.addConnector(this.httpsConnector);
     }
@@ -152,6 +153,7 @@ public class Server {
 
     /**
      * Builder for {@link Server}.
+     * 
      * @see Server
      */
     public static class Builder {

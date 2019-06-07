@@ -14,10 +14,10 @@
 
 package com.adobe.cq.testing.mockserver.junit;
 
+import org.junit.rules.ExternalResource;
+
 import com.adobe.cq.testing.mockserver.Rule;
 import com.adobe.cq.testing.mockserver.Server;
-
-import org.junit.rules.ExternalResource;
 
 /**
  * Rule wrapper for the mock server to be used in JUnit.

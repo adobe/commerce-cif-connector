@@ -39,7 +39,7 @@ public class SyntheticImageResource extends ImageResource {
      * @param url The URL of the image.
      */
     public SyntheticImageResource(ResourceResolver resolver, String path, String slingResourceType, String url) {
-        super(new SyntheticResource(resolver, path, slingResourceType){
+        super(new SyntheticResource(resolver, path, slingResourceType) {
             private ValueMap valueMap;
             {
                 Map<String, Object> values = new HashMap<>();
