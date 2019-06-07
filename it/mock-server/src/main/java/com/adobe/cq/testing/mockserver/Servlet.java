@@ -14,16 +14,17 @@
 
 package com.adobe.cq.testing.mockserver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic servlet for the mock server.
@@ -74,7 +75,8 @@ public class Servlet extends HttpServlet {
         // Go through rules and execute the first that matches
         RequestWrapper wrapper = new RequestWrapper(req);
         for (Rule rule : rules) {
-            if (rule.execute(wrapper, resp)) return;
+            if (rule.execute(wrapper, resp))
+                return;
         }
 
         // Return 404 if no rule is applicable
