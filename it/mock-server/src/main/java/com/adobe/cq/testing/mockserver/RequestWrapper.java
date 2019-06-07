@@ -14,11 +14,10 @@
 
 package com.adobe.cq.testing.mockserver;
 
-import java.io.IOException;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.IOUtils;
+import java.io.IOException;
 
 /**
  * RequestWrapper wraps a HttpServletRequest to enable multiple caching of the request body.
@@ -34,8 +33,7 @@ public class RequestWrapper {
     /**
      * Constructor.
      *
-     * @param request
-     *            Request reference.
+     * @param request Request reference.
      */
     public RequestWrapper(HttpServletRequest request) {
         this.request = request;
@@ -45,8 +43,7 @@ public class RequestWrapper {
      * Returns the body of the request.
      *
      * @return Request body as string.
-     * @throws IOException
-     *             if body cannot be read
+     * @throws IOException if body cannot be read
      */
     public String getBody() throws IOException {
         if (this.body == null) {

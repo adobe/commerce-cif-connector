@@ -14,10 +14,10 @@
 
 package com.adobe.cq.testing.mockserver.junit;
 
-import org.junit.rules.ExternalResource;
-
 import com.adobe.cq.testing.mockserver.Rule;
 import com.adobe.cq.testing.mockserver.Server;
+
+import org.junit.rules.ExternalResource;
 
 /**
  * Rule wrapper for the mock server to be used in JUnit.
@@ -30,14 +30,12 @@ public class ServerRule extends ExternalResource {
     /**
      * Private constructor.
      */
-    private ServerRule() {
-    }
+    private ServerRule() {}
 
     /**
      * Instantiate a ServerRule that automatically starts and stops a server as defined in the given Builder.
      *
-     * @param builder
-     *            Server.Builder object
+     * @param builder Server.Builder object
      */
     public ServerRule(Server.Builder builder) {
         super();
@@ -68,8 +66,7 @@ public class ServerRule extends ExternalResource {
     /**
      * Add a rule builder to the server.
      *
-     * @param builder
-     *            Rule.Builder object
+     * @param builder Rule.Builder object
      */
     public void add(Rule.Builder builder) {
         this.server.add(builder);
@@ -78,8 +75,7 @@ public class ServerRule extends ExternalResource {
     /**
      * Add a rule to the server.
      *
-     * @param rule
-     *            Rule object
+     * @param rule Rule object
      */
     public void add(Rule rule) {
         this.server.add(rule);

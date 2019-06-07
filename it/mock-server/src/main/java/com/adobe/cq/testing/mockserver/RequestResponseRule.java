@@ -44,16 +44,15 @@ public class RequestResponseRule implements Rule {
     private AtomicInteger called = new AtomicInteger(0);
 
     /**
-     * Private constructor. Use Builder to create a Rule instance.
+     * Private constructor.
+     * Use Builder to create a Rule instance.
      */
-    private RequestResponseRule() {
-    }
+    private RequestResponseRule() {}
 
     /**
      * Set number of expected calls.
      *
-     * @param expectedCalls
-     *            Expected calls
+     * @param expectedCalls Expected calls
      */
     public void setExpectedCalls(int expectedCalls) {
         this.expectedCalls = expectedCalls;
@@ -62,22 +61,19 @@ public class RequestResponseRule implements Rule {
     /**
      * Checks if the request object matches a given HTTP request.
      *
-     * @param request
-     *            HTTP request object
+     * @param request HTTP request object
      * @return true if the request matched the given HTTP request.
      */
-    @Override
-    public boolean match(RequestWrapper request) {
+    @Override public boolean match(RequestWrapper request) {
         return this.expectedRequest.match(request);
     }
 
     /**
-     * Checks if the request object matches a given HTTP request and writes a response to the HTTP response object.
+     * Checks if the request object matches a given HTTP request and writes a response to the
+     * HTTP response object.
      *
-     * @param request
-     *            HTTP request object
-     * @param response
-     *            HTTP response object
+     * @param request HTTP request object
+     * @param response HTTP response object
      * @return true if the request matches and the response was written.
      */
     @Override
@@ -101,13 +97,10 @@ public class RequestResponseRule implements Rule {
     /**
      * Verify that the number of expected calls equals the actual number of calls.
      */
-    @Override
-    public void verify() throws Exception {
+    @Override public void verify() throws Exception {
         if (this.expectedCalls > 0) {
             if (this.expectedCalls != this.called.get()) {
-                throw new Exception("Rule " + this.toString() + " was not called as many times as expected. "
-                        + String.valueOf(this.called.get()) + " calls received, but "
-                        + String.valueOf(this.expectedCalls) + " calls expected.");
+                throw new Exception("Rule " + this.toString() + " was not called as many times as expected. " + String.valueOf(this.called.get()) + " calls received, but " + String.valueOf(this.expectedCalls) + " calls expected.");
             }
         }
     }
@@ -115,8 +108,7 @@ public class RequestResponseRule implements Rule {
     /**
      * Reset the number of actual calls to 0.
      */
-    @Override
-    public void reset() {
+    @Override public void reset() {
         this.called = new AtomicInteger();
     }
 
@@ -129,14 +121,12 @@ public class RequestResponseRule implements Rule {
         return new RequestResponseRule.Builder();
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return "RequestResponseRule{" + expectedRequest.getRequestURI() + '}';
     }
 
     /**
      * Builder for {@link RequestResponseRule}.
-     * 
      * @see RequestResponseRule
      */
     public static class Builder implements Rule.Builder {
@@ -159,8 +149,7 @@ public class RequestResponseRule implements Rule {
         /**
          * Set the number of expected calls.
          *
-         * @param e
-         *            Expected calls
+         * @param e Expected calls
          * @return Rule.Builder object
          */
         public RequestResponseRule.Builder expectCalls(int e) {
@@ -171,8 +160,7 @@ public class RequestResponseRule implements Rule {
         /**
          * Set the request of the rule.
          *
-         * @param b
-         *            Request as Request.Builder.
+         * @param b Request as Request.Builder.
          * @return Rule.Builder object
          */
         public RequestResponseRule.Builder on(MockRequest.Builder b) {
@@ -183,8 +171,7 @@ public class RequestResponseRule implements Rule {
         /**
          * Set the request of the rule.
          *
-         * @param r
-         *            Request as HttpServletRequest
+         * @param r Request as HttpServletRequest
          * @return Rule.Builder object
          */
         public RequestResponseRule.Builder on(MockRequest r) {
@@ -195,8 +182,7 @@ public class RequestResponseRule implements Rule {
         /**
          * Set the response of the rule.
          *
-         * @param b
-         *            Response as Response.Builder
+         * @param b Response as Response.Builder
          * @return Rule.Builder object
          */
         public RequestResponseRule.Builder send(MockResponse.Builder b) {
@@ -207,8 +193,7 @@ public class RequestResponseRule implements Rule {
         /**
          * Set the response of the rule.
          *
-         * @param r
-         *            Response as HttpServletResponse
+         * @param r Response as HttpServletResponse
          * @return Rule.Builder object
          */
         public RequestResponseRule.Builder send(MockResponse r) {
@@ -217,20 +202,18 @@ public class RequestResponseRule implements Rule {
         }
 
         /**
-         * Generate JSON representation of the rule which can be used when configuring the mock server with the
-         * configuration servlet.
+         * Generate JSON representation of the rule which can be used when configuring the mock
+         * server with the configuration servlet.
          *
          * @return JSON representation.
-         * @throws JsonProcessingException
-         *             if object cannot be converted to JSON
+         * @throws JsonProcessingException if object cannot be converted to JSON
          */
         public String toJSON() throws JsonProcessingException {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(this);
         }
 
-        @Override
-        public Rule build() {
+        @Override public Rule build() {
             RequestResponseRule r = new RequestResponseRule();
 
             r.expectedCalls = this.expectedCalls;

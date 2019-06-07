@@ -24,8 +24,7 @@ public interface Response extends HttpServletResponse {
     /**
      * Apply any property set on the response object to a given response.
      *
-     * @param r
-     *            Response object.
+     * @param r Response object.
      */
     void applyTo(HttpServletResponse r);
 
