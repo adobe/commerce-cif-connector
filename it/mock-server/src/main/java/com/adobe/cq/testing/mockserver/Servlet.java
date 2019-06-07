@@ -14,20 +14,20 @@
 
 package com.adobe.cq.testing.mockserver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Generic servlet for the mock server.
- * The behavior of the servlet is defined by a set of rules that have to be added.
+ * Generic servlet for the mock server. The behavior of the servlet is defined by a set of rules that have to be added.
  */
 public class Servlet extends HttpServlet {
 
@@ -49,7 +49,8 @@ public class Servlet extends HttpServlet {
     /**
      * Add a rule to the servlet.
      *
-     * @param rule Rule to be added.
+     * @param rule
+     *            Rule to be added.
      */
     public void add(Rule rule) {
         this.rules.add(rule);
@@ -58,7 +59,8 @@ public class Servlet extends HttpServlet {
     /**
      * Verify all rules.
      *
-     * @throws Exception if not all rules are met
+     * @throws Exception
+     *             if not all rules are met
      */
     public void verify() throws Exception {
         for (Rule rule : this.rules) {
@@ -74,7 +76,8 @@ public class Servlet extends HttpServlet {
         // Go through rules and execute the first that matches
         RequestWrapper wrapper = new RequestWrapper(req);
         for (Rule rule : rules) {
-            if (rule.execute(wrapper, resp)) return;
+            if (rule.execute(wrapper, resp))
+                return;
         }
 
         // Return 404 if no rule is applicable

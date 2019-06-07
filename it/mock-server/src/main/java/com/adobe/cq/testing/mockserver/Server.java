@@ -41,8 +41,7 @@ public class Server {
     private ServerConnector httpsConnector;
 
     /**
-     * Private constructor.
-     * Use Builder to create a Server instance.
+     * Private constructor. Use Builder to create a Server instance.
      */
     private Server() {
         this.server = new org.eclipse.jetty.server.Server();
@@ -53,7 +52,8 @@ public class Server {
     /**
      * Add a HTTP connector to the server.
      *
-     * @param httpPort HTTP port
+     * @param httpPort
+     *            HTTP port
      */
     private void addHttpConnector(int httpPort) {
         this.httpConnector = new ServerConnector(server);
@@ -64,7 +64,8 @@ public class Server {
     /**
      * Add a HTTPS connector to the server.
      *
-     * @param httpsPort HTTPS port
+     * @param httpsPort
+     *            HTTPS port
      */
     private void addHttpsConnector(int httpsPort) {
         HttpConfiguration https = new HttpConfiguration();
@@ -73,7 +74,8 @@ public class Server {
         sslContextFactory.setKeyStorePath(Server.class.getResource(KEY_STORE_PATH).toExternalForm());
         sslContextFactory.setKeyStorePassword(KEY_STORE_PASSWORD);
         sslContextFactory.setKeyManagerPassword(KEY_STORE_PASSWORD);
-        this.httpsConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
+        this.httpsConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                new HttpConnectionFactory(https));
         this.httpsConnector.setPort(httpsPort);
         server.addConnector(this.httpsConnector);
     }
@@ -99,7 +101,8 @@ public class Server {
     /**
      * Start the server.
      *
-     * @throws Exception if server cannot be started.
+     * @throws Exception
+     *             if server cannot be started.
      */
     public void start() throws Exception {
         this.server.start();
@@ -108,7 +111,8 @@ public class Server {
     /**
      * Stop the server.
      *
-     * @throws Exception if server cannot be stopped.
+     * @throws Exception
+     *             if server cannot be stopped.
      */
     public void stop() throws Exception {
         this.server.stop();
@@ -124,7 +128,8 @@ public class Server {
     /**
      * Add a rule builder to the server.
      *
-     * @param builder RuleBuilder object
+     * @param builder
+     *            RuleBuilder object
      */
     public void add(Rule.Builder builder) {
         Rule rule = builder.build();
@@ -134,7 +139,8 @@ public class Server {
     /**
      * Add a rule to the server.
      *
-     * @param rule Rule object
+     * @param rule
+     *            Rule object
      */
     public void add(Rule rule) {
         rule.reset();
@@ -144,7 +150,8 @@ public class Server {
     /**
      * Verify all the rules of the server.
      *
-     * @throws Exception if not all rules are met.
+     * @throws Exception
+     *             if not all rules are met.
      */
     public void verify() throws Exception {
         this.servlet.verify();
@@ -152,6 +159,7 @@ public class Server {
 
     /**
      * Builder for {@link Server}.
+     * 
      * @see Server
      */
     public static class Builder {
@@ -174,7 +182,8 @@ public class Server {
         /**
          * Add a HTTP connector to the server that listens to the given port.
          *
-         * @param port HTTP port
+         * @param port
+         *            HTTP port
          * @return Server.Builder object
          */
         public Server.Builder withHttp(int port) {
@@ -197,7 +206,8 @@ public class Server {
         /**
          * Add a HTTPS connector to the server that listens to the given port.
          *
-         * @param port HTTPS port
+         * @param port
+         *            HTTPS port
          * @return Server.Builder object
          */
         public Server.Builder withHttps(int port) {

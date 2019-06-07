@@ -24,7 +24,8 @@ public interface Rule {
     /**
      * Checks if the Rule matches a given HTTP request.
      *
-     * @param request HTTP request object
+     * @param request
+     *            HTTP request object
      * @return true if the rule matches the given HTTP request.
      */
     boolean match(RequestWrapper request);
@@ -32,8 +33,10 @@ public interface Rule {
     /**
      * Execute the rule for given request and response object.
      *
-     * @param request HTTP request object
-     * @param response HTTP response object
+     * @param request
+     *            HTTP request object
+     * @param response
+     *            HTTP response object
      * @return true if the rule was applied
      */
     boolean execute(RequestWrapper request, HttpServletResponse response);
@@ -41,7 +44,8 @@ public interface Rule {
     /**
      * Verify that the rule was applied correctly.
      *
-     * @throws Exception if rule is not met
+     * @throws Exception
+     *             if rule is not met
      */
     void verify() throws Exception;
 

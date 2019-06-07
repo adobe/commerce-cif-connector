@@ -14,9 +14,6 @@
 
 package com.adobe.cq.testing.mockserver;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,6 +21,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * MockResponse contains the data that is sent in a HTTP response within a {@link RequestResponseRule}.
@@ -56,103 +57,128 @@ public class MockResponse implements Response {
     private MockResponse() {
     }
 
-    @Override public void addCookie(Cookie cookie) {
+    @Override
+    public void addCookie(Cookie cookie) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public boolean containsHeader(String s) {
+    @Override
+    public boolean containsHeader(String s) {
         return this.headers.containsKey(s);
     }
 
-    @Override public String encodeURL(String s) {
+    @Override
+    public String encodeURL(String s) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public String encodeRedirectURL(String s) {
+    @Override
+    public String encodeRedirectURL(String s) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public String encodeUrl(String s) {
+    @Override
+    public String encodeUrl(String s) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public String encodeRedirectUrl(String s) {
+    @Override
+    public String encodeRedirectUrl(String s) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void sendError(int i, String s) throws IOException {
+    @Override
+    public void sendError(int i, String s) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void sendError(int i) throws IOException {
+    @Override
+    public void sendError(int i) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void sendRedirect(String s) throws IOException {
+    @Override
+    public void sendRedirect(String s) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void setDateHeader(String s, long l) {
+    @Override
+    public void setDateHeader(String s, long l) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void addDateHeader(String s, long l) {
+    @Override
+    public void addDateHeader(String s, long l) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void setHeader(String s, String s1) {
+    @Override
+    public void setHeader(String s, String s1) {
         this.headers.put(s, s1);
     }
 
-    @Override public void addHeader(String s, String s1) {
+    @Override
+    public void addHeader(String s, String s1) {
         this.headers.put(s, s1);
     }
 
-    @Override public void setIntHeader(String s, int i) {
+    @Override
+    public void setIntHeader(String s, int i) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void addIntHeader(String s, int i) {
+    @Override
+    public void addIntHeader(String s, int i) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void setStatus(int i) {
+    @Override
+    public void setStatus(int i) {
         this.statusCode = i;
     }
 
-    @Override public void setStatus(int i, String s) {
+    @Override
+    public void setStatus(int i, String s) {
         this.setStatus(i);
     }
 
-    @Override public int getStatus() {
+    @Override
+    public int getStatus() {
         return this.statusCode;
     }
 
-    @Override public String getHeader(String s) {
+    @Override
+    public String getHeader(String s) {
         return this.headers.get(s);
     }
 
-    @Override public Collection<String> getHeaders(String s) {
+    @Override
+    public Collection<String> getHeaders(String s) {
         return Collections.singletonList(this.headers.get(s));
     }
 
-    @Override public Collection<String> getHeaderNames() {
+    @Override
+    public Collection<String> getHeaderNames() {
         return this.headers.keySet();
     }
 
-    @Override public String getCharacterEncoding() {
+    @Override
+    public String getCharacterEncoding() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public String getContentType() {
+    @Override
+    public String getContentType() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public ServletOutputStream getOutputStream() throws IOException {
+    @Override
+    public ServletOutputStream getOutputStream() throws IOException {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public PrintWriter getWriter() throws IOException {
+    @Override
+    public PrintWriter getWriter() throws IOException {
         if (this.contentPrintWriter == null) {
             this.contentStringWriter = new StringWriter();
             this.contentPrintWriter = new PrintWriter(contentStringWriter, true);
@@ -160,51 +186,63 @@ public class MockResponse implements Response {
         return this.contentPrintWriter;
     }
 
-    @Override public void setCharacterEncoding(String s) {
+    @Override
+    public void setCharacterEncoding(String s) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void setContentLength(int i) {
+    @Override
+    public void setContentLength(int i) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void setContentLengthLong(long len) {
+    @Override
+    public void setContentLengthLong(long len) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void setContentType(String s) {
+    @Override
+    public void setContentType(String s) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void setBufferSize(int i) {
+    @Override
+    public void setBufferSize(int i) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public int getBufferSize() {
+    @Override
+    public int getBufferSize() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void flushBuffer() throws IOException {
+    @Override
+    public void flushBuffer() throws IOException {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void resetBuffer() {
+    @Override
+    public void resetBuffer() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public boolean isCommitted() {
+    @Override
+    public boolean isCommitted() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void reset() {
+    @Override
+    public void reset() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public void setLocale(Locale locale) {
+    @Override
+    public void setLocale(Locale locale) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override public Locale getLocale() {
+    @Override
+    public Locale getLocale() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
@@ -212,7 +250,8 @@ public class MockResponse implements Response {
         return this.contentStringWriter.toString();
     }
 
-    @Override public void applyTo(HttpServletResponse r) {
+    @Override
+    public void applyTo(HttpServletResponse r) {
         // Apply headers
         for (String key : this.getHeaderNames()) {
             r.addHeader(key, this.getHeader(key));
@@ -265,12 +304,14 @@ public class MockResponse implements Response {
          *
          * Use MockResponse.response() to get an instance of this builder.
          */
-        private Builder() {}
+        private Builder() {
+        }
 
         /**
          * Set status code for the response.
          *
-         * @param c Status code
+         * @param c
+         *            Status code
          * @return Response.Builder object
          */
         public MockResponse.Builder withStatus(int c) {
@@ -281,7 +322,8 @@ public class MockResponse implements Response {
         /**
          * Set the content for the response.
          *
-         * @param content Content
+         * @param content
+         *            Content
          * @return Response.Builder object
          */
         public MockResponse.Builder withContent(String content) {
@@ -292,7 +334,8 @@ public class MockResponse implements Response {
         /**
          * Set content type for response.
          *
-         * @param type Content Type
+         * @param type
+         *            Content Type
          * @return Response.Builder object
          */
         public MockResponse.Builder withContentType(String type) {
@@ -303,13 +346,15 @@ public class MockResponse implements Response {
         /**
          * Read the given resource and set its content as content for the response.
          *
-         * @param path Path to a resource
+         * @param path
+         *            Path to a resource
          * @return Response.Builder object
          */
         public MockResponse.Builder withContentFromResource(String path) {
             String content = null;
             try {
-                content = new String(Files.readAllBytes(Paths.get(this.getClass().getResource(path).toURI())), StandardCharsets.UTF_8);
+                content = new String(Files.readAllBytes(Paths.get(this.getClass().getResource(path).toURI())),
+                        StandardCharsets.UTF_8);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -320,8 +365,10 @@ public class MockResponse implements Response {
         /**
          * Add a response header.
          *
-         * @param key   Header key
-         * @param value Header value
+         * @param key
+         *            Header key
+         * @param value
+         *            Header value
          * @return Response.Builder object
          */
         public MockResponse.Builder withHeader(String key, String value) {
@@ -329,7 +376,8 @@ public class MockResponse implements Response {
             return this;
         }
 
-        @Override public MockResponse build() {
+        @Override
+        public MockResponse build() {
             MockResponse r = new MockResponse();
             r.setStatus(this.status);
 

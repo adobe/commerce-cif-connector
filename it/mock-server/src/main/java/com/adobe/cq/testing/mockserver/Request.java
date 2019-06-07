@@ -24,7 +24,8 @@ public interface Request extends HttpServletRequest {
     /**
      * Match the request against another received request.
      *
-     * @param r Request to compare
+     * @param r
+     *            Request to compare
      * @return Returns true if the received request contains at least all properties of the request object.
      */
     boolean match(RequestWrapper r);
