@@ -331,38 +331,45 @@ class ResourceMapper<T> {
 
         try {
             ProductInterface productInterface = graphqlDataService.getProductBySku(sku);
-            if (productInterface != null && productInterface instanceof ConfigurableProduct) {
+            if (productInterface == null) {
+                return null;
+            }
+
+            String imageUrl = null;
+            if (productInterface.getImage() != null) {
+                imageUrl = productInterface.getImage().getUrl();
+            }
+            List<Resource> children = new ArrayList<>();
+
+            if (productInterface instanceof ConfigurableProduct) {
                 ConfigurableProduct product = (ConfigurableProduct) productInterface;
                 List<ConfigurableVariant> variants = product.getVariants();
                 if (variants != null && !variants.isEmpty()) {
-                    List<Resource> children = new ArrayList<>();
                     ResourceResolver resolver = ctx.getResourceResolver();
-                    String imageUrl = product.getImage().getUrl();
                     for (ConfigurableVariant variant : variants) {
                         SimpleProduct simpleProduct = variant.getProduct();
                         String path = parentPath + "/" + simpleProduct.getSku();
                         children.add(new ProductResource(resolver, path, simpleProduct, simpleProduct.getSku()));
 
-                        if (imageUrl == null) {
+                        if (imageUrl == null && simpleProduct.getImage() != null) {
                             imageUrl = simpleProduct.getImage().getUrl();
                         }
                     }
-
-                    if (imageUrl != null) {
-                        String imagePath = parentPath + "/image";
-                        Resource imageResource = new SyntheticImageResource(ctx.getResourceResolver(), imagePath,
-                            SyntheticImageResource.IMAGE_RESOURCE_TYPE, imageUrl);
-                        children.add(0, imageResource);
-                    }
-
-                    return children.iterator();
                 }
             }
+
+            if (imageUrl != null) {
+                String imagePath = parentPath + "/image";
+                Resource imageResource = new SyntheticImageResource(ctx.getResourceResolver(), imagePath,
+                    SyntheticImageResource.IMAGE_RESOURCE_TYPE, imageUrl);
+                children.add(0, imageResource);
+            }
+
+            return children.iterator();
+
         } catch (Exception e) {
             LOGGER.error("Error while fetching variants for product " + sku, e);
             return null;
         }
-
-        return null;
     }
 }

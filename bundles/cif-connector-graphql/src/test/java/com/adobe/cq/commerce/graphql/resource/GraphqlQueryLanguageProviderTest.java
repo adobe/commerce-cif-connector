@@ -27,6 +27,7 @@ import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.graphql.testing.Utils;
 
 import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.VIRTUAL_PRODUCT_QUERY_LANGUAGE;
+import static org.junit.Assert.assertNull;
 
 public class GraphqlQueryLanguageProviderTest {
 
@@ -52,6 +53,8 @@ public class GraphqlQueryLanguageProviderTest {
 
         // mock query has limit = 20 and offset = 20 --> so we expect page 2 and limit 20
         Mockito.verify(graphqlDataService, Mockito.times(1)).searchProducts("gloves", Integer.valueOf(2), Integer.valueOf(20));
+
+        assertNull(queryLanguageProvider.findResources(null, jsonRequest, "whatever"));
     }
 
     @Test

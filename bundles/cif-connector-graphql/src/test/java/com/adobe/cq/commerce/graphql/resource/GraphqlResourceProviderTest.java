@@ -42,6 +42,7 @@ import com.adobe.cq.commerce.api.CommerceException;
 import com.adobe.cq.commerce.api.Product;
 import com.adobe.cq.commerce.graphql.client.GraphqlClient;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
+import com.adobe.cq.commerce.graphql.core.MagentoProduct;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceConfiguration;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl;
 import com.adobe.cq.commerce.graphql.magento.MockGraphqlDataServiceConfiguration;
@@ -60,7 +61,9 @@ import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvide
 import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
 import static org.apache.sling.jcr.resource.api.JcrResourceConstants.NT_SLING_FOLDER;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -163,6 +166,7 @@ public class GraphqlResourceProviderTest {
         assertEquals(MockGraphqlDataServiceConfiguration.ROOT_CATEGORY_ID, valueMap.get(CIF_ID));
         assertEquals(CATEGORY, valueMap.get(PN_COMMERCE_TYPE));
         assertEquals(NT_SLING_FOLDER, valueMap.get(PROPERTY_RESOURCE_TYPE));
+        assertNull(root.adaptTo(Product.class));
     }
 
     @Test
@@ -180,6 +184,7 @@ public class GraphqlResourceProviderTest {
 
     private void assertCategoryPaths(GraphqlResourceProvider provider, Resource category, int depth) {
         assertTrue(category.getPath().substring(CATALOG_ROOT_PATH.length() + 1).split("/").length == depth);
+        assertNull(category.adaptTo(Product.class));
         Boolean isLeaf = category.getValueMap().get(LEAF_CATEGORY, Boolean.class);
         if (Boolean.FALSE.equals(isLeaf)) {
             Iterator<Resource> it = provider.listChildren(resolveContext, category);
@@ -188,6 +193,20 @@ public class GraphqlResourceProviderTest {
                     assertCategoryPaths(provider, it.next(), depth + 1);
                 }
             }
+        }
+    }
+
+    @Test
+    public void testCategoryProductChildren() throws IOException {
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category(id:4)");
+        Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK, "{category(id:19)");
+
+        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
+        Resource coats = provider.getResource(resolveContext, CATALOG_ROOT_PATH + "/men/coats", null, null);
+        Iterator<Resource> it = provider.listChildren(resolveContext, coats);
+        assertTrue(it.hasNext());
+        while (it.hasNext()) {
+            assertTrue(it.next() instanceof ProductResource);
         }
     }
 
@@ -210,30 +229,42 @@ public class GraphqlResourceProviderTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testProductResource() throws IOException, CommerceException {
+    public void testConfigurableProductResource() throws IOException, CommerceException {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
         GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         Resource resource = provider.getResource(resolveContext, PRODUCT_PATH, null, null);
         assertTrue(resource instanceof ProductResource);
+        assertTrue(MagentoProduct.isAProductOrVariant(resource));
         assertEquals(SKU, resource.getValueMap().get("sku", String.class));
         Date lastModified = resource.getValueMap().get(JcrConstants.JCR_LASTMODIFIED, Date.class);
         assertTrue(lastModified != null);
 
         Product product = resource.adaptTo(Product.class);
+        assertEquals(product, product.getBaseProduct());
+        assertEquals(product, product.getPIMProduct());
         assertEquals(SKU, product.getSKU());
         assertEquals(NAME, product.getTitle());
         assertEquals(DESCRIPTION, product.getDescription());
         assertEquals(IMAGE_URL, product.getImageUrl());
         assertEquals(IMAGE_URL, product.getThumbnailUrl());
+        assertEquals(IMAGE_URL, product.getThumbnailUrl(123));
+        assertEquals(IMAGE_URL, product.getThumbnailUrl("selector"));
+        assertNull(product.getThumbnail());
         assertEquals(URL_KEY, product.getProperty("urlKey", String.class));
+        assertNull(product.getProperty("whatever", String.class));
 
-        Resource asset = product.getAsset();
-        assertEquals(IMAGE_URL, asset.getPath());
+        assertEquals(IMAGE_URL, product.getAsset().getPath());
+        assertEquals(IMAGE_URL, product.getAssets().get(0).getPath());
 
-        Resource image = product.getImage();
-        assertEquals(PRODUCT_PATH + "/image", image.getPath());
+        assertEquals(PRODUCT_PATH + "/image", product.getImage().getPath());
+        assertEquals(PRODUCT_PATH + "/image", product.getImages().get(0).getPath());
+        assertNull(product.getImagePath());
+
+        // We do not extract variant axes
+        assertFalse(product.getVariantAxes().hasNext());
+        assertFalse(product.axisIsVariant("whatever"));
 
         // Test master variant when fetched via Product API
         Product masterVariant = product.getVariants().next();
@@ -249,6 +280,63 @@ public class GraphqlResourceProviderTest {
         // Test master variant when fetched via Resource API
         Resource firstVariant = it.next();
         assertEquals(MASTER_VARIANT_SKU, firstVariant.getValueMap().get("sku", String.class));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testSimpleProductResource() throws IOException, CommerceException {
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-simple-product.json", httpClient, HttpStatus.SC_OK, "{product");
+
+        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
+        String productPath = CATALOG_ROOT_PATH + "/men/coats/24-MB01";
+
+        Resource resource = provider.getResource(resolveContext, productPath, null, null);
+        assertTrue(resource instanceof ProductResource);
+        assertTrue(MagentoProduct.isAProductOrVariant(resource));
+        assertEquals("24-MB01", resource.getValueMap().get("sku", String.class));
+        Date lastModified = resource.getValueMap().get(JcrConstants.JCR_LASTMODIFIED, Date.class);
+        assertTrue(lastModified != null);
+
+        Product product = resource.adaptTo(Product.class);
+        assertEquals(product, product.getBaseProduct());
+        assertEquals(product, product.getPIMProduct());
+        assertEquals("24-MB01", product.getSKU());
+        assertEquals("Joust Duffle Bag", product.getTitle());
+        assertEquals("The sporty Joust Duffle Bag can't be beat", product.getDescription());
+
+        String imageUrl = "http://hostname/pub/media/catalog/product/mb01-blue-0.jpg";
+        assertEquals(imageUrl, product.getImageUrl());
+        assertEquals(imageUrl, product.getThumbnailUrl());
+        assertEquals(imageUrl, product.getThumbnailUrl(123));
+        assertEquals(imageUrl, product.getThumbnailUrl("selector"));
+        assertNull(product.getThumbnail());
+        assertEquals("joust-duffle-bag", product.getProperty("urlKey", String.class));
+        assertNull(product.getProperty("whatever", String.class));
+
+        assertEquals(imageUrl, product.getAsset().getPath());
+        assertEquals(imageUrl, product.getAssets().get(0).getPath());
+
+        assertEquals(productPath + "/image", product.getImage().getPath());
+        assertEquals(productPath + "/image", product.getImages().get(0).getPath());
+        assertNull(product.getImagePath());
+
+        // We do not extract variant axes
+        assertFalse(product.getVariantAxes().hasNext());
+        assertFalse(product.axisIsVariant("whatever"));
+
+        // A simple product doesn't have any variant
+        assertFalse(product.getVariants().hasNext());
+
+        Iterator<Resource> it = provider.listChildren(resolveContext, resource);
+
+        // First child is the image
+        Resource imageResource = it.next();
+        assertEquals(productPath + "/image", imageResource.getPath());
+        assertEquals(imageUrl, imageResource.getValueMap().get(DownloadResource.PN_REFERENCE, String.class));
+
+        // A simple product doesn't have any variant
+        assertFalse(it.hasNext());
     }
 
     @Test

@@ -262,19 +262,9 @@
                                         <element>BUNDLE</element>
                                         <limits>
                                             <limit>
-                                                <counter>INSTRUCTION</counter>
+                                                <counter>BRANCH</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.0</minimum>
-                                            </limit>
-                                        </limits>
-                                    </rule>
-                                    <rule>
-                                        <element>CLASS</element>
-                                        <limits>
-                                            <limit>
-                                                <counter>INSTRUCTION</counter>
-                                                <value>COVEREDRATIO</value>
-                                                <minimum>0.0</minimum>
+                                                <minimum>0.6</minimum>
                                             </limit>
                                         </limits>
                                     </rule>
