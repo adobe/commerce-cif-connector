@@ -449,8 +449,12 @@
           "description": {
             "html": ""
           },
-          "image": null,
-          "thumbnail": null,
+          "image": {
+            "url": null
+          },
+          "thumbnail": {
+            "url": null
+          },
           "url_key": "sonja-insulated-jacket",
           "updated_at": "2018-11-22 14:36:01",
           "created_at": "2018-11-22 14:36:01",

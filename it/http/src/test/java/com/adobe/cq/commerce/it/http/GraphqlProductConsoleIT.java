@@ -14,10 +14,14 @@
 
 package com.adobe.cq.commerce.it.http;
 
+import java.util.List;
+
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
+import org.apache.sling.testing.clients.util.URLParameterBuilder;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.jsoup.Jsoup;
@@ -97,6 +101,16 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
             .withMethod(HttpMethod.POST)
             .withRequestURI("/graphql")
             .withBody(s -> s.startsWith("{\"query\":\"{products(filter:{sku:{eq:\\\"meskwielt\\\"}})")))
+        .send(response()
+            .withStatus(HttpStatus.OK_200)
+            .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-product.json")
+            .withContentType("application/json; charset=utf-8"));
+
+    public static RequestResponseRule.Builder SEARCH_PRODUCTS_FULL_TEXT = rule()
+        .on(request()
+            .withMethod(HttpMethod.POST)
+            .withRequestURI("/graphql")
+            .withBody(s -> s.startsWith("{\"query\":\"{products(search:\\\"coats\\\"")))
         .send(response()
             .withStatus(HttpStatus.OK_200)
             .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-product.json")
@@ -214,9 +228,38 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Document doc = Jsoup.parse(response.getContent());
 
         // Verify property fields
-        // TODO: Behavior not correct, see CQ-4222819
         Assert.assertNotEquals("Footwear", doc.select("input[name=jcr:title]").val());
         Assert.assertFalse(doc.select("input[name=jcr:title]").hasAttr("disabled"));
+    }
+
+    @Test
+    public void testAssetsProductsFinder() throws Exception {
+
+        // Prepare
+        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(SEARCH_PRODUCTS_FULL_TEXT.build());
+        mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
+
+        List<NameValuePair> params = URLParameterBuilder.create()
+            .add("_dc", "1560254795557")
+            .add("query", "coats")
+            .add("itemResourceType", "commerce/gui/components/authoring/assetfinder/product")
+            .add("limit", "0..20")
+            .add("_charset_", "utf-8")
+            .add("_", "1560254761223")
+            .getList();
+
+        // Perform
+        SlingHttpResponse response = cAuthorAuthor.doGet("/bin/wcm/contentfinder/cifproduct/view.html" + JCR_BASE_PATH, params,
+            NO_CACHE_HEADERS, SC_OK);
+
+        // Verify
+        mockServerRule.verify();
+        Document doc = Jsoup.parse(response.getContent());
+
+        Elements elements = doc.select("coral-card[data-asset-group=product]");
+        Assert.assertEquals(1, elements.size());
+        Assert.assertEquals(JCR_BASE_PATH + "/men/coats/meskwielt", elements.attr("data-path"));
     }
 
 }
