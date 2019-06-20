@@ -13,7 +13,7 @@
 -->
 <sly data-sly-use.helper="libs.commerce.gui.components.common.cifproductfield.ViewHelper"/>
 <sly data-sly-use.cifhelper="libs.commerce.gui.components.common.cifproductfield.CIFProductFieldHelper"/>
-<tr class="foundation-collection-item ${helper.product ? 'cq-commerce-picker-selectable' : 'foundation-collection-navigator'}"
+<tr class="foundation-collection-item ${helper.product && 'cq-commerce-picker-selectable'} ${cifhelper.drillDown && 'foundation-collection-navigator'}"
     data-foundation-collection-item-id="${resource.path}" data-path="${resource.path}" data-type="product"
     data-foundation-picker-collection-item-value="${cifhelper.selectionId}"
     data-timeline="true" is="coral-table-row" data-title="${helper.title}">
