@@ -53,6 +53,11 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
     public Resource getResource(ResolveContext<T> ctx, String path, ResourceContext resourceContext, Resource parent) {
         LOGGER.debug("getResource called for " + path);
 
+        // needed for testing, harmless during runtime
+        if (path.endsWith("/.")) {
+            path = path.substring(0, path.length() - 2);
+        }
+
         if (path.equals(root)) {
             Resource resource = ctx.getParentResourceProvider().getResource(
                 (ResolveContext) ctx.getParentResolveContext(), path, resourceContext, parent);

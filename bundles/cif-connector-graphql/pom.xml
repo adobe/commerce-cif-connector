@@ -29,7 +29,7 @@
     <name>CIF Connector - GraphQL Bundle</name>
     <description>CIF GraphQL Connector for AEM Commerce authoring</description>
     <url>https://github.com/adobe/commerce-cif-connector/bundles/cif-connector-graphql</url>
-    
+
     <scm>
         <connection>scm:git:https://github.com/adobe/commerce-cif-connector</connection>
         <developerConnection>scm:git:git@github.com:adobe/commerce-cif-connector.git</developerConnection>
@@ -255,6 +255,13 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.api</artifactId>
+            <version>2.20.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     

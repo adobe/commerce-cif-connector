@@ -90,7 +90,9 @@ public class GraphqlResourceProviderTest {
     private HttpClient httpClient;
 
     private ResolveContext resolveContext;
+    private ResourceResolver resourceResolver;
     private JcrResourceProvider jcrResourceProvider;
+    private GraphqlResourceProvider provider;
     private Resource rootResource;
     private ValueMap rootValueMap;
     private Scheduler scheduler;
@@ -109,7 +111,7 @@ public class GraphqlResourceProviderTest {
         dataService.activate(config);
 
         Resource resource = mock(Resource.class);
-        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        resourceResolver = mock(ResourceResolver.class);
         when(resource.getResourceResolver()).thenReturn(resourceResolver);
 
         resolveContext = mock(ResolveContext.class);
@@ -122,11 +124,18 @@ public class GraphqlResourceProviderTest {
         when(jcrResourceProvider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null)).thenReturn(rootResource);
         when(rootResource.getPath()).thenReturn(CATALOG_ROOT_PATH);
         when(rootResource.getValueMap()).thenReturn(rootValueMap);
+        when(rootResource.getResourceResolver()).thenReturn(resourceResolver);
 
         scheduler = mock(Scheduler.class);
         ScheduleOptions opts = mock(ScheduleOptions.class);
         when(scheduler.schedule(any(), any())).thenReturn(Boolean.FALSE);
         when(scheduler.NOW(Mockito.anyInt(), Mockito.anyLong())).thenReturn(opts);
+
+        provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
+        when(resourceResolver.getResource(any())).then(invocationOnMock -> {
+            String path = (String) invocationOnMock.getArguments()[0];
+            return provider.getResource(resolveContext, path, null, null);
+        });
     }
 
     @Test
@@ -155,7 +164,6 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testRootCategory() {
-        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         Resource root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
 
         assertNotNull(root);
@@ -164,6 +172,8 @@ public class GraphqlResourceProviderTest {
 
         // check special properties
         assertEquals(MockGraphqlDataServiceConfiguration.ROOT_CATEGORY_ID, valueMap.get(CIF_ID));
+        // deep read cifId
+        assertEquals(MockGraphqlDataServiceConfiguration.ROOT_CATEGORY_ID, valueMap.get("./" + CIF_ID));
         assertEquals(CATEGORY, valueMap.get(PN_COMMERCE_TYPE));
         assertEquals(NT_SLING_FOLDER, valueMap.get(PROPERTY_RESOURCE_TYPE));
         assertNull(root.adaptTo(Product.class));
@@ -173,7 +183,6 @@ public class GraphqlResourceProviderTest {
     public void testCategoryTree() throws IOException {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
 
-        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         Resource root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
         Iterator<Resource> it = provider.listChildren(resolveContext, root);
         assertTrue(it.hasNext());
@@ -185,12 +194,19 @@ public class GraphqlResourceProviderTest {
     private void assertCategoryPaths(GraphqlResourceProvider provider, Resource category, int depth) {
         assertTrue(category.getPath().substring(CATALOG_ROOT_PATH.length() + 1).split("/").length == depth);
         assertNull(category.adaptTo(Product.class));
+        String cifId = category.getValueMap().get(CIF_ID, String.class);
+        // deep read cifId
+        assertEquals(cifId, category.getValueMap().get("./" + CIF_ID, String.class));
         Boolean isLeaf = category.getValueMap().get(LEAF_CATEGORY, Boolean.class);
         if (Boolean.FALSE.equals(isLeaf)) {
             Iterator<Resource> it = provider.listChildren(resolveContext, category);
             if (it != null) {
                 while (it.hasNext()) {
-                    assertCategoryPaths(provider, it.next(), depth + 1);
+                    Resource child = it.next();
+                    // deep read child/cifId
+                    String childCifId = child.getValueMap().get(CIF_ID, String.class);
+                    assertEquals(childCifId, category.getValueMap().get(child.getName() + "/" + CIF_ID, String.class));
+                    assertCategoryPaths(provider, child, depth + 1);
                 }
             }
         }
@@ -201,12 +217,15 @@ public class GraphqlResourceProviderTest {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category(id:4)");
         Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK, "{category(id:19)");
 
-        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         Resource coats = provider.getResource(resolveContext, CATALOG_ROOT_PATH + "/men/coats", null, null);
         Iterator<Resource> it = provider.listChildren(resolveContext, coats);
         assertTrue(it.hasNext());
         while (it.hasNext()) {
-            assertTrue(it.next() instanceof ProductResource);
+            final Resource child = it.next();
+            assertTrue(child instanceof ProductResource);
+            // deep read child/sku
+            String childSku = child.getValueMap().get("sku", String.class);
+            assertEquals(childSku, coats.getValueMap().get(child.getName() + "/sku", String.class));
         }
     }
 
@@ -233,7 +252,6 @@ public class GraphqlResourceProviderTest {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
-        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         Resource resource = provider.getResource(resolveContext, PRODUCT_PATH, null, null);
         assertTrue(resource instanceof ProductResource);
         assertTrue(MagentoProduct.isAProductOrVariant(resource));
@@ -280,6 +298,9 @@ public class GraphqlResourceProviderTest {
         // Test master variant when fetched via Resource API
         Resource firstVariant = it.next();
         assertEquals(MASTER_VARIANT_SKU, firstVariant.getValueMap().get("sku", String.class));
+
+        // Test deep read firstVariantName/sku
+        assertEquals(MASTER_VARIANT_SKU, resource.getValueMap().get(firstVariant.getName() + "/sku", String.class));
     }
 
     @SuppressWarnings("deprecation")
@@ -288,7 +309,6 @@ public class GraphqlResourceProviderTest {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-simple-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
-        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         String productPath = CATALOG_ROOT_PATH + "/men/coats/24-MB01";
 
         Resource resource = provider.getResource(resolveContext, productPath, null, null);
@@ -334,6 +354,8 @@ public class GraphqlResourceProviderTest {
         Resource imageResource = it.next();
         assertEquals(productPath + "/image", imageResource.getPath());
         assertEquals(imageUrl, imageResource.getValueMap().get(DownloadResource.PN_REFERENCE, String.class));
+        // Deep read image/fileReference of product
+        assertEquals(imageUrl, resource.getValueMap().get("image/" + DownloadResource.PN_REFERENCE, String.class));
 
         // A simple product doesn't have any variant
         assertFalse(it.hasNext());
@@ -344,13 +366,15 @@ public class GraphqlResourceProviderTest {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
-        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         Resource resource = provider.getResource(resolveContext, MASTER_VARIANT_PATH, null, null);
         assertTrue(resource instanceof ProductResource);
         assertEquals(MASTER_VARIANT_SKU, resource.getValueMap().get("sku", String.class));
 
         Product product = resource.adaptTo(Product.class);
         assertMasterVariant(product);
+
+        // deep read sku
+        assertEquals(MASTER_VARIANT_SKU, resource.getValueMap().get("./sku", String.class));
     }
 
     @Test
@@ -358,10 +382,12 @@ public class GraphqlResourceProviderTest {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
-        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         Resource resource = provider.getResource(resolveContext, PRODUCT_PATH + "/image", null, null);
         assertTrue(resource instanceof SyntheticImageResource);
         assertEquals(IMAGE_URL, resource.getValueMap().get(DownloadResource.PN_REFERENCE, String.class));
+
+        // deep read fileReference
+        assertEquals(IMAGE_URL, resource.getValueMap().get("./" + DownloadResource.PN_REFERENCE, String.class));
     }
 
     @Test
@@ -373,7 +399,6 @@ public class GraphqlResourceProviderTest {
         String jsonRequest = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream(
             "commerce-products-omni-search-request.json"), StandardCharsets.UTF_8);
 
-        GraphqlResourceProvider provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         QueryLanguageProvider queryLanguageProvider = provider.getQueryLanguageProvider();
         assertTrue(ArrayUtils.contains(queryLanguageProvider.getSupportedLanguages(null), VIRTUAL_PRODUCT_QUERY_LANGUAGE));
 
