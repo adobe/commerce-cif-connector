@@ -44,6 +44,7 @@ import com.google.gson.Gson;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class GraphqlDataServiceImplTest {
@@ -95,6 +96,17 @@ public class GraphqlDataServiceImplTest {
         assertTrue(product instanceof ConfigurableProduct);
         ConfigurableProduct configurableProduct = (ConfigurableProduct) product;
         assertEquals(15, configurableProduct.getVariants().size());
+
+        assertNull(dataService.getProductBySku(null));
+    }
+
+    @Test
+    public void testNoProductBySku() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_OK);
+        assertNull(dataService.getProductBySku(SKU));
+
+        // This would fail if the product was not propely cached because the mocked HTTP response was already consumed
+        assertNull(dataService.getProductBySku(SKU));
     }
 
     @Test
