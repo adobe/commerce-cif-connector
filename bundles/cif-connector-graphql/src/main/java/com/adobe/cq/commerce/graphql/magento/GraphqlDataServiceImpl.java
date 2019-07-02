@@ -17,6 +17,7 @@ package com.adobe.cq.commerce.graphql.magento;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -67,8 +68,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     private GraphqlDataServiceConfiguration configuration;
 
     // We maintain some caches to speed up all lookups
-    private LoadingCache<String, ProductInterface> productCache;
-    private LoadingCache<Integer, List<ProductInterface>> categoryCache;
+    private LoadingCache<String, Optional<ProductInterface>> productCache;
+    private LoadingCache<Integer, Optional<List<ProductInterface>>> categoryCache;
 
     protected Map<String, GraphqlClient> clients = new ConcurrentHashMap<>();
 
@@ -127,14 +128,18 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     @Override
     public ProductInterface getProductBySku(String sku) {
+        if (sku == null) {
+            return null;
+        }
+
         try {
-            return productCache.get(sku);
+            return productCache.get(sku).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private ProductInterface getProductBySkuImpl(String sku) {
+    private Optional<ProductInterface> getProductBySkuImpl(String sku) {
 
         LOGGER.debug("Trying to fetch product " + sku);
 
@@ -156,7 +161,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         LOGGER.debug("Fetched product " + (product != null ? product.getName() : null));
 
-        return product;
+        return Optional.ofNullable(product);
     }
 
     @Override
@@ -232,13 +237,13 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     @Override
     public List<ProductInterface> getCategoryProducts(Integer categoryId) {
         try {
-            return categoryCache.get(categoryId);
+            return categoryCache.get(categoryId).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<ProductInterface> getCategoryProductsImpl(Integer categoryId) {
+    private Optional<List<ProductInterface>> getCategoryProductsImpl(Integer categoryId) {
 
         LOGGER.debug("Trying to fetch products for category " + categoryId);
 
@@ -261,10 +266,10 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Populate the products cache
         for (ProductInterface product : products) {
-            productCache.put(product.getSku(), product);
+            productCache.put(product.getSku(), Optional.of(product));
         }
 
-        return products;
+        return Optional.ofNullable(products);
     }
 
     public GraphqlDataServiceConfiguration getConfiguration() {
