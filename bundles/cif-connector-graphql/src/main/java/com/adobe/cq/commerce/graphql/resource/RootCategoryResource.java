@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceWrapper;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.wrappers.DeepReadValueMapDecorator;
 
 import com.adobe.cq.commerce.common.ValueMapDecorator;
 
@@ -58,7 +59,7 @@ class RootCategoryResource extends ResourceWrapper {
         map.put(PN_COMMERCE_TYPE, CATEGORY);
         map.put(CIF_ID, rootCategoryId);
 
-        return new ValueMapDecorator(Collections.unmodifiableMap(map));
+        return new DeepReadValueMapDecorator(this, new ValueMapDecorator(Collections.unmodifiableMap(map)));
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.SyntheticResource;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.wrappers.DeepReadValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 
 import com.adobe.cq.commerce.api.CommerceConstants;
@@ -63,7 +64,7 @@ class CategoryResource extends SyntheticResource {
         } else {
             map.put(JcrConstants.JCR_TITLE, MAGENTO_GRAPHQL_PROVIDER);
         }
-        values = new ValueMapDecorator(map);
+        values = new DeepReadValueMapDecorator(this, new ValueMapDecorator(map));
     }
 
     @Override

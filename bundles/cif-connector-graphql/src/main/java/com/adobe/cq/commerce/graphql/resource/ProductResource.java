@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.SyntheticResource;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.wrappers.DeepReadValueMapDecorator;
 
 import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.api.Product;
@@ -93,7 +94,7 @@ class ProductResource extends SyntheticResource {
 
         map.put(CommerceConstants.PN_COMMERCE_TYPE, activeVariantSku != null ? VARIANT : PRODUCT);
 
-        values = new ValueMapDecorator(map);
+        values = new DeepReadValueMapDecorator(this, new ValueMapDecorator(map));
     }
 
     private Date convertToDate(String magentoDate) {
