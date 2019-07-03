@@ -134,6 +134,10 @@ public class GraphqlResourceProviderTest {
         provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
         when(resourceResolver.getResource(any())).then(invocationOnMock -> {
             String path = (String) invocationOnMock.getArguments()[0];
+            if (path.endsWith("/.")) {
+                path = path.substring(0, path.length() - 2);
+            }
+
             return provider.getResource(resolveContext, path, null, null);
         });
     }
