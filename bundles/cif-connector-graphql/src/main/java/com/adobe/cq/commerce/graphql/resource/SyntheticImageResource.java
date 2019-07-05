@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.SyntheticResource;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.wrappers.DeepReadValueMapDecorator;
 
 import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.day.cq.commons.DownloadResource;
@@ -44,7 +45,7 @@ public class SyntheticImageResource extends ImageResource {
             {
                 Map<String, Object> values = new HashMap<>();
                 values.put(DownloadResource.PN_REFERENCE, url);
-                valueMap = new ValueMapDecorator(values);
+                valueMap = new DeepReadValueMapDecorator(this, new ValueMapDecorator(values));
             }
 
             @Override

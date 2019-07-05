@@ -17,19 +17,19 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.1.3-SNAPSHOT</version>
+        <version>0.1.3</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cif-connector-graphql</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
     
     <name>CIF Connector - GraphQL Bundle</name>
     <description>CIF GraphQL Connector for AEM Commerce authoring</description>
     <url>https://github.com/adobe/commerce-cif-connector/bundles/cif-connector-graphql</url>
-    
+
     <scm>
         <connection>scm:git:https://github.com/adobe/commerce-cif-connector</connection>
         <developerConnection>scm:git:git@github.com:adobe/commerce-cif-connector.git</developerConnection>
@@ -171,7 +171,7 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>magento-graphql</artifactId>
-            <version>2.0.0-magento231</version>
+            <version>3.0.0-magento232</version>
             <scope>provided</scope>
         </dependency>
 
@@ -255,6 +255,13 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.api</artifactId>
+            <version>2.20.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     
