@@ -12,24 +12,24 @@
  *
  ******************************************************************************/
 
-package libs.commerce.gui.components.common.cifproductfield.datasources.children;
+package com.adobe.cq.commerce.gui.components.common.cifproductfield;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
+import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.functors.FalsePredicate;
+import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.collections.iterators.FilterIterator;
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.jackrabbit.JcrConstants;
@@ -42,6 +42,7 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.osgi.service.component.annotations.Component;
 
 import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
 import com.adobe.granite.ui.components.Config;
@@ -52,14 +53,53 @@ import com.adobe.granite.ui.components.ds.AbstractDataSource;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.EmptyDataSource;
 
-public class children extends SlingSafeMethodsServlet {
+@Component(
+    service = Servlet.class,
+    name = "CIFProductFieldChildrenDataSourceServlet",
+    immediate = true,
+    property = {
+        "sling.servlet.resourceTypes=commerce/gui/components/common/cifproductfield/datasources/children",
+        "sling.servlet.methods=GET"
+    })
+public class ChildrenDataSourceServlet extends SlingSafeMethodsServlet {
+    enum Filter implements Predicate {
+        product(PRODUCT_PREDICATE),
+        folderOrProduct(FOLDER_PREDICATE, PRODUCT_PREDICATE),
+        folderOrProductOrVariant(FOLDER_PREDICATE, PRODUCT_PREDICATE, VARIANT_PREDICATE);
 
-    private static final String FILTER_PRODUCT = "product";
-    private static final String FILTER_FOLDER_OR_PRODUCT = "folderOrProduct";
-    private static final String FILTER_FOLDER_OR_PRODUCT_OR_VARIANT = "folderOrProductOrVariant";
+        private final Predicate predicate;
 
-    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
-        throws ServletException, IOException {
+        Filter(Predicate... predicates) {
+            Predicate acc = FalsePredicate.INSTANCE;
+            for (Predicate p : predicates) {
+                acc = new OrPredicate(acc, p);
+            }
+            this.predicate = acc;
+        }
+
+        @Override
+        public boolean evaluate(Object object) {
+            return predicate.evaluate(object);
+        }
+
+        private static Predicate getFilter(String filter) {
+            if (filter == null) {
+                return Filter.folderOrProduct;
+            }
+
+            try {
+                return Filter.valueOf(filter);
+            } catch (IllegalArgumentException x) {
+                return Filter.folderOrProduct;
+            }
+        }
+    }
+
+    private static Predicate FOLDER_PREDICATE = createFolderPredicate();
+    private static Predicate PRODUCT_PREDICATE = createProductPredicate("product");
+    private static Predicate VARIANT_PREDICATE = createProductPredicate("variant");
+
+    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
 
         final SlingScriptHelper sling = getScriptHelper(request);
 
@@ -105,38 +145,29 @@ public class children extends SlingSafeMethodsServlet {
             final String itemRT = dsCfg.get("itemResourceType", String.class);
             final String filter = ex.getString(dsCfg.get("filter", String.class));
 
-            final Collection<Predicate> predicates = new ArrayList<Predicate>(2);
-            predicates.add(createPredicate(filter));
+            final Collection<Predicate> predicates = new ArrayList<>(2);
+            predicates.add(Filter.getFilter(filter));
 
             if (searchName != null) {
                 final Pattern searchNamePattern = Pattern.compile(Pattern.quote(searchName), Pattern.CASE_INSENSITIVE);
-
-                predicates.add(new Predicate() {
-                    @Override
-                    public boolean evaluate(Object o) {
-                        Resource r = (Resource) o;
-                        return searchNamePattern.matcher(r.getName()).lookingAt();
-                    }
-                });
+                predicates.add(o -> searchNamePattern.matcher(((Resource) o).getName()).lookingAt());
             }
 
             final Predicate predicate = PredicateUtils.allPredicate(predicates);
             final Transformer transformer = createTransformer(itemRT, predicate);
 
             final List<Resource> list;
-            if (FILTER_PRODUCT.equals(filter)) {
+            if (Filter.product.name().equals(filter)) {
                 class ProductFinder extends AbstractResourceVisitor {
-                    private ProductPredicate productPredicate = new ProductPredicate();
-                    List<Resource> products = new ArrayList<Resource>();
+                    private List<Resource> products = new ArrayList<>();
 
                     @Override
                     protected void visit(Resource res) {
-                        if (productPredicate.evaluate(res)) {
+                        if (Filter.product.evaluate(res)) {
                             products.add(res);
                         }
                     }
                 }
-                ;
                 ProductFinder productFinder = new ProductFinder();
                 productFinder.accept(parent);
                 list = IteratorUtils.toList(new FilterIterator(productFinder.products.iterator(), predicate));
@@ -148,13 +179,9 @@ public class children extends SlingSafeMethodsServlet {
             DataSource datasource = new AbstractDataSource() {
 
                 public Iterator<Resource> iterator() {
-                    Collections.sort(list, new Comparator<Resource>() {
-                        public int compare(Resource o1, Resource o2) {
-                            return o1.getName().compareTo(o2.getName());
-                        }
-                    });
+                    list.sort(Comparator.comparing(Resource::getName));
 
-                    return new TransformIterator(new PagingIterator<Resource>(list.iterator(), offset, limit), transformer);
+                    return new TransformIterator(new PagingIterator<>(list.iterator(), offset, limit), transformer);
                 }
             };
 
@@ -162,19 +189,6 @@ public class children extends SlingSafeMethodsServlet {
         }
 
         request.setAttribute(DataSource.class.getName(), ds);
-    }
-
-    private static Predicate createPredicate(String filter) {
-        if (FILTER_PRODUCT.equals(filter)) {
-            return new ProductPredicate();
-        } else if (FILTER_FOLDER_OR_PRODUCT.equals(filter)) {
-            return new FolderOrProductPredicate();
-        } else if (FILTER_FOLDER_OR_PRODUCT_OR_VARIANT.equals(filter)) {
-            return new FolderOrProductOrVariantPredicate();
-        } else {
-            //default
-            return new FolderOrProductPredicate();
-        }
     }
 
     private static Transformer createTransformer(final String itemRT, final Predicate predicate) {
@@ -200,78 +214,31 @@ public class children extends SlingSafeMethodsServlet {
         return bindings.getSling();
     }
 
-    private static class ProductPredicate implements Predicate {
-        @Override
-        public boolean evaluate(Object object) {
+    private static Predicate createFolderPredicate() {
+        return object -> {
+            Resource resource = (Resource) object;
+            return resource.isResourceType("sling:Folder")
+                || resource.isResourceType("sling:OrderedFolder")
+                || resource.isResourceType(JcrConstants.NT_FOLDER);
+        };
+    }
+
+    private static Predicate createProductPredicate(String commerceType) {
+        return object -> {
             final Resource resource = (Resource) object;
             ValueMap valueMap = resource.getValueMap();
 
-            if (!valueMap.containsKey("sling:resourceType") || !valueMap.containsKey("cq:commerceType"))
-                return false;
-
-            //product
-            final boolean ret = resource.isResourceType("commerce/components/product") &&
-                "product".equals(valueMap.get("cq:commerceType", String.class));
-
-            return ret;
-        }
+            return valueMap.containsKey("sling:resourceType") &&
+                resource.isResourceType("commerce/components/product") &&
+                valueMap.containsKey("cq:commerceType") &&
+                commerceType.equals(valueMap.get("cq:commerceType", String.class));
+        };
     }
 
-    private static class VariantPredicate implements Predicate {
-        @Override
-        public boolean evaluate(Object object) {
-            final Resource resource = (Resource) object;
-            ValueMap valueMap = resource.getValueMap();
-
-            if (!valueMap.containsKey("sling:resourceType") || !valueMap.containsKey("cq:commerceType"))
-                return false;
-
-            //product
-            final boolean ret = resource.isResourceType("commerce/components/product") &&
-                "variant".equals(valueMap.get("cq:commerceType", String.class));
-
-            return ret;
-        }
-    }
-
-    private static class FolderOrProductPredicate implements Predicate {
-        private final ProductPredicate productPredicate = new ProductPredicate();
-
-        @Override
-        public boolean evaluate(Object object) {
-            final Resource resource = (Resource) object;
-
-            if (resource.isResourceType("sling:Folder")
-                || resource.isResourceType("sling:OrderedFolder")
-                || resource.isResourceType(JcrConstants.NT_FOLDER))
-                return true;
-
-            return productPredicate.evaluate(object);
-        }
-    }
-
-    private static class FolderOrProductOrVariantPredicate implements Predicate {
-        private final ProductPredicate productPredicate = new ProductPredicate();
-        private final VariantPredicate variantPredicate = new VariantPredicate();
-
-        @Override
-        public boolean evaluate(Object object) {
-            final Resource resource = (Resource) object;
-
-            if (resource.isResourceType("sling:Folder")
-                || resource.isResourceType("sling:OrderedFolder")
-                || resource.isResourceType(JcrConstants.NT_FOLDER))
-                return true;
-
-            return productPredicate.evaluate(object) || variantPredicate.evaluate(object);
-        }
-    }
-
-    // TODO It can be extracted out to granite.ui.commons
     private static class PredicatedResourceWrapper extends ResourceWrapper {
         private Predicate predicate;
 
-        public PredicatedResourceWrapper(Resource resource, Predicate predicate) {
+        PredicatedResourceWrapper(Resource resource, Predicate predicate) {
             super(resource);
             this.predicate = predicate;
         }
@@ -290,19 +257,13 @@ public class children extends SlingSafeMethodsServlet {
         @SuppressWarnings("unchecked")
         @Override
         public Iterator<Resource> listChildren() {
-            return new TransformIterator(new FilterIterator(super.listChildren(), predicate), new Transformer() {
-                public Object transform(Object o) {
-                    return new PredicatedResourceWrapper((Resource) o, predicate);
-                }
-            });
+            return new TransformIterator(new FilterIterator(super.listChildren(), predicate), o -> new PredicatedResourceWrapper(
+                (Resource) o, predicate));
         }
 
         @Override
         public boolean hasChildren() {
-            if (!super.hasChildren()) {
-                return false;
-            }
-            return listChildren().hasNext();
+            return super.hasChildren() && listChildren().hasNext();
         }
     }
 }
