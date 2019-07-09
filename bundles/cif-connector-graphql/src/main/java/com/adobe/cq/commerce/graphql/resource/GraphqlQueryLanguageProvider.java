@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.spi.resource.provider.QueryLanguageProvider;
@@ -77,19 +78,31 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
         Integer limit = NumberUtils.createInteger(
             (queryParameters.get(LIMIT_PARAMETER) == null) ? "" : queryParameters.get(LIMIT_PARAMETER).toString());
 
-        // Convert offset and limit to current page. We use the limit as the "page size".
-        // We assume that offset % limit = 0
-        Integer currentPage = Integer.valueOf(1); // Magento paging starts with page 1
-        if (offset != null && limit != null && offset.intValue() > 0 && limit.intValue() > 0) {
-            currentPage = (offset.intValue() / limit.intValue()) + 1;
+        LOGGER.debug("Performing product search with '{}' (offset: {}, limit: {})", fulltext, offset, limit);
+
+        // Convert offset and limit to Magento page number and size
+        Pair<Integer, Integer> pagination = Pair.of(1, offset.intValue() + limit.intValue()); // Magento paging starts with page 1
+        if (offset != null && limit != null && offset.intValue() > 0 && limit.intValue() > 1) {
+            pagination = toMagentoPageNumberAndSize(offset, limit);
         }
 
-        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, currentPage, limit);
+        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, pagination.getLeft(), pagination.getRight());
+
+        // The Magento page might start before 'offset' and be bigger than 'limit', so we extract exactly what we need
+        int start = offset - ((pagination.getLeft() - 1) * pagination.getRight());
+        int end = start + limit;
+        if (start >= 0 && end <= products.size()) {
+            products = products.subList(start, end);
+        }
+
+        LOGGER.debug("Returning {} products", products.size());
+
         List<Resource> resources = new ArrayList<>();
         for (ProductInterface product : products) {
             List<CategoryInterface> categories = product.getCategories();
             if (categories != null && !categories.isEmpty()) {
-                for (CategoryInterface category : categories) {
+                CategoryInterface category = categories.stream().filter(c -> c.getUrlPath() != null).findFirst().orElse(null);
+                if (category != null) {
                     String path = resourceMapper.getRoot() + "/" + category.getUrlPath() + "/" + product.getSku();
                     resources.add(new ProductResource(ctx.getResourceResolver(), path, product));
                 }
@@ -100,6 +113,35 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
         }
 
         return resources.iterator();
+    }
+
+    /**
+     * This method calculates the best possible matching Magento page number and size that
+     * returns a range of items that "encompasses" the given offset and limit. The corresponding
+     * page might start before the <code>offset</code> and might contain more than <code>limit</code> products.
+     * This means that one might have to "re-extract" the right range of products from the page.
+     * 
+     * @param offset The range offset.
+     * @param limit The range limit.
+     * @return A page number/size pair encompassing the given range.
+     */
+    protected static Pair<Integer, Integer> toMagentoPageNumberAndSize(int offset, int limit) {
+        if (offset % limit == 0) {
+            return Pair.of((offset / limit) + 1, limit); // page number and size perfectly matches offset and limit
+        } else {
+            // Finds a Magento (page,size) that encompasses the AEM (offset,limit) range
+            // AEM (20,11) |------ offset ------|-- limit --|
+            // Mag. (2,16) |---- page 1 ----|---- page 2 ----|
+            int total = offset + limit;
+            for (int size = limit; size < total; size++) {
+                int min = offset - (offset % size);
+                int max = min + size;
+                if (min <= offset && max >= total) {
+                    return Pair.of((min / size) + 1, size);
+                }
+            }
+            return Pair.of(1, total); // Worst is one single page of size total
+        }
     }
 
     private String getFullText(Map<String, Object> queryParams) {
