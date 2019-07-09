@@ -66,7 +66,7 @@ public class GraphqlQueryLanguageProviderTest {
 
         queryLanguageProvider.findResources(null, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
 
-        // mock query has limit = 10 and offset = 0 --> so we expect page 1 and limit 20
+        // mock query has limit = 10 and offset = 0 --> so we expect page 1 and limit 10
         Mockito.verify(graphqlDataService, Mockito.times(1)).searchProducts("gloves", Integer.valueOf(1), Integer.valueOf(10));
     }
 
