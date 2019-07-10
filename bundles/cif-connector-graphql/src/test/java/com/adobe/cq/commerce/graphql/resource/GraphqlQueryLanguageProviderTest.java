@@ -15,35 +15,48 @@
 package com.adobe.cq.commerce.graphql.resource;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.graphql.testing.Utils;
+import com.adobe.cq.commerce.magento.graphql.ProductInterface;
+import com.adobe.cq.commerce.magento.graphql.Query;
+import com.adobe.cq.commerce.magento.graphql.gson.Error;
+import com.adobe.cq.commerce.magento.graphql.gson.QueryDeserializer;
+import com.google.common.collect.Iterators;
+import com.google.gson.reflect.TypeToken;
 
 import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.VIRTUAL_PRODUCT_QUERY_LANGUAGE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class GraphqlQueryLanguageProviderTest {
 
     ResourceMapper<?> resourceMapper;
     GraphqlDataService graphqlDataService;
     GraphqlQueryLanguageProvider<?> queryLanguageProvider;
+    ResolveContext ctx;
 
     @Before
     public void setUp() throws Exception {
         resourceMapper = Mockito.mock(ResourceMapper.class);
         graphqlDataService = Mockito.mock(GraphqlDataService.class);
+        ctx = Mockito.mock(ResolveContext.class);
         queryLanguageProvider = new GraphqlQueryLanguageProvider<>(resourceMapper, graphqlDataService);
-
-        Mockito.when(graphqlDataService.searchProducts(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Collections.emptyList());
     }
 
     @Test
@@ -51,23 +64,53 @@ public class GraphqlQueryLanguageProviderTest {
         // The search request coming from com.adobe.cq.commerce.impl.omnisearch.ProductsOmniSearchHandler is serialized in JSON
         String jsonRequest = getResource("commerce-products-omni-search-request.json");
 
-        queryLanguageProvider.findResources(null, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
+        Mockito.when(graphqlDataService.searchProducts(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Collections.emptyList());
+        queryLanguageProvider.findResources(ctx, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
 
-        // mock query has limit = 20 and offset = 20 --> so we expect page 2 and limit 20
+        // mock query has limit = 20 and offset = 20 --> so we expect page 2 and size 20
         Mockito.verify(graphqlDataService, Mockito.times(1)).searchProducts("gloves", Integer.valueOf(2), Integer.valueOf(20));
 
-        assertNull(queryLanguageProvider.findResources(null, jsonRequest, "whatever"));
+        assertNull(queryLanguageProvider.findResources(ctx, jsonRequest, "whatever"));
     }
 
     @Test
-    public void testQueryLanguageProvider2() throws IOException {
+    public void testQueryLanguageProviderWithProducts() throws IOException {
         // The search request coming from com.adobe.cq.commerce.impl.omnisearch.ProductsOmniSearchHandler is serialized in JSON
         String jsonRequest = getResource("commerce-products-omni-search-request2.json");
 
-        queryLanguageProvider.findResources(null, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
+        String json = getResource("magento-graphql-simple-products.json");
+        Type type = TypeToken.getParameterized(GraphqlResponse.class, Query.class, Error.class).getType();
+        GraphqlResponse<Query, Error> response = QueryDeserializer.getGson().fromJson(json, type);
+        List<ProductInterface> products = response.getData().getProducts().getItems();
 
-        // mock query has limit = 10 and offset = 0 --> so we expect page 1 and limit 10
-        Mockito.verify(graphqlDataService, Mockito.times(1)).searchProducts("gloves", Integer.valueOf(1), Integer.valueOf(10));
+        Mockito.when(graphqlDataService.searchProducts(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(products);
+        Iterator<Resource> it = queryLanguageProvider.findResources(ctx, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
+
+        // The mock query has limit = 2 and offset = 4 --> so we expect page 3 and size 2
+        Mockito.verify(graphqlDataService, Mockito.times(1)).searchProducts("gloves", Integer.valueOf(3), Integer.valueOf(2));
+
+        // The JSON response contains 3 products but the query requested 2 products
+        assertEquals(2, Iterators.size(it));
+    }
+
+    @Test
+    public void testQueryLanguageProviderDefaultPagination() throws IOException {
+        // The search request coming from com.adobe.cq.commerce.impl.omnisearch.ProductsOmniSearchHandler is serialized in JSON
+        String jsonRequest = getResource("commerce-products-omni-search-request3.json");
+
+        String json = getResource("magento-graphql-simple-products.json");
+        Type type = TypeToken.getParameterized(GraphqlResponse.class, Query.class, Error.class).getType();
+        GraphqlResponse<Query, Error> response = QueryDeserializer.getGson().fromJson(json, type);
+        List<ProductInterface> products = response.getData().getProducts().getItems();
+
+        Mockito.when(graphqlDataService.searchProducts(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(products);
+        Iterator<Resource> it = queryLanguageProvider.findResources(ctx, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
+
+        // No limit and offset in query --> so we expect page 1 and size 20
+        Mockito.verify(graphqlDataService, Mockito.times(1)).searchProducts("gloves", Integer.valueOf(1), Integer.valueOf(20));
+
+        // The JSON response contains 3 products and the query requested 20 products
+        assertEquals(3, Iterators.size(it));
     }
 
     @Test

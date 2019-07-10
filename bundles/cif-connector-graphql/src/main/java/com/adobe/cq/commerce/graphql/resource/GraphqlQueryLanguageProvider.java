@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
@@ -73,18 +72,15 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
         Map<String, Object> queryParameters = stringToMap(query);
 
         String fulltext = getFullText(queryParameters);
-        Integer offset = NumberUtils.createInteger(
-            (queryParameters.get(OFFSET_PARAMETER) == null) ? "" : queryParameters.get(OFFSET_PARAMETER).toString());
-        Integer limit = NumberUtils.createInteger(
-            (queryParameters.get(LIMIT_PARAMETER) == null) ? "" : queryParameters.get(LIMIT_PARAMETER).toString());
+        Integer offset = queryParameters.containsKey(OFFSET_PARAMETER) ? Integer.valueOf(queryParameters.get(OFFSET_PARAMETER).toString())
+            : Integer.valueOf(0);
+        Integer limit = queryParameters.containsKey(LIMIT_PARAMETER) ? Integer.valueOf(queryParameters.get(LIMIT_PARAMETER).toString())
+            : Integer.valueOf(20);
 
         LOGGER.debug("Performing product search with '{}' (offset: {}, limit: {})", fulltext, offset, limit);
 
         // Convert offset and limit to Magento page number and size
-        Pair<Integer, Integer> pagination = Pair.of(1, offset.intValue() + limit.intValue()); // Magento paging starts with page 1
-        if (offset != null && limit != null && offset.intValue() > 0 && limit.intValue() > 1) {
-            pagination = toMagentoPageNumberAndSize(offset, limit);
-        }
+        Pair<Integer, Integer> pagination = toMagentoPageNumberAndSize(offset, limit);
 
         List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, pagination.getLeft(), pagination.getRight());
 
