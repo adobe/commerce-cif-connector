@@ -21,7 +21,7 @@
     Product card
 */-->
 <coral-card data-sly-test.product="${helper.product}" data-foundation-collection-item-id="${resource.path}"
-        data-sly-attribute.class="${helper.product && 'cq-commerce-picker-selectable'}"
+        data-sly-attribute.class="${helper.product && 'cq-commerce-picker-selectable'} ${cifhelper.drillDown && 'foundation-collection-navigator'}"
         data-path="${resource.path}" data-type="product" data-timeline="true" data-title="${helper.title}">
     <coral-card-asset>
         <img data-sly-test="${helper.cardImageUrl}" src="${helper.cardImageUrl}"/>
