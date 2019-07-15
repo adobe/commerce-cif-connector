@@ -219,6 +219,13 @@
             <artifactId>org.apache.felix.http.servlet-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- AEM Uber JAR -->
         <dependency>
             <groupId>com.adobe.aem</groupId>

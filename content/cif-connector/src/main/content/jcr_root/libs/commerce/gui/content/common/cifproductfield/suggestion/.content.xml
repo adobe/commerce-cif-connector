@@ -5,7 +5,7 @@
     query="${param.query}">
     <datasource
         jcr:primaryType="nt:unstructured"
-        sling:resourceType="commerce/gui/components/common/productfield/datasources/children"
+        sling:resourceType="commerce/gui/components/common/cifproductfield/datasources/children"
         filter="${param.filter}"
         limit="${empty requestPathInfo.selectors[1] ? &quot;10&quot; : requestPathInfo.selectors[1]}"
         offset="${requestPathInfo.selectors[0]}"

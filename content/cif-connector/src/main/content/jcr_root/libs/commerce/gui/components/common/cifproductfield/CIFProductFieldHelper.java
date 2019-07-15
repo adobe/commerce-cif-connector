@@ -73,4 +73,7 @@ public class CIFProductFieldHelper extends WCMUsePojo {
         return getProperties().get("identifier", String.class);
     }
 
+    public boolean isDrillDown() {
+        return getResource().hasChildren();
+    }
 }
