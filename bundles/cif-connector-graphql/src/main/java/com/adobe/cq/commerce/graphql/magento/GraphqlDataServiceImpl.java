@@ -45,11 +45,13 @@ import com.adobe.cq.commerce.magento.graphql.FilterTypeInput;
 import com.adobe.cq.commerce.magento.graphql.Operations;
 import com.adobe.cq.commerce.magento.graphql.ProductFilterInput;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
+import com.adobe.cq.commerce.magento.graphql.ProductSortInput;
 import com.adobe.cq.commerce.magento.graphql.Products;
 import com.adobe.cq.commerce.magento.graphql.ProductsQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.Query;
 import com.adobe.cq.commerce.magento.graphql.QueryQuery.CategoryArgumentsDefinition;
 import com.adobe.cq.commerce.magento.graphql.QueryQuery.ProductsArgumentsDefinition;
+import com.adobe.cq.commerce.magento.graphql.SortEnum;
 import com.adobe.cq.commerce.magento.graphql.gson.Error;
 import com.adobe.cq.commerce.magento.graphql.gson.QueryDeserializer;
 import com.google.common.cache.CacheBuilder;
@@ -171,12 +173,13 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     private List<ProductInterface> searchProductsImpl(String text, Integer currentPage, Integer pageSize) {
 
-        LOGGER.debug("Performing product search with '" + text + "'");
+        LOGGER.debug("Performing product search with '{}' (page: {}, size: {})", text, currentPage, pageSize);
 
         // Search parameters
         ProductsArgumentsDefinition searchArgs;
         if (StringUtils.isNotEmpty(text)) {
-            searchArgs = s -> s.search(text).currentPage(currentPage).pageSize(pageSize);
+            ProductSortInput sortInput = new ProductSortInput().setSku(SortEnum.ASC);
+            searchArgs = s -> s.search(text).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
         } else {
             // If the search is empty, we perform a "dummy" search (sku != null) that matches all products
             FilterTypeInput input = new FilterTypeInput().setNotnull("");
@@ -194,6 +197,11 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         List<ProductInterface> products = query.getProducts().getItems();
 
         LOGGER.debug("Fetched " + (products != null ? products.size() : null) + " products");
+
+        // Populate the products cache
+        for (ProductInterface product : products) {
+            productCache.put(product.getSku(), Optional.of(product));
+        }
 
         return products;
     }

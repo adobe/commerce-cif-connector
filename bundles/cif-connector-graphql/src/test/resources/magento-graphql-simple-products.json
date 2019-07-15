@@ -1,0 +1,107 @@
+{
+  "data": {
+    "products": {
+      "total_count": 3,
+      "items": [
+        {
+          "__typename": "SimpleProduct",
+          "id": 1,
+          "sku": "24-MB01",
+          "name": "Joust Duffle Bag",
+          "description": {
+            "html": "The sporty Joust Duffle Bag can't be beat"
+          },
+          "image": {
+            "url": "http://hostname/pub/media/catalog/product/mb01-blue-0.jpg"
+          },
+          "thumbnail": {
+            "url": "http://hostname/pub/media/catalog/product/mb01-blue-0.jpg"
+          },
+          "url_key": "joust-duffle-bag",
+          "updated_at": "2019-05-21 11:54:47",
+          "created_at": "2019-05-21 11:54:47",
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "currency": "USD",
+                "value": 34
+              }
+            }
+          },
+          "categories": [
+            {
+              "__typename": "CategoryTree",
+              "url_path": "coats"
+            },
+            {
+              "__typename": "CategoryTree",
+              "url_path": "coats/men"
+            }
+          ]
+        },
+        {
+          "__typename": "SimpleProduct",
+          "id": 1,
+          "sku": "24-MB02",
+          "name": "Joust Duffle Bag",
+          "description": {
+            "html": "The sporty Joust Duffle Bag can't be beat"
+          },
+          "image": {
+            "url": "http://hostname/pub/media/catalog/product/mb01-blue-0.jpg"
+          },
+          "thumbnail": {
+            "url": "http://hostname/pub/media/catalog/product/mb01-blue-0.jpg"
+          },
+          "url_key": "joust-duffle-bag",
+          "updated_at": "2019-05-21 11:54:47",
+          "created_at": "2019-05-21 11:54:47",
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "currency": "USD",
+                "value": 34
+              }
+            }
+          },
+          "categories": [
+            {
+              "__typename": "CategoryTree",
+              "url_path": null
+            },
+            {
+              "__typename": "CategoryTree",
+              "url_path": "coats/men"
+            }
+          ]
+        },
+        {
+          "__typename": "SimpleProduct",
+          "id": 1,
+          "sku": "24-MB03",
+          "name": "Joust Duffle Bag",
+          "description": {
+            "html": "The sporty Joust Duffle Bag can't be beat"
+          },
+          "image": {
+            "url": "http://hostname/pub/media/catalog/product/mb01-blue-0.jpg"
+          },
+          "thumbnail": {
+            "url": "http://hostname/pub/media/catalog/product/mb01-blue-0.jpg"
+          },
+          "url_key": "joust-duffle-bag",
+          "updated_at": "2019-05-21 11:54:47",
+          "created_at": "2019-05-21 11:54:47",
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "currency": "USD",
+                "value": 34
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
