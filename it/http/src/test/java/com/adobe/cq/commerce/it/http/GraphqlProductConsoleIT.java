@@ -262,4 +262,33 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Assert.assertEquals(JCR_BASE_PATH + "/men/coats/meskwielt", elements.attr("data-path"));
     }
 
+    @Test
+    public void testOmnisearch() throws Exception {
+
+        // Prepare
+        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(SEARCH_PRODUCTS_FULL_TEXT.build());
+        mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
+
+        List<NameValuePair> params = URLParameterBuilder.create()
+            .add("p.guessTotal", "1000")
+            .add("fulltext", "coats")
+            .add("path", "/var/commerce/products")
+            .add("property", "cq:commerceType")
+            .add("property.value", "product")
+            .add("_", "1562672338517")
+            .getList();
+
+        // Perform
+        SlingHttpResponse response = cAuthorAuthor.doGet("/mnt/overlay/granite/ui/content/shell/omnisearch/searchresults.html", params,
+            NO_CACHE_HEADERS, SC_OK);
+
+        // Verify
+        mockServerRule.verify();
+        Document doc = Jsoup.parse(response.getContent());
+
+        Elements elements = doc.select("coral-card[data-path^=" + JCR_BASE_PATH + "]");
+        Assert.assertEquals(1, elements.size());
+        Assert.assertEquals(JCR_BASE_PATH + "/men/coats/meskwielt", elements.attr("data-path"));
+    }
 }
