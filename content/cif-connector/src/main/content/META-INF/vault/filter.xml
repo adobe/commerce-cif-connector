@@ -17,6 +17,10 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <workspaceFilter version="1.0">
+    <filter root="/libs/commerce/config">
+        <include pattern="/libs/commerce/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-cif-omnisearch"/>
+    </filter>
+
     <filter root="/libs/cif"/>
     <filter root="/libs/commerce/gui/components/common/cifproductfield"/>
     <filter root="/libs/commerce/gui/components/common/cifcategoryfield"/>

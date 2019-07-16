@@ -14,6 +14,7 @@
 
 package com.adobe.cq.commerce.it.http;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -34,6 +35,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.adobe.cq.testing.mockserver.RequestResponseRule;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static com.adobe.cq.testing.mockserver.MockRequest.request;
 import static com.adobe.cq.testing.mockserver.MockResponse.response;
@@ -290,5 +293,47 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Elements elements = doc.select("coral-card[data-path^=" + JCR_BASE_PATH + "]");
         Assert.assertEquals(1, elements.size());
         Assert.assertEquals(JCR_BASE_PATH + "/men/coats/meskwielt", elements.attr("data-path"));
+    }
+
+    @Test
+    public void testOmnisearchSuggestions() throws Exception {
+
+        // Prepare
+        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(SEARCH_PRODUCTS_FULL_TEXT.build());
+        mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
+
+        List<NameValuePair> params = URLParameterBuilder.create()
+            .add("p.guessTotal", "1000")
+            .add("fulltext", "coats")
+            .add("path", "/var/commerce/products")
+            .add("property", "cq:commerceType")
+            .add("property.value", "product")
+            .add("location", "product")
+            .add("_", "1562672338517")
+            .getList();
+
+        // Perform
+        SlingHttpResponse response = cAuthorAuthor.doGet("/libs/granite/omnisearch", params,
+            NO_CACHE_HEADERS, SC_OK);
+
+        // Verify
+        mockServerRule.verify();
+
+        // the JSON result must contain the suggestion "El gordo down jacket"
+        JsonNode jsonNode = new ObjectMapper().readTree(response.getContent());
+        JsonNode suggestions = jsonNode.get("suggestions");
+        Assert.assertEquals(2, suggestions.size());
+
+        boolean hasJacket = false;
+        Iterator<JsonNode> elements = suggestions.elements();
+        while (elements.hasNext()) {
+            JsonNode suggestion = elements.next().get("suggestion");
+            if (suggestion != null && suggestion.asText().equals("El gordo down jacket")) {
+                hasJacket = true;
+                break;
+            }
+        }
+        Assert.assertTrue(hasJacket);
     }
 }
