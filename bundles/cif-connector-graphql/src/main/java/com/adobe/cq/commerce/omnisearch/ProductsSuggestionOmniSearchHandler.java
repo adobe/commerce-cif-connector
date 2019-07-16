@@ -86,7 +86,7 @@ public class ProductsSuggestionOmniSearchHandler extends AbstractOmniSearchHandl
         target = "(component.name=com.adobe.cq.commerce.impl.omnisearch.ProductsOmniSearchHandler)")
     private OmniSearchHandler productsOmniSearchHandler;
 
-    // This is never used, it id declared to "enforce" the dependency to Commerce Core
+    // This is never used, it is declared to "enforce" the dependency to Commerce Core
     // so that this bundle is always loaded or restarted AFTER the Commerce Core bundle
     // so we properly override the 'product' omnisearch handler
     @Reference

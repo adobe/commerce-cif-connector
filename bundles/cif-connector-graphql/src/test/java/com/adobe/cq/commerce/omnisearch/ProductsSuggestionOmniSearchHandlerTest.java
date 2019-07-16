@@ -62,6 +62,7 @@ public class ProductsSuggestionOmniSearchHandlerTest {
         suggestionHandler.getResults(resolver, params, 20, 10);
 
         // Search is delegated to the legacy Commerce Core ProductsSuggestionOmniSearchHandler
+        Assert.assertEquals("product", suggestionHandler.getID());
         Mockito.verify(productsOmniSearchHandler).getResults(resolver, params, 20, 10);
     }
 
@@ -91,6 +92,8 @@ public class ProductsSuggestionOmniSearchHandlerTest {
             .thenReturn(Collections.singletonList((Resource) cifProduct).iterator());
 
         suggestionHandler.activate(null);
+        suggestionHandler.onEvent(null);
+
         Query suggestionQuery = suggestionHandler.getSuggestionQuery(resolver, "coats");
         QueryResult queryResult = suggestionQuery.execute();
         RowIterator rows = queryResult.getRows();
@@ -118,6 +121,8 @@ public class ProductsSuggestionOmniSearchHandlerTest {
         Assert.assertNull(row.getNode("whatever"));
         Assert.assertEquals(0d, row.getScore(), 0);
         Assert.assertEquals(0d, row.getScore("whatever"), 0);
+
+        suggestionHandler.deactivate(null);
     }
 
     @Test
@@ -133,9 +138,11 @@ public class ProductsSuggestionOmniSearchHandlerTest {
         Mockito.doReturn(jcrQuery).when(suggestionHandler).getSuperSuggestionQuery(resolver, "coats");
         Mockito.doReturn(resolver).when(suggestionHandler).getResourceResolver();
 
-        Mockito.when(resolver.findResources(Mockito.any(), Mockito.any())).thenReturn(Collections.emptyListIterator());
+        Mockito.when(resolver.findResources(Mockito.any(), Mockito.any())).thenThrow(new RuntimeException());
 
+        suggestionHandler.onEvent(null);
         suggestionHandler.activate(null);
+
         Query suggestionQuery = suggestionHandler.getSuggestionQuery(resolver, "coats");
         QueryResult queryResult = suggestionQuery.execute();
         RowIterator rows = queryResult.getRows();
