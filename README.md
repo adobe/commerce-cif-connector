@@ -101,7 +101,8 @@ The category picker field supports the following optional properties:
 * `rootPath` - configure the root path of the virtual catalog data tree to be used (default = `/var/commerce/products`)
 * `multiple` (true, false) - allows to select one or multiple categories (default = false)
 * `emptyText` - to configure the empty text value of the picker field
-* `selectionId`(id, path) - allows to choose the category attribute to be returned by the picker (default = id)
+* `selectionId`(id, path, sku, slug) - allows to choose the category attribute to be returned by the picker (default = id)
+* `filter`(folderOrProduct, folderOrProductOrVariant) - filters the content to be rendered by the picker while navigating the product tree. folderOrProduct - renders folders and products. folderOrProductOrVariant - renders folders, product and product variants. If a product or product variant is rendered it becomes also selectable in the picker.  (default = folderOrProduct) 
  
 ## Building and installing from source
 
