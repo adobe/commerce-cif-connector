@@ -194,6 +194,9 @@
                     <groupId>org.apache.sling</groupId>
                     <artifactId>maven-sling-plugin</artifactId>
                     <version>2.1.10</version>
+                    <configuration>
+                        <slingUrl>http://${aem.host}:${aem.port}${aem.contextPath}/system/console</slingUrl>
+                    </configuration>
                 </plugin>
 
                 <plugin>
