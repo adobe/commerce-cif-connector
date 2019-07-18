@@ -41,6 +41,7 @@ For simplicity, we only provide the version requirements of the `all` package. I
 
 | CIF Connector All   | AEM 6.4 | AEM 6.5 | Magento | Java |
 |---------------------|---------|---------|---------|------|
+| 0.3.1-SNAPSHOT      | 6.4.4.0 | 6.5.0   | 2.3.2   | 1.8  |
 | 0.3.0               | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
 | 0.2.0               | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
 | 0.1.0               | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |

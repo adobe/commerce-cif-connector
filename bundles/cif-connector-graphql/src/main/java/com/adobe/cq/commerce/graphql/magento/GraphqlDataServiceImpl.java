@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.adobe.cq.commerce.graphql.client.GraphqlClient;
 import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
+import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.RequestOptions;
 import com.adobe.cq.commerce.graphql.resource.Constants;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
@@ -117,7 +118,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
                 .build(CacheLoader.from(id -> getCategoryProductsImpl(id)));
         }
 
-        requestOptions = new RequestOptions().withGson(QueryDeserializer.getGson());
+        requestOptions = new RequestOptions().withGson(QueryDeserializer.getGson()).withHttpMethod(HttpMethod.GET);
         if (!GraphqlDataServiceConfiguration.STORE_CODE_DEFAULT.equals(configuration.storeCode())) {
             Header storeHeader = new BasicHeader(Constants.STORE_HEADER, configuration.storeCode());
             requestOptions.withHeaders(Collections.singletonList(storeHeader));

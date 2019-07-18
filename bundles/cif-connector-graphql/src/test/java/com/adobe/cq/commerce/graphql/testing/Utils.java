@@ -16,6 +16,8 @@ package com.adobe.cq.commerce.graphql.testing;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -48,17 +50,32 @@ public class Utils {
 
         @Override
         public boolean matches(Object obj) {
-            if (!(obj instanceof HttpUriRequest) && !(obj instanceof HttpEntityEnclosingRequest)) {
+            if (!(obj instanceof HttpUriRequest)) {
                 return false;
             }
-            HttpEntityEnclosingRequest req = (HttpEntityEnclosingRequest) obj;
-            try {
-                String body = IOUtils.toString(req.getEntity().getContent(), StandardCharsets.UTF_8);
-                Gson gson = new Gson();
-                GraphqlRequest graphqlRequest = gson.fromJson(body, GraphqlRequest.class);
-                return graphqlRequest.getQuery().startsWith(startsWith);
-            } catch (Exception e) {
-                return false;
+
+            if (obj instanceof HttpEntityEnclosingRequest) {
+                // GraphQL query is in POST body
+                HttpEntityEnclosingRequest req = (HttpEntityEnclosingRequest) obj;
+                try {
+                    String body = IOUtils.toString(req.getEntity().getContent(), StandardCharsets.UTF_8);
+                    Gson gson = new Gson();
+                    GraphqlRequest graphqlRequest = gson.fromJson(body, GraphqlRequest.class);
+                    return graphqlRequest.getQuery().startsWith(startsWith);
+                } catch (Exception e) {
+                    return false;
+                }
+            } else {
+                // GraphQL query is in the URL 'query' parameter
+                HttpUriRequest req = (HttpUriRequest) obj;
+                String uri = null;
+                try {
+                    uri = URLDecoder.decode(req.getURI().toString(), StandardCharsets.UTF_8.name());
+                } catch (UnsupportedEncodingException e) {
+                    return false;
+                }
+                String graphqlQuery = uri.substring(uri.indexOf("?query=") + 7);
+                return graphqlQuery.startsWith(startsWith);
             }
         }
 
@@ -77,21 +94,17 @@ public class Utils {
 
         @Override
         public boolean matches(Object obj) {
-            if (!(obj instanceof HttpUriRequest) && !(obj instanceof HttpEntityEnclosingRequest)) {
+            if (!(obj instanceof HttpUriRequest)) {
                 return false;
             }
-            HttpEntityEnclosingRequest req = (HttpEntityEnclosingRequest) obj;
-            try {
-                for (Header header : headers) {
-                    Header reqHeader = req.getFirstHeader(header.getName());
-                    if (reqHeader == null || !reqHeader.getValue().equals(header.getValue())) {
-                        return false;
-                    }
+            HttpUriRequest req = (HttpUriRequest) obj;
+            for (Header header : headers) {
+                Header reqHeader = req.getFirstHeader(header.getName());
+                if (reqHeader == null || !reqHeader.getValue().equals(header.getValue())) {
+                    return false;
                 }
-                return true;
-            } catch (Exception e) {
-                return false;
             }
+            return true;
         }
     }
 
