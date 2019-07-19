@@ -42,6 +42,11 @@ public class GraphqlOSGiConfig {
         return this;
     }
 
+    public GraphqlOSGiConfig withHttpMethod(String httpMethod) {
+        config.put("httpMethod", httpMethod);
+        return this;
+    }
+
     public GraphqlOSGiConfig withAcceptSelfSignedCertificates(boolean acceptSelfSignedCertificates) {
         config.put("acceptSelfSignedCertificates", Boolean.valueOf(acceptSelfSignedCertificates).toString());
         return this;

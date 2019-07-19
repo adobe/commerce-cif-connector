@@ -89,6 +89,7 @@ public class CommerceTestBase {
         // This configures the lower-level GraphQL client. The Magento client is configured in the test-content package.
         graphqlOsgiConfig.withIdentifier("default")
             .withUrl("https://localhost:" + httpsPort + "/graphql")
+            .withHttpMethod("POST")
             .withAcceptSelfSignedCertificates(true)
             .withCatalogCachingSchedulerEnabled(false);
 
@@ -190,16 +191,21 @@ public class CommerceTestBase {
      * @return
      */
     protected String getValue(Element e) {
-        if (e.tagName().equals("meta"))
+        if (e.tagName().equals("meta")) {
             return e.attr("content");
-        if (e.tagName().equals("a"))
+        }
+        if (e.tagName().equals("a")) {
             return e.attr("href");
-        if (e.tagName().equals("link"))
+        }
+        if (e.tagName().equals("link")) {
             return e.attr("href");
-        if (e.tagName().equals("img"))
+        }
+        if (e.tagName().equals("img")) {
             return e.attr("src");
-        if (e.tagName().equals("input"))
+        }
+        if (e.tagName().equals("input")) {
             return e.attr("value");
+        }
         return e.text();
     }
 
