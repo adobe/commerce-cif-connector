@@ -54,7 +54,8 @@ The CIF Magento GraphQL AEM commerce connector has to be configured to access yo
     * Look for `CIF GraphQL Client Configuration Factory`
     * Create a child configuration
         * Keep the `default` service identifier or set something custom. Make sure to use the same value in step 2) below.
-        * For _GraphQL Service URL_ enter the URL of your Magento GraphQL endpoint (usually `https://hostname/graphql`)
+        * For `GraphQL Service URL` enter the URL of your Magento GraphQL endpoint (usually `https://hostname/graphql`)
+        * With `Default HTTP method` you can define whether the underlying HTTP client will send GET or POST requests. Starting with version 2.3.2, Magento supports and can cache some GraphQL queries when using GET.
 
 2) Configuration of the connector
     * Go to http://localhost:4502/system/console/configMgr
