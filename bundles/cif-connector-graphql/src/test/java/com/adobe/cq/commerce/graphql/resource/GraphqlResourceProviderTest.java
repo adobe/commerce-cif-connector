@@ -43,6 +43,7 @@ import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.api.CommerceException;
 import com.adobe.cq.commerce.api.Product;
 import com.adobe.cq.commerce.graphql.client.GraphqlClient;
+import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
 import com.adobe.cq.commerce.graphql.core.MagentoProduct;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceConfiguration;
@@ -105,6 +106,7 @@ public class GraphqlResourceProviderTest {
         GraphqlClient baseClient = new GraphqlClientImpl();
         Whitebox.setInternalState(baseClient, "gson", new Gson());
         Whitebox.setInternalState(baseClient, "client", httpClient);
+        Whitebox.setInternalState(baseClient, "httpMethod", HttpMethod.POST);
 
         GraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
         dataService = new GraphqlDataServiceImpl();

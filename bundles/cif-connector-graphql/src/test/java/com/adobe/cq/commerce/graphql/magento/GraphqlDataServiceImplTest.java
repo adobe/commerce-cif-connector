@@ -30,9 +30,12 @@ import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import com.adobe.cq.commerce.graphql.client.GraphqlClient;
+import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
+import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
 import com.adobe.cq.commerce.graphql.testing.Utils;
+import com.adobe.cq.commerce.graphql.testing.Utils.GetQueryMatcher;
 import com.adobe.cq.commerce.graphql.testing.Utils.HeadersMatcher;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
@@ -68,6 +71,7 @@ public class GraphqlDataServiceImplTest {
         GraphqlClient baseClient = new GraphqlClientImpl();
         Whitebox.setInternalState(baseClient, "gson", new Gson());
         Whitebox.setInternalState(baseClient, "client", httpClient);
+        Whitebox.setInternalState(baseClient, "httpMethod", HttpMethod.POST);
 
         MockGraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
         config.setStoreCode(STORE_CODE);
@@ -220,4 +224,23 @@ public class GraphqlDataServiceImplTest {
         HeadersMatcher matcher = new HeadersMatcher(headers);
         Mockito.verify(httpClient, Mockito.times(1)).execute(Mockito.argThat(matcher));
     }
+
+    @Test
+    public void testGetHttpMethod() throws Exception {
+        // This checks that the generated GraphQL query is what we expect
+        // It ensures that all changes made to the GraphQL queries are backed up by tests
+        String query = getResource("graphql-queries/product-by-sku.txt");
+
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, query);
+
+        dataService.requestOptions.withHttpMethod(HttpMethod.GET);
+        ProductInterface product = dataService.getProductBySku(SKU);
+        assertEquals(SKU, product.getSku());
+        assertEquals(NAME, product.getName());
+
+        // Check that the HTTP client is called with the right method
+        GetQueryMatcher matcher = new GetQueryMatcher(new GraphqlRequest(query));
+        Mockito.verify(httpClient, Mockito.times(1)).execute(Mockito.argThat(matcher));
+    }
+
 }
