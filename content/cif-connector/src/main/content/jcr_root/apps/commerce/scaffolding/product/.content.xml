@@ -76,8 +76,7 @@
                                                                     fieldLabel="SKU"
                                                                     name="sku"
                                                                     renderReadOnly="{Boolean}true"
-                                                                    required="{Boolean}true"
-                                                                    validation="weretail.sku"/>
+                                                                    required="{Boolean}true"/>
                                                             <price
                                                                     jcr:primaryType="nt:unstructured"
                                                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
