@@ -103,6 +103,16 @@ The category picker field supports the following optional properties:
 * `emptyText` - to configure the empty text value of the picker field
 * `selectionId`(id, path) - allows to choose the category attribute to be returned by the picker (default = id)
  
+### Using a scaffolding to display the product properties page
+
+The project provides a [sample scaffolding](./content/cif-connector/src/main/content/jcr_root/apps/commerce/scaffolding/product/.content.xml) that only displays the basic information about a product. To link this scaffolding to your catalog root you have to do the following steps:
+1. Open CRXDe Lite and go to `/apps/commerce/scaffolding/product`
+2. Update the `cq:targetPath` property to point to the root of your catalog
+3. Save the changes
+
+To see the properties page go to the products console (in Commerce --> Products) and select a cloud product. The `Properties` action should be available and it should open the properties page when clicked.   
+ 
+ 
 ## Building and installing from source
 
 ### Pre-requisites
