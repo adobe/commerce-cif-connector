@@ -54,7 +54,8 @@ The CIF Magento GraphQL AEM commerce connector has to be configured to access yo
     * Look for `CIF GraphQL Client Configuration Factory`
     * Create a child configuration
         * Keep the `default` service identifier or set something custom. Make sure to use the same value in step 2) below.
-        * For _GraphQL Service URL_ enter the URL of your Magento GraphQL endpoint (usually `https://hostname/graphql`)
+        * For `GraphQL Service URL` enter the URL of your Magento GraphQL endpoint (usually `https://hostname/graphql`)
+        * With `Default HTTP method` you can define whether the underlying HTTP client will send GET or POST requests. Starting with version 2.3.2, Magento supports and can cache some GraphQL queries when using GET.
 
 2) Configuration of the connector
     * Go to http://localhost:4502/system/console/configMgr
@@ -101,7 +102,8 @@ The category picker field supports the following optional properties:
 * `rootPath` - configure the root path of the virtual catalog data tree to be used (default = `/var/commerce/products`)
 * `multiple` (true, false) - allows to select one or multiple categories (default = false)
 * `emptyText` - to configure the empty text value of the picker field
-* `selectionId`(id, path) - allows to choose the category attribute to be returned by the picker (default = id)
+* `selectionId`(id, path, sku, slug) - allows to choose the category attribute to be returned by the picker (default = id)
+* `filter`(folderOrProduct, folderOrProductOrVariant) - filters the content to be rendered by the picker while navigating the product tree. folderOrProduct - renders folders and products. folderOrProductOrVariant - renders folders, product and product variants. If a product or product variant is rendered it becomes also selectable in the picker.  (default = folderOrProduct) 
  
 ### Using a scaffolding to display the product properties page
 

@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Node;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceWrapper;
 import org.apache.sling.api.resource.ValueMap;
@@ -29,7 +31,6 @@ import static com.adobe.cq.commerce.api.CommerceConstants.PN_COMMERCE_TYPE;
 import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.CIF_ID;
 import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
-import static org.apache.sling.jcr.resource.api.JcrResourceConstants.NT_SLING_FOLDER;
 
 /**
  * Resource implementation for the root category node of the product tree.
@@ -37,6 +38,7 @@ import static org.apache.sling.jcr.resource.api.JcrResourceConstants.NT_SLING_FO
  * virtual product tree.
  */
 class RootCategoryResource extends ResourceWrapper {
+    static final String RESOURCE_TYPE = "commerce/components/ccifrootfolder";
     private Integer rootCategoryId;
 
     /**
@@ -51,11 +53,16 @@ class RootCategoryResource extends ResourceWrapper {
     }
 
     @Override
+    public String getResourceType() {
+        return RESOURCE_TYPE;
+    }
+
+    @Override
     public ValueMap getValueMap() {
         Map<String, Object> map = new HashMap<>(super.getValueMap());
 
         // add special properties not available in the JCR node
-        map.put(PROPERTY_RESOURCE_TYPE, NT_SLING_FOLDER);
+        map.put(PROPERTY_RESOURCE_TYPE, RESOURCE_TYPE);
         map.put(PN_COMMERCE_TYPE, CATEGORY);
         map.put(CIF_ID, rootCategoryId);
 
@@ -65,9 +72,25 @@ class RootCategoryResource extends ResourceWrapper {
     @Override
     public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
         if (type.equals(ValueMap.class)) {
-            return (AdapterType) getValueMap();
+            return type.cast(getValueMap());
+        } else if (type.equals(Node.class)) {
+            return type.cast(adaptToNode(Thread.currentThread().getStackTrace()));
         }
 
         return super.adaptTo(type);
+    }
+
+    Node adaptToNode(StackTraceElement[] stackTrace) {
+        // return null when adaptTo() is called by
+        // com.day.cq.dam.core.impl.servlet.FolderThumbnailServlet.getPreviewGenerator()
+        // return the underlying JCR Node otherwise
+        if (stackTrace.length > 2) {
+            StackTraceElement caller = stackTrace[2];
+            if ("com.day.cq.dam.core.impl.servlet.FolderThumbnailServlet".equals(caller.getClassName()) &&
+                "getPreviewGenerator".equals(caller.getMethodName())) {
+                return null;
+            }
+        }
+        return super.adaptTo(Node.class);
     }
 }

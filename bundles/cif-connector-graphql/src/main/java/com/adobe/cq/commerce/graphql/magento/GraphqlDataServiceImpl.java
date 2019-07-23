@@ -66,7 +66,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     // We cannot extend GraphqlClientImpl because it's not OSGi-exported so we use "object composition"
     protected GraphqlClient baseClient;
-    private RequestOptions requestOptions;
+    protected RequestOptions requestOptions;
     private GraphqlDataServiceConfiguration configuration;
 
     // We maintain some caches to speed up all lookups

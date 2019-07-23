@@ -19,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 
+import javax.jcr.Node;
+
 import org.apache.commons.collections.map.SingletonMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -41,6 +43,7 @@ import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.api.CommerceException;
 import com.adobe.cq.commerce.api.Product;
 import com.adobe.cq.commerce.graphql.client.GraphqlClient;
+import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
 import com.adobe.cq.commerce.graphql.core.MagentoProduct;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceConfiguration;
@@ -59,7 +62,6 @@ import static com.adobe.cq.commerce.graphql.resource.Constants.MAGENTO_GRAPHQL_P
 import static com.adobe.cq.commerce.graphql.resource.Constants.PRODUCT;
 import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.VIRTUAL_PRODUCT_QUERY_LANGUAGE;
 import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
-import static org.apache.sling.jcr.resource.api.JcrResourceConstants.NT_SLING_FOLDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -104,6 +106,7 @@ public class GraphqlResourceProviderTest {
         GraphqlClient baseClient = new GraphqlClientImpl();
         Whitebox.setInternalState(baseClient, "gson", new Gson());
         Whitebox.setInternalState(baseClient, "client", httpClient);
+        Whitebox.setInternalState(baseClient, "httpMethod", HttpMethod.POST);
 
         GraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
         dataService = new GraphqlDataServiceImpl();
@@ -176,11 +179,36 @@ public class GraphqlResourceProviderTest {
 
         // check special properties
         assertEquals(MockGraphqlDataServiceConfiguration.ROOT_CATEGORY_ID, valueMap.get(CIF_ID));
+        assertEquals(RootCategoryResource.RESOURCE_TYPE, valueMap.get(PROPERTY_RESOURCE_TYPE));
+        assertEquals(RootCategoryResource.RESOURCE_TYPE, root.getResourceType());
+        assertEquals(CATEGORY, valueMap.get(PN_COMMERCE_TYPE));
+
         // deep read cifId
         assertEquals(MockGraphqlDataServiceConfiguration.ROOT_CATEGORY_ID, valueMap.get("./" + CIF_ID));
-        assertEquals(CATEGORY, valueMap.get(PN_COMMERCE_TYPE));
-        assertEquals(NT_SLING_FOLDER, valueMap.get(PROPERTY_RESOURCE_TYPE));
+
         assertNull(root.adaptTo(Product.class));
+
+        // test adaptTo(Node)
+        Node rootNode = mock(Node.class);
+        when(rootResource.adaptTo(Node.class)).thenReturn(rootNode);
+        assertEquals(rootNode, root.adaptTo(Node.class));
+
+        RootCategoryResource rootCategoryResource = (RootCategoryResource) root;
+        assertEquals(rootNode, rootCategoryResource.adaptToNode(new StackTraceElement[0]));
+
+        StackTraceElement[] stackTrace = {
+            new StackTraceElement("AClass", "aMethod", "aFile", 1),
+            new StackTraceElement("AClass", "aMethod", "aFile", 1),
+            new StackTraceElement("AClass", "aMethod", "aFile", 1),
+            new StackTraceElement("AClass", "aMethod", "aFile", 1)
+        };
+        assertEquals(rootNode, rootCategoryResource.adaptToNode(stackTrace));
+
+        String callerClass = "com.day.cq.dam.core.impl.servlet.FolderThumbnailServlet";
+        String callerMethod = "getPreviewGenerator";
+        stackTrace[2] = new StackTraceElement(callerClass, callerMethod, "", 0);
+
+        assertNull(rootCategoryResource.adaptToNode(stackTrace));
     }
 
     @Test
