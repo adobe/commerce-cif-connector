@@ -1,0 +1,15 @@
+{
+  "commerce": {
+    "jcr:primaryType": "sling:Folder",
+    "products": {
+      "jcr:primaryType": "sling:Folder",
+      "magento-graphql": {
+        "jcr:primaryType": "sling:Folder",
+        "cq:catalogDataResourceProviderFactory": "magento-graphql",
+        "cq:catalogIdentifier": "default",
+        "cq:magentoStore": "default",
+        "magentoRootCategoryId": "4"
+      }
+    }
+  }
+}

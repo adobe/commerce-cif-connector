@@ -29,4 +29,6 @@
 
     <!-- remove default config for products search in editor -->
     <filter root="/libs/settings/cq/search/facets/products" />
+    
+    <filter root="/apps/commerce/gui/content/products/bindproducttreewizard/customfields/magento-graphql" mode="update"/>
 </workspaceFilter>

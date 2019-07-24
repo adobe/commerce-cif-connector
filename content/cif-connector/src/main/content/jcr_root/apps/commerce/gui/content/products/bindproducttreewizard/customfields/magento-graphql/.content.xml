@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/foundation/layouts/well">
+    <items jcr:primaryType="nt:unstructured">
+        <cqMagentoStore
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+            fieldLabel="Magento Store View"
+            name="./cq:magentoStore"
+            renderReadOnly="{Boolean}false"/>
+        <magentoRootCategoryId
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+            fieldLabel="Root category id"
+            name="./magentoRootCategoryId"
+            renderReadOnly="{Boolean}false"/>
+    </items>
+</jcr:root>

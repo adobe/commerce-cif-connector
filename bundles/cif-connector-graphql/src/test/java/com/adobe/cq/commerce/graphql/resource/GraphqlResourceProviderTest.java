@@ -35,6 +35,7 @@ import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider;
 import org.apache.sling.spi.resource.provider.QueryLanguageProvider;
 import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
@@ -46,13 +47,17 @@ import com.adobe.cq.commerce.graphql.client.GraphqlClient;
 import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
 import com.adobe.cq.commerce.graphql.core.MagentoProduct;
+import com.adobe.cq.commerce.graphql.magento.GraphqlAemContext;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceConfiguration;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl;
 import com.adobe.cq.commerce.graphql.magento.MockGraphqlDataServiceConfiguration;
 import com.adobe.cq.commerce.graphql.testing.Utils;
 import com.day.cq.commons.DownloadResource;
+import com.day.cq.commons.inherit.ComponentInheritanceValueMap;
+import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.google.gson.Gson;
+import io.wcm.testing.mock.aem.junit.AemContext;
 
 import static com.adobe.cq.commerce.api.CommerceConstants.PN_COMMERCE_TYPE;
 import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
@@ -96,8 +101,11 @@ public class GraphqlResourceProviderTest {
     private JcrResourceProvider jcrResourceProvider;
     private GraphqlResourceProvider provider;
     private Resource rootResource;
-    private ValueMap rootValueMap;
+    private InheritanceValueMap rootValueMap;
     private Scheduler scheduler;
+
+    @Rule
+    public final AemContext context = GraphqlAemContext.createContext("/context/graphql-resource-provider-context.json", "/var");
 
     @Before
     public void setUp() throws Exception {
@@ -113,34 +121,32 @@ public class GraphqlResourceProviderTest {
         Whitebox.setInternalState(dataService, "clients", new SingletonMap("default", baseClient));
         dataService.activate(config);
 
-        Resource resource = mock(Resource.class);
         resourceResolver = mock(ResourceResolver.class);
-        when(resource.getResourceResolver()).thenReturn(resourceResolver);
+
+        rootResource = Mockito.spy(context.resourceResolver().getResource(CATALOG_ROOT_PATH));
+        when(rootResource.getResourceResolver()).thenReturn(resourceResolver);
 
         resolveContext = mock(ResolveContext.class);
         jcrResourceProvider = mock(JcrResourceProvider.class);
-        rootResource = mock(Resource.class);
-        rootValueMap = mock(ValueMap.class);
+
         when(resolveContext.getParentResolveContext()).thenReturn(resolveContext);
         when(resolveContext.getParentResourceProvider()).thenReturn(jcrResourceProvider);
         when(resolveContext.getResourceResolver()).thenReturn(resourceResolver);
         when(jcrResourceProvider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null)).thenReturn(rootResource);
-        when(rootResource.getPath()).thenReturn(CATALOG_ROOT_PATH);
-        when(rootResource.getValueMap()).thenReturn(rootValueMap);
-        when(rootResource.getResourceResolver()).thenReturn(resourceResolver);
 
         scheduler = mock(Scheduler.class);
         ScheduleOptions opts = mock(ScheduleOptions.class);
         when(scheduler.schedule(any(), any())).thenReturn(Boolean.FALSE);
         when(scheduler.NOW(Mockito.anyInt(), Mockito.anyLong())).thenReturn(opts);
 
-        provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler);
+        rootValueMap = new ComponentInheritanceValueMap(rootResource);
+        provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler, rootValueMap);
+
         when(resourceResolver.getResource(any())).then(invocationOnMock -> {
             String path = (String) invocationOnMock.getArguments()[0];
             if (path.endsWith("/.")) {
                 path = path.substring(0, path.length() - 2);
             }
-
             return provider.getResource(resolveContext, path, null, null);
         });
     }
@@ -149,7 +155,7 @@ public class GraphqlResourceProviderTest {
     public void testFactoryInitMethod() throws InterruptedException, IOException {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
 
-        ResourceMapper resourceMapper = new ResourceMapper(CATALOG_ROOT_PATH, dataService, scheduler);
+        ResourceMapper resourceMapper = new ResourceMapper(CATALOG_ROOT_PATH, dataService, scheduler, rootValueMap);
         ResourceMapper spy = spy(resourceMapper);
 
         final Runnable cacheRefreshJob = new Runnable() {

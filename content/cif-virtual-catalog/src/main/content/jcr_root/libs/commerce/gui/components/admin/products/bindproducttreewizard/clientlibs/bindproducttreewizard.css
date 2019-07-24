@@ -1,3 +1,7 @@
 #cq-commerce-products-bindproducttree-catalog-select-data {
     display: none;
 }
+
+.bindproducttreewizard-customfields.hide {
+    display: none;
+}

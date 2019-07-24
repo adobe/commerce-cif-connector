@@ -99,7 +99,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
             return null;
         }
 
-        ResourceProvider<T> resourceProvider = new GraphqlResourceProvider<T>(root.getPath(), client, scheduler);
+        ResourceProvider<T> resourceProvider = new GraphqlResourceProvider<T>(root.getPath(), client, scheduler, properties);
         return resourceProvider;
     }
 

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
+import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
@@ -42,11 +43,11 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
     private ResourceMapper<T> resourceMapper;
     private GraphqlQueryLanguageProvider<T> queryLanguageProvider;
 
-    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler) {
+    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, InheritanceValueMap properties) {
         this.root = root;
-        rootCategoryId = graphqlDataService.getConfiguration().rootCategoryId();
-        resourceMapper = new ResourceMapper<T>(root, graphqlDataService, scheduler);
-        queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlDataService);
+        rootCategoryId = Integer.valueOf(properties.getInherited("magentoRootCategoryId", String.class));
+        resourceMapper = new ResourceMapper<T>(root, graphqlDataService, scheduler, properties);
+        queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlDataService, properties);
     }
 
     @Override
