@@ -208,14 +208,14 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         // 3. Check the fields
         Document doc = Jsoup.parse(response.getContent());
 
-        Assert.assertEquals("The Title field is preset",1, doc.select("input[name=jcr:title]").size());
+        Assert.assertEquals("The Title field is preset", 1, doc.select("input[name=jcr:title]").size());
         Assert.assertEquals("The Title has the correct value", "El Gordo Down Jacket", doc.select("input[name=jcr:title]").val());
 
-        Assert.assertEquals("The Price field is correct",1, doc.select("input[name=formattedPrice]").size());
-        Assert.assertEquals("The Price field has the correct value","USD 119.0", doc.select("input[name=formattedPrice]").val());
+        Assert.assertEquals("The Price field is correct", 1, doc.select("input[name=formattedPrice]").size());
+        Assert.assertEquals("The Price field has the correct value", "USD 119.0", doc.select("input[name=formattedPrice]").val());
 
-        Assert.assertEquals("The SKU field is correct",1, doc.select("input[name=sku]").size());
-        Assert.assertEquals("The SKU field has the correct value","meskwielt", doc.select("input[name=sku]").val());
+        Assert.assertEquals("The SKU field is correct", 1, doc.select("input[name=sku]").size());
+        Assert.assertEquals("The SKU field has the correct value", "meskwielt", doc.select("input[name=sku]").val());
 
     }
 
