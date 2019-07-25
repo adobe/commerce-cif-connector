@@ -89,7 +89,8 @@ The product picker field supports the following optional properties:
 * `rootPath` - configure the root path of the virtual catalog data tree to be used (default = `/var/commerce/products`)
 * `multiple` (true, false) - allows to select one or multiple products (default = false)
 * `emptyText` - to configure the empty text value of the picker field
-* `selectionId`(id, sku, slug, path) - allows to choose the product attribute to be returned by the picker (default = id)
+* `selectionId` (id, sku, slug, path, skus) - allows to choose the product attribute to be returned by the picker (default = id). Using `sku` returns the sku of the selected product, while using `skus` returns a string like `base#variant` with the skus of the base product and the selected variant, or a single sku if a base product is selected.
+* `filter` (folderOrProduct, folderOrProductOrVariant) - filters the content to be rendered by the picker while navigating the product tree. `folderOrProduct` - renders folders and products. `folderOrProductOrVariant` - renders folders, product and product variants. If a product or product variant is rendered it becomes also selectable in the picker. (default = `folderOrProduct`) 
 
 ### Category Picker
 The category picker (provided by `/libs/commerce/gui/components/common/cifcategoryfield`) can be used in a component dialog as well. The following snippet can be used in a cq:dialog configuration:
@@ -103,7 +104,6 @@ The category picker field supports the following optional properties:
 * `multiple` (true, false) - allows to select one or multiple categories (default = false)
 * `emptyText` - to configure the empty text value of the picker field
 * `selectionId`(id, path, sku, slug) - allows to choose the category attribute to be returned by the picker (default = id)
-* `filter`(folderOrProduct, folderOrProductOrVariant) - filters the content to be rendered by the picker while navigating the product tree. folderOrProduct - renders folders and products. folderOrProductOrVariant - renders folders, product and product variants. If a product or product variant is rendered it becomes also selectable in the picker.  (default = folderOrProduct) 
  
 ## Building and installing from source
 

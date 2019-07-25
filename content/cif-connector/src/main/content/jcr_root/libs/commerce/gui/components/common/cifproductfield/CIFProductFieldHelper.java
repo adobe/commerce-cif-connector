@@ -27,7 +27,7 @@ public class CIFProductFieldHelper extends WCMUsePojo {
     @Override
     public void activate() throws Exception {
         String st = getRequest().getParameter("selectionId");
-        if ("id".equals(st) || "sku".equals(st) || "path".equals(st) || "slug".equals(st)) {
+        if ("id".equals(st) || "sku".equals(st) || "path".equals(st) || "slug".equals(st) || "skus".equals(st)) {
             selectionId = st;
         } else {
             selectionId = "id";
@@ -69,6 +69,16 @@ public class CIFProductFieldHelper extends WCMUsePojo {
         }
         if ("sku".equals(selectionId)) {
             return getProperties().get("sku", String.class);
+        }
+        if ("skus".equals(selectionId)) {
+            String sku = getProperties().get("sku", String.class);
+            if ("variant".equals(getProperties().get("cq:commerceType", String.class))) {
+                Resource parent = getResource().getParent();
+                String parentSku = parent.getValueMap().get("sku", String.class);
+                return parentSku + "#" + sku;
+            } else {
+                return sku;
+            }
         }
         return getProperties().get("identifier", String.class);
     }

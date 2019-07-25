@@ -53,6 +53,8 @@ public class Initializer extends WCMUsePojo {
             defaultEmptyText = "Product SKU";
         } else if ("slug".equals(selectionId)) {
             defaultEmptyText = "Product slug";
+        } else if ("skus".equals(selectionId)) {
+            defaultEmptyText = "Product SKU(s) separated by # character";
         } else {
             defaultEmptyText = "Product ID";
         }
