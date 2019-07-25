@@ -29,4 +29,9 @@
 
     <!-- remove default config for products search in editor -->
     <filter root="/libs/settings/cq/search/facets/products" />
+
+    <filter root="/apps/commerce">
+        <exclude pattern="/apps/commerce(/.*)?"/>
+        <include pattern="/apps/commerce/scaffolding"/>
+    </filter>
 </workspaceFilter>
