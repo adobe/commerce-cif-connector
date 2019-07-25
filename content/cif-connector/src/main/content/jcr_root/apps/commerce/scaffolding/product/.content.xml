@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:targetPath="/var/commerce/products/magento"
+        jcr:description="Example scaffolding that is used to display the cloud products properties"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Product Data"
+        sling:resourceType="wcm/scaffolding/components/scaffolding">
+        <cq:dialog
+            jcr:primaryType="nt:unstructured"
+            jcr:title="We.Retail Product Properties"
+            sling:resourceType="cq/gui/components/authoring/dialog">
+            <content
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <columns
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                        <items jcr:primaryType="nt:unstructured">
+                            <column1
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <images
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="commerce/gui/components/admin/products/images">
+                                        <image
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="commerce/gui/components/admin/products/images/image"
+                                            var="${imageRelPath}">
+                                            <thumbnail
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="commerce/gui/components/admin/products/properties/productthumbnail"
+                                                class="cq-ProductThumbnail">
+                                               
+                                            </thumbnail>
+                                        </image>
+                                    </images>
+                                </items>
+                            </column1>
+                            <column2
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <tabs
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/tabs">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <basic
+                                                jcr:primaryType="nt:unstructured"
+                                                jcr:title="Basic"
+                                                sling:resourceType="granite/ui/components/coral/foundation/container">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <titles
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                                        <items jcr:primaryType="nt:unstructured">
+                                                            <title
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                                fieldLabel="Title"
+                                                                name="jcr:title"
+                                                                renderReadOnly="{Boolean}true"
+                                                                required="{Boolean}true"/>
+                                                            <description
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                                                fieldLabel="Description"
+                                                                name="jcr:description"
+                                                                renderReadOnly="{Boolean}true"/>
+                                                            <sku
+                                                                    jcr:primaryType="nt:unstructured"
+                                                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                                    fieldLabel="SKU"
+                                                                    name="sku"
+                                                                    renderReadOnly="{Boolean}true"
+                                                                    required="{Boolean}true"
+                                                                    validation="weretail.sku"/>
+                                                            <price
+                                                                    jcr:primaryType="nt:unstructured"
+                                                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                                    fieldLabel="Price"
+                                                                    name="formattedPrice"
+                                                                    renderReadOnly="{Boolean}true"/>
+                                                            <charset
+                                                                jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                                                ignoreData="{Boolean}true"
+                                                                name="_charset_"
+                                                                value="utf-8"/>
+                                                        </items>
+                                                    </titles>   
+                                                </items>
+                                            </basic>
+                                        </items>
+                                    </tabs>
+                                </items>
+                            </column2>
+                        </items>
+                    </columns>
+                </items>
+            </content>
+        </cq:dialog>
+        <dialog/>
+    </jcr:content>
+</jcr:root>
