@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.apache.sling.testing.clients.util.FormEntityBuilder;
@@ -185,6 +186,39 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         // Check variants
         Assert.assertEquals(15, doc.select(String.format(CORAL_COLUMN_FORMAT_STARTS_WITH, JCR_BASE_PATH
             + "/men/coats/meskwielt/meskwielt-")).size());
+    }
+
+    @Test
+    public void testProductPropertiesPage() throws ClientException {
+
+        // Prepare
+        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
+
+        // 1. Update the scaffolding to point to the test catalog
+        String scaffoldingPath = "/apps/commerce/scaffolding/product/jcr:content";
+        UrlEncodedFormEntity postParams = FormEntityBuilder.create().addParameter("cq:targetPath", JCR_BASE_PATH).build();
+        SlingHttpResponse postResponse = cAdminAuthor.doPost(scaffoldingPath, postParams, 200);
+
+        // 2. Request a product properties page
+        String productPropertiesUrl = "/mnt/overlay/commerce/gui/content/products/properties.html";
+        List<NameValuePair> params = URLParameterBuilder.create()
+            .add("item", JCR_BASE_PATH + "/men/coats/meskwielt")
+            .getList();
+        SlingHttpResponse response = cAuthorAuthor.doGet(productPropertiesUrl, params, 200);
+
+        // 3. Check the fields
+        Document doc = Jsoup.parse(response.getContent());
+
+        Assert.assertEquals("The Title field is preset", 1, doc.select("input[name=jcr:title]").size());
+        Assert.assertEquals("The Title has the correct value", "El Gordo Down Jacket", doc.select("input[name=jcr:title]").val());
+
+        Assert.assertEquals("The Price field is correct", 1, doc.select("input[name=formattedPrice]").size());
+        Assert.assertEquals("The Price field has the correct value", "USD 119.0", doc.select("input[name=formattedPrice]").val());
+
+        Assert.assertEquals("The SKU field is correct", 1, doc.select("input[name=sku]").size());
+        Assert.assertEquals("The SKU field has the correct value", "meskwielt", doc.select("input[name=sku]").val());
+
     }
 
     @Test
