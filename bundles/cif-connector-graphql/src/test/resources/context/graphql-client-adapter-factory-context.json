@@ -3,14 +3,18 @@
     "jcr:primaryType": "cq:Page",
     "jcr:content": {
       "jcr:primaryType":"cq:PageContent",
-      "cq:catalogIdentifier": "my-catalog"
+      "cq:catalogIdentifier": "my-catalog",
+      "cq:magentoStore": "default",
+      "magentoRootCategoryId": "4"
     }
   },
   "pageB": {
     "jcr:primaryType": "cq:Page",
     "jcr:content": {
       "jcr:primaryType":"cq:PageContent",
-      "cq:catalogIdentifier": "my-catalog"
+      "cq:catalogIdentifier": "my-catalog",
+      "cq:magentoStore": "default",
+      "magentoRootCategoryId": "4"
     },
     "pageC": {
       "jcr:primaryType": "cq:Page",

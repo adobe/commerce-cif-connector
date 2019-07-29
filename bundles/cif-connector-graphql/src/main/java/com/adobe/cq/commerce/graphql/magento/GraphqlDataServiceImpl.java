@@ -54,9 +54,8 @@ import com.adobe.cq.commerce.magento.graphql.QueryQuery.ProductsArgumentsDefinit
 import com.adobe.cq.commerce.magento.graphql.SortEnum;
 import com.adobe.cq.commerce.magento.graphql.gson.Error;
 import com.adobe.cq.commerce.magento.graphql.gson.QueryDeserializer;
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 @Component(service = GraphqlDataService.class)
 @Designate(ocd = GraphqlDataServiceConfiguration.class, factory = true)
@@ -70,8 +69,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     private GraphqlDataServiceConfiguration configuration;
 
     // We maintain some caches to speed up all lookups
-    private LoadingCache<String, Optional<ProductInterface>> productCache;
-    private LoadingCache<Integer, Optional<List<ProductInterface>>> categoryCache;
+    private Cache<String, Optional<ProductInterface>> productCache;
+    private Cache<Integer, Optional<List<ProductInterface>>> categoryCache;
 
     protected Map<String, GraphqlClient> clients = new ConcurrentHashMap<>();
 
@@ -108,40 +107,46 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
             productCache = CacheBuilder.newBuilder()
                 .maximumSize(configuration.productCachingSize())
                 .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
-                .build(CacheLoader.from(sku -> getProductBySkuImpl(sku)));
+                .build();
 
             // Used when the products of a given category are being fetched
             categoryCache = CacheBuilder.newBuilder()
                 .maximumSize(configuration.categoryCachingSize())
                 .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
-                .build(CacheLoader.from(id -> getCategoryProductsImpl(id)));
+                .build();
         }
 
         requestOptions = new RequestOptions().withGson(QueryDeserializer.getGson());
-        if (!GraphqlDataServiceConfiguration.STORE_CODE_DEFAULT.equals(configuration.storeCode())) {
-            Header storeHeader = new BasicHeader(Constants.STORE_HEADER, configuration.storeCode());
-            requestOptions.withHeaders(Collections.singletonList(storeHeader));
-        }
     }
 
-    protected GraphqlResponse<Query, Error> execute(String query) {
-        return baseClient.execute(new GraphqlRequest(query), Query.class, Error.class, requestOptions);
+    protected GraphqlResponse<Query, Error> execute(String query, String storeView) {
+        RequestOptions options = requestOptions;
+        if (storeView != null) {
+            Header storeHeader = new BasicHeader(Constants.STORE_HEADER, storeView);
+
+            // Create new options to avoid setting the storeView as the new default value
+            options = new RequestOptions()
+                .withGson(requestOptions.getGson())
+                .withHeaders(Collections.singletonList(storeHeader));
+        }
+
+        return baseClient.execute(new GraphqlRequest(query), Query.class, Error.class, options);
     }
 
     @Override
-    public ProductInterface getProductBySku(String sku) {
+    public ProductInterface getProductBySku(String sku, String storeView) {
         if (sku == null) {
             return null;
         }
 
         try {
-            return productCache.get(sku).orElse(null);
+            return productCache.get(sku, () -> getProductBySkuImpl(sku, storeView)).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Optional<ProductInterface> getProductBySkuImpl(String sku) {
+    private Optional<ProductInterface> getProductBySkuImpl(String sku, String storeView) {
 
         LOGGER.debug("Trying to fetch product " + sku);
 
@@ -154,7 +159,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         ProductsQueryDefinition queryArgs = q -> q.items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY);
 
         String queryString = Operations.query(query -> query.products(searchArgs, queryArgs)).toString();
-        GraphqlResponse<Query, Error> response = execute(queryString);
+        GraphqlResponse<Query, Error> response = execute(queryString, storeView);
 
         Query query = response.getData();
         Products productsQuery = query.getProducts();
@@ -167,11 +172,11 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     }
 
     @Override
-    public List<ProductInterface> searchProducts(String text, Integer currentPage, Integer pageSize) {
-        return searchProductsImpl(text, currentPage, pageSize);
+    public List<ProductInterface> searchProducts(String text, Integer currentPage, Integer pageSize, String storeView) {
+        return searchProductsImpl(text, currentPage, pageSize, storeView);
     }
 
-    private List<ProductInterface> searchProductsImpl(String text, Integer currentPage, Integer pageSize) {
+    private List<ProductInterface> searchProductsImpl(String text, Integer currentPage, Integer pageSize, String storeView) {
 
         LOGGER.debug("Performing product search with '{}' (page: {}, size: {})", text, currentPage, pageSize);
 
@@ -191,7 +196,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         ProductsQueryDefinition queryArgs = q -> q.items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY);
 
         String queryString = Operations.query(query -> query.products(searchArgs, queryArgs)).toString();
-        GraphqlResponse<Query, Error> response = execute(queryString);
+        GraphqlResponse<Query, Error> response = execute(queryString, storeView);
 
         Query query = response.getData();
         List<ProductInterface> products = query.getProducts().getItems();
@@ -207,11 +212,11 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     }
 
     @Override
-    public CategoryTree getCategoryTree(Integer categoryId) {
-        return getCategoriesImpl(categoryId);
+    public CategoryTree getCategoryTree(Integer categoryId, String storeView) {
+        return getCategoriesImpl(categoryId, storeView);
     }
 
-    private CategoryTree getCategoriesImpl(Integer categoryId) {
+    private CategoryTree getCategoriesImpl(Integer categoryId, String storeView) {
 
         LOGGER.debug("Trying to fetch category " + categoryId);
 
@@ -232,7 +237,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
                             .apply(u)))));
 
         String queryString = Operations.query(query -> query.category(searchArgs, queryArgs)).toString();
-        GraphqlResponse<Query, Error> response = execute(queryString);
+        GraphqlResponse<Query, Error> response = execute(queryString, storeView);
 
         Query query = response.getData();
         CategoryTree category = query.getCategory();
@@ -243,15 +248,15 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     }
 
     @Override
-    public List<ProductInterface> getCategoryProducts(Integer categoryId) {
+    public List<ProductInterface> getCategoryProducts(Integer categoryId, String storeView) {
         try {
-            return categoryCache.get(categoryId).orElse(null);
+            return categoryCache.get(categoryId, () -> getCategoryProductsImpl(categoryId, storeView)).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Optional<List<ProductInterface>> getCategoryProductsImpl(Integer categoryId) {
+    private Optional<List<ProductInterface>> getCategoryProductsImpl(Integer categoryId, String storeView) {
 
         LOGGER.debug("Trying to fetch products for category " + categoryId);
 
@@ -264,7 +269,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
                 .items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY));
 
         String queryString = Operations.query(query -> query.category(searchArgs, queryArgs)).toString();
-        GraphqlResponse<Query, Error> response = execute(queryString);
+        GraphqlResponse<Query, Error> response = execute(queryString, storeView);
 
         Query query = response.getData();
         CategoryTree category = query.getCategory();

@@ -23,7 +23,6 @@ public @interface GraphqlDataServiceConfiguration {
 
     public String CQ_CATALOG_IDENTIFIER = "cq:catalogIdentifier";
     public String CONNECTOR_ID_DEFAULT = "default";
-    public String STORE_CODE_DEFAULT = "default";
 
     public static final int MAX_HTTP_CONNECTIONS_DEFAULT = 20;
     public static final boolean ACCEPT_SELF_SIGNED_CERTIFICATES = false;
@@ -47,19 +46,6 @@ public @interface GraphqlDataServiceConfiguration {
         type = AttributeType.STRING,
         required = true)
     String identifier() default CONNECTOR_ID_DEFAULT;
-
-    @AttributeDefinition(
-        name = "Magento root category id",
-        description = "The ID of the root category.",
-        type = AttributeType.INTEGER,
-        required = true)
-    int rootCategoryId();
-
-    @AttributeDefinition(
-        name = "Magento store view",
-        description = "The code of the Magento store view.",
-        type = AttributeType.STRING)
-    String storeCode() default STORE_CODE_DEFAULT;
 
     @AttributeDefinition(
         name = "Enable/disable product data caching",

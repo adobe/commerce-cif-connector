@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.magento.graphql.CategoryInterface;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
+import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,11 +52,16 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
     private ResourceMapper<T> resourceMapper;
     private GraphqlDataService graphqlDataService;
     private ObjectMapper jsonMapper;
+    private String storeView;
 
-    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlDataService) {
+    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlDataService, InheritanceValueMap properties) {
         this.resourceMapper = resourceMapper;
         this.graphqlDataService = graphqlDataService;
         jsonMapper = new ObjectMapper();
+
+        if (properties != null) {
+            storeView = properties.getInherited(Constants.MAGENTO_STORE_PROPERTY, String.class);
+        }
     }
 
     @Override
@@ -82,7 +88,8 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
         // Convert offset and limit to Magento page number and size
         Pair<Integer, Integer> pagination = toMagentoPageNumberAndSize(offset, limit);
 
-        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, pagination.getLeft(), pagination.getRight());
+        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, pagination.getLeft(), pagination.getRight(),
+            storeView);
 
         // The Magento page might start before 'offset' and be bigger than 'limit', so we extract exactly what we need
         int start = offset - ((pagination.getLeft() - 1) * pagination.getRight());

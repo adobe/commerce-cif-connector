@@ -34,6 +34,7 @@ import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
+import com.adobe.cq.commerce.graphql.resource.Constants;
 import com.adobe.cq.commerce.graphql.testing.Utils;
 import com.adobe.cq.commerce.graphql.testing.Utils.GetQueryMatcher;
 import com.adobe.cq.commerce.graphql.testing.Utils.HeadersMatcher;
@@ -74,7 +75,6 @@ public class GraphqlDataServiceImplTest {
         Whitebox.setInternalState(baseClient, "httpMethod", HttpMethod.POST);
 
         MockGraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
-        config.setStoreCode(STORE_CODE);
 
         dataService = new GraphqlDataServiceImpl();
         dataService.clients.put("default", baseClient);
@@ -93,7 +93,7 @@ public class GraphqlDataServiceImplTest {
 
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, query);
 
-        ProductInterface product = dataService.getProductBySku(SKU);
+        ProductInterface product = dataService.getProductBySku(SKU, null);
         assertEquals(SKU, product.getSku());
         assertEquals(NAME, product.getName());
 
@@ -101,16 +101,16 @@ public class GraphqlDataServiceImplTest {
         ConfigurableProduct configurableProduct = (ConfigurableProduct) product;
         assertEquals(15, configurableProduct.getVariants().size());
 
-        assertNull(dataService.getProductBySku(null));
+        assertNull(dataService.getProductBySku(null, null));
     }
 
     @Test
     public void testNoProductBySku() throws Exception {
         Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_OK);
-        assertNull(dataService.getProductBySku(SKU));
+        assertNull(dataService.getProductBySku(SKU, null));
 
         // This would fail if the product was not propely cached because the mocked HTTP response was already consumed
-        assertNull(dataService.getProductBySku(SKU));
+        assertNull(dataService.getProductBySku(SKU, null));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class GraphqlDataServiceImplTest {
         Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
         Exception exception = null;
         try {
-            dataService.getProductBySku(SKU);
+            dataService.getProductBySku(SKU, null);
         } catch (Exception e) {
             exception = e;
         }
@@ -132,7 +132,7 @@ public class GraphqlDataServiceImplTest {
         String query = getResource("graphql-queries/products-search.txt");
 
         Utils.setupHttpResponse("magento-graphql-products-search.json", httpClient, HttpStatus.SC_OK, query);
-        List<ProductInterface> products = dataService.searchProducts("coats", 0, 3);
+        List<ProductInterface> products = dataService.searchProducts("coats", 0, 3, null);
         assertEquals(3, products.size());
     }
 
@@ -143,7 +143,7 @@ public class GraphqlDataServiceImplTest {
         String query = getResource("graphql-queries/products-empty-search.txt");
 
         Utils.setupHttpResponse("magento-graphql-products-search.json", httpClient, HttpStatus.SC_OK, query);
-        List<ProductInterface> products = dataService.searchProducts(null, 0, 3);
+        List<ProductInterface> products = dataService.searchProducts(null, 0, 3, null);
         assertEquals(3, products.size());
     }
 
@@ -155,7 +155,7 @@ public class GraphqlDataServiceImplTest {
 
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, query);
 
-        CategoryTree categoryTree = dataService.getCategoryTree(ROOT_CATEGORY_ID);
+        CategoryTree categoryTree = dataService.getCategoryTree(ROOT_CATEGORY_ID, null);
         assertEquals(ROOT_CATEGORY_ID, categoryTree.getId());
         assertEquals(ROOT_CATEGORY_NAME, categoryTree.getName());
 
@@ -170,14 +170,14 @@ public class GraphqlDataServiceImplTest {
         String query = getResource("graphql-queries/category-products.txt");
 
         Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK, query);
-        List<ProductInterface> products = dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID);
+        List<ProductInterface> products = dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, null);
         assertEquals(5, products.size());
     }
 
     @Test
     public void testMagentoError() throws Exception {
         Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
-        GraphqlResponse<Query, Error> response = dataService.execute("{dummy}");
+        GraphqlResponse<Query, Error> response = dataService.execute("{dummy}", null);
 
         assertEquals(1, response.getErrors().size());
         Error error = response.getErrors().get(0);
@@ -195,7 +195,7 @@ public class GraphqlDataServiceImplTest {
         Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_SERVICE_UNAVAILABLE);
         Exception exception = null;
         try {
-            dataService.execute("{dummy}");
+            dataService.execute("{dummy}", null);
         } catch (Exception e) {
             exception = e;
         }
@@ -207,7 +207,7 @@ public class GraphqlDataServiceImplTest {
         Utils.setupHttpResponse("sample-graphql-generic-response.json", httpClient, HttpStatus.SC_OK);
         Exception exception = null;
         try {
-            dataService.getProductBySku(SKU);
+            dataService.getProductBySku(SKU, null);
         } catch (Exception e) {
             exception = e;
         }
@@ -217,10 +217,11 @@ public class GraphqlDataServiceImplTest {
     @Test
     public void testStoreCodeHeader() throws Exception {
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
-        dataService.execute("{dummy}");
+
+        dataService.execute("{dummy}", STORE_CODE);
 
         // Check that the HTTP client is sending the custom request headers
-        List<Header> headers = Collections.singletonList(new BasicHeader("Store", STORE_CODE));
+        List<Header> headers = Collections.singletonList(new BasicHeader(Constants.STORE_HEADER, STORE_CODE));
         HeadersMatcher matcher = new HeadersMatcher(headers);
         Mockito.verify(httpClient, Mockito.times(1)).execute(Mockito.argThat(matcher));
     }
@@ -234,7 +235,7 @@ public class GraphqlDataServiceImplTest {
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, query);
 
         dataService.requestOptions.withHttpMethod(HttpMethod.GET);
-        ProductInterface product = dataService.getProductBySku(SKU);
+        ProductInterface product = dataService.getProductBySku(SKU, null);
         assertEquals(SKU, product.getSku());
         assertEquals(NAME, product.getName());
 
