@@ -62,14 +62,14 @@ The CIF Magento GraphQL AEM commerce connector has to be configured to access yo
     * Look for `CIF Catalog Magento GraphQL Configuration Factory`
     * Create a child configuration
         * For `Magento GraphQL Service Identifier` enter the ID of the GraphQL client you already configured (see "pre-requisites")
-        * For `Magento root category id` enter the ID of the default root category of your Magento instance
-        * For `Magento store view` enter the code of the Magento store view you want to use or keep "default"
 
 3) Binding of product catalog to AEM resource tree
     * Go to AEM Commerce product console (http://localhost:4502/aem/products.html/var/commerce/products)
     * Click on Create > Bind Products
     * Enter Title, unique name and select `magento-graphql` as commerce provider
-    * For "Project", you can select the ID of the Magento instance you created in the previous step
+    * For `Magento store view` enter the code of the Magento store view you want to use or keep "default"
+    * For `Root category id` enter the ID of the Magento root category you want to define as the root of that binding
+    * For `Project`, you can select the ID of the connector instance you created in the previous step
 
 4) AEM content editor product drag & drop
     * To allow authors to drag & drop product assets from the AEM Assets Browser to a page a project specific configuration is needed to configure which component is used when dragging a product to a page. See AEM documentation about [Configuring a Paragraph System so that Dragging an Asset Creates a Component Instance](https://helpx.adobe.com/experience-manager/6-4/sites/developing/using/developing-components.html#ConfiguringaParagraphSystemsothatDragginganAssetCreatesaComponentInstance) for details.

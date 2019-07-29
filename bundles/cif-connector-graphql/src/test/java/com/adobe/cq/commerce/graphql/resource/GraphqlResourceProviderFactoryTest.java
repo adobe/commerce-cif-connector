@@ -30,7 +30,7 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 public class GraphqlResourceProviderFactoryTest {
 
     @Rule
-    public final AemContext context = GraphqlAemContext.createContext("/context/graphql-client-adapter-factory-context.json");
+    public final AemContext context = GraphqlAemContext.createContext("/context/graphql-client-adapter-factory-context.json", "/content");
 
     private GraphqlResourceProviderFactory<?> factory;
     private GraphqlDataServiceImpl client;

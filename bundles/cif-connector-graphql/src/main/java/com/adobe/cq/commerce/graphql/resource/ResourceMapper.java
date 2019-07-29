@@ -40,6 +40,7 @@ import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableVariant;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
 import com.adobe.cq.commerce.magento.graphql.SimpleProduct;
+import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.google.common.collect.Lists;
 
 class ResourceMapper<T> {
@@ -56,12 +57,20 @@ class ResourceMapper<T> {
     private Scheduler scheduler;
     private GraphqlDataService graphqlDataService;
     private GraphqlDataServiceConfiguration config;
+    private Integer rootCategoryId;
+    private String storeView;
 
-    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler) {
+    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, InheritanceValueMap properties) {
         this.root = root;
         this.scheduler = scheduler;
         this.graphqlDataService = graphqlDataService;
-        this.config = graphqlDataService.getConfiguration();
+        config = graphqlDataService.getConfiguration();
+
+        // Get Magento store view property
+        storeView = properties.getInherited(Constants.MAGENTO_STORE_PROPERTY, String.class);
+
+        // Get root category id
+        rootCategoryId = Integer.valueOf(properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
 
         if (config.catalogCachingEnabled() && config.catalogCachingSchedulerEnabled()) {
             scheduleCacheRefresh();
@@ -129,7 +138,7 @@ class ResourceMapper<T> {
      * This method builds various category caches used to lookup categories and products in a faster way.
      */
     private void buildAllCategoryPaths() {
-        CategoryTree categoryTree = graphqlDataService.getCategoryTree(config.rootCategoryId());
+        CategoryTree categoryTree = graphqlDataService.getCategoryTree(rootCategoryId, storeView);
         if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
             LOGGER.error("The Magento catalog is null or empty");
             return;
@@ -216,7 +225,7 @@ class ResourceMapper<T> {
             // --> and use the 2nd part (if any) to select the right variant
 
             String sku = productParts.get(0);
-            ProductInterface product = graphqlDataService.getProductBySku(sku);
+            ProductInterface product = graphqlDataService.getProductBySku(sku, storeView);
             if (product != null && product.getId() != null) {
                 boolean isVariant = productParts.size() > 1;
                 return new ProductResource(ctx.getResourceResolver(), path, product, isVariant ? productParts.get(1) : null);
@@ -234,7 +243,7 @@ class ResourceMapper<T> {
         List<String> productParts = resolveProductParts(productPath);
         try {
             String sku = productParts.size() == 1 ? productParts.get(0) : productParts.get(1);
-            ProductInterface product = graphqlDataService.getProductBySku(sku);
+            ProductInterface product = graphqlDataService.getProductBySku(sku, storeView);
             if (product != null) {
                 String imageUrl = product.getImage().getUrl();
                 if (imageUrl == null && product instanceof ConfigurableProduct) {
@@ -308,7 +317,7 @@ class ResourceMapper<T> {
 
         if (children.isEmpty()) {
             try {
-                List<ProductInterface> products = graphqlDataService.getCategoryProducts(Integer.valueOf(parentCifId));
+                List<ProductInterface> products = graphqlDataService.getCategoryProducts(Integer.valueOf(parentCifId), storeView);
                 if (products != null && !products.isEmpty()) {
                     for (ProductInterface product : products) {
                         String path = parentPath + "/" + product.getSku();
@@ -330,7 +339,7 @@ class ResourceMapper<T> {
         String parentPath = parent.getPath();
 
         try {
-            ProductInterface productInterface = graphqlDataService.getProductBySku(sku);
+            ProductInterface productInterface = graphqlDataService.getProductBySku(sku, storeView);
             if (productInterface == null) {
                 return null;
             }

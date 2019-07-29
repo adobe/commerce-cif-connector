@@ -20,21 +20,9 @@ public class MockGraphqlDataServiceConfiguration implements Annotation, GraphqlD
 
     public static final int ROOT_CATEGORY_ID = 4;
 
-    private String storeCode;
-
     @Override
     public String identifier() {
         return GraphqlDataServiceConfiguration.CONNECTOR_ID_DEFAULT;
-    }
-
-    @Override
-    public int rootCategoryId() {
-        return ROOT_CATEGORY_ID;
-    }
-
-    @Override
-    public String storeCode() {
-        return storeCode != null ? storeCode : GraphqlDataServiceConfiguration.STORE_CODE_DEFAULT;
     }
 
     @Override
@@ -75,9 +63,5 @@ public class MockGraphqlDataServiceConfiguration implements Annotation, GraphqlD
     @Override
     public Class<? extends Annotation> annotationType() {
         return GraphqlDataServiceConfiguration.class;
-    }
-
-    void setStoreCode(String storeCode) {
-        this.storeCode = storeCode;
     }
 }

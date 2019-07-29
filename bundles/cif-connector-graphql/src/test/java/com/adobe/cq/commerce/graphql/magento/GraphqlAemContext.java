@@ -25,11 +25,11 @@ public final class GraphqlAemContext {
 
     private GraphqlAemContext() {}
 
-    public static AemContext createContext(String contentPath) {
+    public static AemContext createContext(String contentPath, String destPath) {
         return new AemContext(
             (AemContextCallback) context -> {
                 // Load page structure
-                context.load().json(contentPath, "/content");
+                context.load().json(contentPath, destPath);
             },
             ResourceResolverType.JCR_MOCK);
     }
