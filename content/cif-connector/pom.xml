@@ -126,7 +126,7 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>cif-virtual-catalog-content</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.1</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
