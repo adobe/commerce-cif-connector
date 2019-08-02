@@ -63,12 +63,13 @@
                                                                 fieldLabel="Title"
                                                                 name="jcr:title"
                                                                 renderReadOnly="{Boolean}true"
-                                                                required="{Boolean}true"/>
+                                                                disabled="{Boolean}true"/>
                                                             <description
                                                                 jcr:primaryType="nt:unstructured"
                                                                 sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
                                                                 fieldLabel="Description"
                                                                 name="jcr:description"
+                                                                disabled="{Boolean}true"
                                                                 renderReadOnly="{Boolean}true"/>
                                                             <sku
                                                                     jcr:primaryType="nt:unstructured"
@@ -76,13 +77,13 @@
                                                                     fieldLabel="SKU"
                                                                     name="sku"
                                                                     renderReadOnly="{Boolean}true"
-                                                                    required="{Boolean}true"
-                                                                    validation="weretail.sku"/>
+                                                                    disabled="{Boolean}true"/>
                                                             <price
                                                                     jcr:primaryType="nt:unstructured"
                                                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                                                     fieldLabel="Price"
                                                                     name="formattedPrice"
+                                                                    disabled="{Boolean}true"
                                                                     renderReadOnly="{Boolean}true"/>
                                                             <charset
                                                                 jcr:primaryType="nt:unstructured"

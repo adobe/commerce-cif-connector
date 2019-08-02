@@ -114,7 +114,6 @@ The project provides a [sample scaffolding](./content/cif-connector/src/main/con
 
 To see the properties page go to the products console (in Commerce --> Products) and select a cloud product. The `Properties` action should be available and it should open the properties page when clicked.   
  
- 
 ## Building and installing from source
 
 ### Pre-requisites
