@@ -148,45 +148,6 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         testBindFactoryCreateRoots2(ROOT_COUNT);
     }
 
-    @Test
-    public void testBindFactoryModifyRoot() throws Exception {
-        manager.activate(componentContext);
-
-        FactoryConfig factoryConfig = bindFactory();
-
-        String rootPath = createDataRoot(factoryConfig.factoryId);
-
-        Thread.sleep(WAIT_FOR_EVENTS);
-
-        Assert.assertEquals(1, getProviders().size());
-        Assert.assertEquals(1, getProviderRegistrations().size());
-        Assert.assertEquals(1, manager.getProviderFactories().values().size());
-        Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
-
-        Assert.assertTrue(getProviderRegistrations().keySet().iterator().hasNext());
-        Object oldProvider = getProviderRegistrations().keySet().iterator().next();
-        Assert.assertNotNull(oldProvider);
-
-        Assert.assertTrue(session.nodeExists(rootPath));
-        Node root = session.getNode(rootPath);
-        root.setProperty("dummy", "dummy");
-        session.save();
-
-        Thread.sleep(WAIT_FOR_EVENTS);
-
-        Assert.assertEquals(1, getProviders().size());
-        Assert.assertEquals(1, getProviderRegistrations().size());
-        Assert.assertEquals(1, manager.getProviderFactories().values().size());
-        Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
-
-        Assert.assertTrue(getProviderRegistrations().keySet().iterator().hasNext());
-        Object newPovider = getProviderRegistrations().keySet().iterator().next();
-        Assert.assertNotNull(newPovider);
-
-        // check reregistration: new provider not the same as old provider
-        Assert.assertNotSame(oldProvider, newPovider);
-    }
-
     private void testBindFactoryCreateRemoveRoots(int createCount, int removeCount) throws Exception {
         if (removeCount > createCount) {
             throw new IllegalArgumentException("removeCount above createCount: " + removeCount + " > " + createCount);

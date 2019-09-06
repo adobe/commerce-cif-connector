@@ -325,8 +325,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             while (events.hasNext()) {
                 final Event event = events.nextEvent();
                 final String path = event.getPath();
-                final int eventType = event.getType();
-                if (eventType == Event.NODE_ADDED) {
+                if (event.getType() == Event.NODE_ADDED) {
                     nodeAdded = true;
                     Session session = resolver.adaptTo(Session.class);
                     final Node node = session.getNode(path);
@@ -334,14 +333,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                         node.hasProperty(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID)) {
                         actions.put(path, true);
                     }
-                } else if (eventType == Event.NODE_REMOVED && providers.containsKey(path)) {
+                } else if (event.getType() == Event.NODE_REMOVED && providers.containsKey(path)) {
                     nodeRemoved = true;
                     actions.put(path, false);
-                } else if ((eventType == Event.PROPERTY_CHANGED || eventType == Event.PROPERTY_ADDED || eventType == Event.PROPERTY_REMOVED)
-                    && isRegistredPath(path)) {
-                    // force re-registering
-                    nodeAdded = true;
-                    nodeRemoved = true;
                 }
             }
 
@@ -367,15 +361,6 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         } catch (RepositoryException e) {
             log.error("Unexpected repository exception during event processing.", e);
         }
-    }
-
-    private boolean isRegistredPath(String path) {
-        for (String provider : providers.keySet()) {
-            if (path.startsWith(provider)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Reference(
