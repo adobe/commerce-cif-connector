@@ -151,7 +151,7 @@ public class ViewHelper extends WCMUsePojo {
         if (isProduct()) {
             imageUrl = product.getThumbnailUrl(size);
             if (imageUrl != null && (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://"))) {
-                imageUrl = getRequest().getContextPath() + imageUrl + "/manualThumbnail?ch_ck=" + ck;
+                imageUrl = getRequest().getContextPath() + imageUrl + "?ch_ck=" + ck;
             }
         } else {
             imageUrl = getResource().getPath();
