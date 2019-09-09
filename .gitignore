@@ -3,6 +3,7 @@
 .metadata
 .project
 .settings
+.vscode
 **/target/**/*
 *.iml
 pom.xml.releaseBackup

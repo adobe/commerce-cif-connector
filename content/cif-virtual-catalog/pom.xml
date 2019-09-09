@@ -12,24 +12,25 @@
     governing permissions and limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
         <version>0.1.4</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
-    
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cif-virtual-catalog-content</artifactId>
     <version>0.2.2-SNAPSHOT</version>
     <packaging>content-package</packaging>
-    
+
     <name>CIF Virtual Catalog - Content package</name>
     <description>Content related to virtual catalog support</description>
     <url>https://github.com/adobe/commerce-cif-connector/content/virtual-catalog</url>
-    
+
     <scm>
         <connection>scm:git:https://github.com/adobe/commerce-cif-connector</connection>
         <developerConnection>scm:git:git@github.com:adobe/commerce-cif-connector.git</developerConnection>
@@ -46,7 +47,7 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-    
+
     <build>
         <resources>
             <!-- define the resources that will go into the package -->
@@ -78,7 +79,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
-            
+
             <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
@@ -102,12 +103,12 @@
                     </dependencies>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.sling</groupId>
                 <artifactId>htl-maven-plugin</artifactId>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
@@ -123,16 +124,16 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>cif-virtual-catalog</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    
+
     <profiles>
         <profile>
             <id>autoInstall</id>
