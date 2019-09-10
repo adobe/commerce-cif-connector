@@ -149,8 +149,6 @@ class ResourceMapper<T> {
 
         if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
             LOGGER.warn("The Magento catalog is null or empty");
-            categoryByPaths = Collections.emptyMap();
-            categoryPathsById = Collections.emptyMap();
             return;
         }
 
@@ -216,7 +214,7 @@ class ResourceMapper<T> {
         // Remove root (/var/commerce/products/cloudcommerce) then try to find the category path /Men/Coats
 
         String subPath = path.substring(root.length() + 1);
-        CategoryTree category = categoryByPaths.get(subPath);
+        CategoryTree category = categoryByPaths == null ? null : categoryByPaths.get(subPath);
         if (category != null) {
             return new CategoryResource(ctx.getResourceResolver(), path, category);
         }
@@ -295,7 +293,8 @@ class ResourceMapper<T> {
         int backtrackCounter = 0;
         List<String> productParts = new ArrayList<>();
         String[] parts = subPath.split("/");
-        Set<String> categoryPaths = categoryByPaths.keySet(); // defensive copy in case the cache is updated while looping
+        // defensive copy in case the cache is updated while looping
+        Set<String> categoryPaths = categoryByPaths == null ? Collections.emptySet() : categoryByPaths.keySet();
         for (String part : Lists.reverse(Arrays.asList(parts))) {
             productParts.add(part);
             backtrackCounter -= part.length() + 1;
@@ -318,7 +317,7 @@ class ResourceMapper<T> {
         ResourceResolver resolver = ctx.getResourceResolver();
         List<Resource> children = new ArrayList<>();
 
-        CategoryTree categoryTree = categoryByPaths.get(key);
+        CategoryTree categoryTree = categoryByPaths == null ? null : categoryByPaths.get(key);
         if (categoryTree != null) {
             for (CategoryTree child : categoryTree.getChildren()) {
                 children.add(new CategoryResource(resolver, root + "/" + child.getUrlPath(), child));
