@@ -34,7 +34,9 @@ public class Servlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(Servlet.class);
 
-    /** List of rules. */
+    /**
+     * List of rules.
+     */
     private List<Rule> rules = new ArrayList<>();
 
     /**
@@ -70,17 +72,17 @@ public class Servlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        log.info("Incoming request {}.", req.getRequestURI());
-
         // Go through rules and execute the first that matches
         RequestWrapper wrapper = new RequestWrapper(req);
 
-        log.info("Incoming request body {}.", wrapper.getBody());
+        log.info("Incoming request {}: {}", req.getRequestURI(), wrapper.getBody());
 
         for (Rule rule : rules) {
             if (rule.execute(wrapper, resp))
                 return;
         }
+
+        log.info("Failed request {}: {}", req.getRequestURI(), wrapper.getBody());
 
         // Return 404 if no rule is applicable
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);
