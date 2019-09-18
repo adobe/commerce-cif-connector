@@ -74,6 +74,9 @@ public class Servlet extends HttpServlet {
 
         // Go through rules and execute the first that matches
         RequestWrapper wrapper = new RequestWrapper(req);
+
+        log.info("Incoming request body {}.", wrapper.getBody());
+
         for (Rule rule : rules) {
             if (rule.execute(wrapper, resp))
                 return;
