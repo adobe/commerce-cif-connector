@@ -77,9 +77,9 @@
     } else if (rt == null && isFolder) { // resource is a folder
         Node rtNode = rtResource.adaptTo(Node.class);
         if (rtNode == null) { // folder is virtual
-            dialog = resourceResolver.getResource("commerce/components/cciffolder/cq:dialog");
+            dialog = resourceResolver.getResource("commerce/components/ciffolder/cq:dialog");
         } else if (rtNode.hasProperty("cq:catalogDataResourceProviderFactory")) {
-            dialog = resourceResolver.getResource("commerce/components/ccifrootfolder/cq:dialog");
+            dialog = resourceResolver.getResource("commerce/components/cifrootfolder/cq:dialog");
         } else {
             dialog = resourceResolver.getResource(folderDialog);
         }
