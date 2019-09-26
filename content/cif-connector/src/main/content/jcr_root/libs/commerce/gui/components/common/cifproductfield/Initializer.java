@@ -17,9 +17,15 @@ package libs.commerce.gui.components.common.cifproductfield;
 import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
 import com.adobe.cq.sightly.WCMUsePojo;
 import com.adobe.granite.ui.components.ValueMapResourceWrapper;
+import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
+import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.day.cq.i18n.I18n;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.Text;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 
 import com.adobe.granite.ui.components.ExpressionResolver;
@@ -33,6 +39,7 @@ public class Initializer extends WCMUsePojo {
     private static final String FIELD_SUPER_TYPE = "commerce/gui/components/common/productfield";
     private static final boolean DEFAULT_SELECTION_MULTIPLE = false;
     private static final String DEFAULT_SELECTION_TYPE = "id";
+    private static final String PN_CATALOG_PATH = "cq:catalogPath";
 
     @Override
     public void activate() throws Exception {
@@ -42,7 +49,11 @@ public class Initializer extends WCMUsePojo {
         final CommerceBasePathsService cbps = getSlingScriptHelper().getService(CommerceBasePathsService.class);
 
         //configure default properties for productfield
-        final String rootPath = ex.getString(properties.get("rootPath", cbps.getProductsBasePath()));
+        String defaultRootPath = findCatalogPath(this);
+        if (defaultRootPath == null) {
+            defaultRootPath = cbps.getProductsBasePath();
+        }
+        final String rootPath = ex.getString(properties.get("rootPath", defaultRootPath));
         final String filter = properties.get("filter", DEFAULT_FILTER);
         final boolean multiple = properties.get("multiple", DEFAULT_SELECTION_MULTIPLE);
         final String selectionId = properties.get("selectionId", DEFAULT_SELECTION_TYPE);
@@ -82,5 +93,20 @@ public class Initializer extends WCMUsePojo {
         wrapperProperties.put("forceselection", true);
 
         getSlingScriptHelper().include(wrapper);
+    }
+
+    public static String findCatalogPath(WCMUsePojo pojo) {
+        String componentPath = pojo.getRequest().getRequestPathInfo().getSuffix();
+        if (StringUtils.isNotBlank(componentPath)) {
+            Page parentPage = pojo.getResourceResolver().adaptTo(PageManager.class).getContainingPage(componentPath);
+            if (parentPage != null) {
+                InheritanceValueMap inheritedProperties = new HierarchyNodeInheritanceValueMap(parentPage.getContentResource());
+                String catalogPath = inheritedProperties.getInherited(PN_CATALOG_PATH, String.class);
+                if (StringUtils.isNotBlank(catalogPath)) {
+                    return catalogPath;
+                }
+            }
+        }
+        return null;
     }
 }

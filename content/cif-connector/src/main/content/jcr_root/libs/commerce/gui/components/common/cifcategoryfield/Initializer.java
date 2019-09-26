@@ -23,6 +23,8 @@ import org.apache.sling.api.resource.ValueMap;
 import com.adobe.granite.ui.components.ExpressionResolver;
 import com.adobe.granite.ui.components.ExpressionHelper;
 
+import static libs.commerce.gui.components.common.cifproductfield.Initializer.findCatalogPath;
+
 public class Initializer extends WCMUsePojo {
 
     private static final String DEFAULT_FILTER = "folderOrCategory";
@@ -39,7 +41,11 @@ public class Initializer extends WCMUsePojo {
         final CommerceBasePathsService cbps = getSlingScriptHelper().getService(CommerceBasePathsService.class);
 
         //configure default properties for cifcategoryfield
-        final String rootPath = ex.getString(properties.get("rootPath", cbps.getProductsBasePath()));
+        String defaultRootPath = findCatalogPath(this);
+        if (defaultRootPath == null) {
+            defaultRootPath = cbps.getProductsBasePath();
+        }
+        final String rootPath = ex.getString(properties.get("rootPath", defaultRootPath));
         final String filter = properties.get("filter", DEFAULT_FILTER);
         final boolean multiple = properties.get("multiple", DEFAULT_SELECTION_MULTIPLE);
         final String selectionId = properties.get("selectionId", DEFAULT_SELECTION_TYPE);
