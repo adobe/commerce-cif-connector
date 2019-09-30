@@ -20,6 +20,13 @@
             jcr:primaryType="nt:unstructured"
             name="fulltext"
             targetCollection="#cq-commerce-product-picker-search-collection">
+        <form jcr:primaryType="nt:unstructured">
+            <selectionid
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                    name="selectionId"
+                    value="${granite:encodeURIComponent(param.selectionId)}"/>
+        </form>
         <views jcr:primaryType="nt:unstructured">
             <card
                     granite:id="cq-commerce-product-picker-search-collection"
