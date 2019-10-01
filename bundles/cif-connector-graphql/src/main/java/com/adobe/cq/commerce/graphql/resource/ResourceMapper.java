@@ -138,9 +138,16 @@ class ResourceMapper<T> {
      * This method builds various category caches used to lookup categories and products in a faster way.
      */
     private void buildAllCategoryPaths() {
-        CategoryTree categoryTree = graphqlDataService.getCategoryTree(rootCategoryId, storeView);
+        CategoryTree categoryTree = null;
+        try {
+            categoryTree = graphqlDataService.getCategoryTree(rootCategoryId, storeView);
+        } catch (Exception x) {
+            LOGGER.warn("Failed to get category tree for root category {} and store view {} : {}", rootCategoryId, storeView,
+                x.getLocalizedMessage());
+        }
+
         if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
-            LOGGER.error("The Magento catalog is null or empty");
+            LOGGER.warn("The Magento catalog is null or empty");
             return;
         }
 
@@ -315,7 +322,7 @@ class ResourceMapper<T> {
             }
         }
 
-        if (children.isEmpty()) {
+        if (children.isEmpty() && StringUtils.isNotBlank(parentCifId)) {
             try {
                 List<ProductInterface> products = graphqlDataService.getCategoryProducts(Integer.valueOf(parentCifId), storeView);
                 if (products != null && !products.isEmpty()) {
