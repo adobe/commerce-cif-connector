@@ -27,7 +27,7 @@
     <packaging>content-package</packaging>
     
     <name>CIF Connector - Content Package</name>
-    <description>Content Package of Connector for CCIF hosted on openwhisk</description>
+    <description>Content Package of Connector for CIF</description>
     <url>https://github.com/adobe/commerce-cif-connector/content/cif-connector-content</url>
     
     <scm>
