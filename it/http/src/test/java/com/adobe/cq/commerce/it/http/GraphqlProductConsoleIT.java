@@ -222,7 +222,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     }
 
     @Test
-    public void testCcifFolderProperties() throws Exception {
+    public void testCifFolderProperties() throws Exception {
         mockServerRule.add(CATALOG_RULE.build());
         SlingHttpResponse response = cAuthorAuthor.doGet(FOLDER_PROPERTIES + JCR_BASE_PATH + "/men", SC_OK);
 

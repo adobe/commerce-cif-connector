@@ -57,7 +57,7 @@
                                             required="{Boolean}false"/>
                                     <customfields
                                             jcr:primaryType="nt:unstructured"
-                                            sling:resourceType="commerce/components/ccifrootfolder/include"
+                                            sling:resourceType="commerce/components/cifrootfolder/include"
                                             path="${empty param.item ? requestPathInfo.suffix : param.item}"/>
                                 </items>
                             </properties>
