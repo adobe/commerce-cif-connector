@@ -315,7 +315,7 @@ class ResourceMapper<T> {
             }
         }
 
-        if (children.isEmpty()) {
+        if (children.isEmpty() && StringUtils.isNotBlank(parentCifId)) {
             try {
                 List<ProductInterface> products = graphqlDataService.getCategoryProducts(Integer.valueOf(parentCifId), storeView);
                 if (products != null && !products.isEmpty()) {
