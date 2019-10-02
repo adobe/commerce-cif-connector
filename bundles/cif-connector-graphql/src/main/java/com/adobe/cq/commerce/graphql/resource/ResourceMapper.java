@@ -16,6 +16,7 @@ package com.adobe.cq.commerce.graphql.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -140,7 +141,9 @@ class ResourceMapper<T> {
     private void buildAllCategoryPaths() {
         CategoryTree categoryTree = graphqlDataService.getCategoryTree(rootCategoryId, storeView);
         if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
-            LOGGER.error("The Magento catalog is null or empty");
+            LOGGER.warn("The Magento catalog is null or empty");
+            categoryByPaths = Collections.emptyMap();
+            categoryPathsById = Collections.emptyMap();
             return;
         }
 
