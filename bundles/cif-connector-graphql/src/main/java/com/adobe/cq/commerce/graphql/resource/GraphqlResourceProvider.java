@@ -49,7 +49,7 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
         try {
             rootCategoryId = Integer.valueOf(magentoRootCategoryId);
         } catch (NumberFormatException x) {
-            LOGGER.warn("Invalid magentoRootCategoryId", x);
+            LOGGER.warn("Invalid root category ID: " + magentoRootCategoryId);
         }
         resourceMapper = new ResourceMapper<T>(root, graphqlDataService, scheduler, properties);
         queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlDataService, properties);
