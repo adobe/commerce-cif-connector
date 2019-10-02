@@ -52,8 +52,8 @@ class ResourceMapper<T> {
     private volatile boolean initDone = false;
     private volatile ReentrantLock initLock = new ReentrantLock();
 
-    private volatile Map<String, CategoryTree> categoryByPaths;
-    private volatile Map<Integer, String> categoryPathsById;
+    private volatile Map<String, CategoryTree> categoryByPaths = Collections.emptyMap();
+    private volatile Map<Integer, String> categoryPathsById = Collections.emptyMap();
 
     private Scheduler scheduler;
     private GraphqlDataService graphqlDataService;
@@ -142,8 +142,6 @@ class ResourceMapper<T> {
         CategoryTree categoryTree = graphqlDataService.getCategoryTree(rootCategoryId, storeView);
         if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
             LOGGER.warn("The Magento catalog is null or empty");
-            categoryByPaths = Collections.emptyMap();
-            categoryPathsById = Collections.emptyMap();
             return;
         }
 
