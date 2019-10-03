@@ -187,6 +187,66 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertNotSame(oldProvider, newPovider);
     }
 
+    @Test
+    public void testBindNullFactoryModifyRoot() throws Exception {
+        manager.activate(componentContext);
+
+        FactoryConfig factoryConfig = bindFactory();
+        FactoryConfig nullFactoryConfig = bindNullFactory();
+
+        String rootPath = createDataRoot(factoryConfig.factoryId);
+
+        Thread.sleep(WAIT_FOR_EVENTS);
+
+        Assert.assertEquals(1, getProviders().size());
+        Assert.assertEquals(1, getProviderRegistrations().size());
+        Assert.assertEquals(2, manager.getProviderFactories().values().size());
+        Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertTrue(manager.getProviderFactories().values().contains(nullFactoryConfig.factory));
+
+        Assert.assertTrue(getProviderRegistrations().keySet().iterator().hasNext());
+        Object oldProvider = getProviderRegistrations().keySet().iterator().next();
+        Assert.assertNotNull(oldProvider);
+
+        Assert.assertTrue(session.nodeExists(rootPath));
+        Node root = session.getNode(rootPath);
+
+        // change data root to null provider factory
+        root.setProperty(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, nullFactoryConfig.factoryId);
+        session.save();
+
+        Thread.sleep(WAIT_FOR_EVENTS);
+
+        // check that no provider was created
+        Assert.assertEquals(0, getProviders().size());
+        Assert.assertEquals(0, getProviderRegistrations().size());
+        Assert.assertEquals(2, manager.getProviderFactories().values().size());
+        Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertTrue(manager.getProviderFactories().values().contains(nullFactoryConfig.factory));
+
+        Assert.assertFalse(getProviderRegistrations().keySet().iterator().hasNext());
+
+        // change data root to provider factory
+        root.setProperty(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, factoryConfig.factoryId);
+        session.save();
+
+        Thread.sleep(WAIT_FOR_EVENTS);
+
+        // check that provider was created
+        Assert.assertEquals(1, getProviders().size());
+        Assert.assertEquals(1, getProviderRegistrations().size());
+        Assert.assertEquals(2, manager.getProviderFactories().values().size());
+        Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertTrue(manager.getProviderFactories().values().contains(nullFactoryConfig.factory));
+
+        Assert.assertTrue(getProviderRegistrations().keySet().iterator().hasNext());
+        Object newPovider = getProviderRegistrations().keySet().iterator().next();
+        Assert.assertNotNull(newPovider);
+
+        // check reregistration: new provider not the same as old provider
+        Assert.assertNotSame(oldProvider, newPovider);
+    }
+
     private void testBindFactoryCreateRemoveRoots(int createCount, int removeCount) throws Exception {
         if (removeCount > createCount) {
             throw new IllegalArgumentException("removeCount above createCount: " + removeCount + " > " + createCount);
@@ -351,11 +411,22 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
     }
 
     private FactoryConfig createFactoryConfig() {
-        return new FactoryConfig();
+        return new FactoryConfig(false);
+    }
+
+    private FactoryConfig createNullFactoryConfig() {
+        return new FactoryConfig(true);
     }
 
     private FactoryConfig bindFactory() {
         FactoryConfig factoryConfig = createFactoryConfig();
+        bindFactory(factoryConfig);
+
+        return factoryConfig;
+    }
+
+    private FactoryConfig bindNullFactory() {
+        FactoryConfig factoryConfig = createNullFactoryConfig();
         bindFactory(factoryConfig);
 
         return factoryConfig;
@@ -372,10 +443,12 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Map<String, String> properties;
         String factoryId;
 
-        FactoryConfig() {
+        FactoryConfig(boolean nullFactory) {
             CatalogDataResourceProviderFactory providerFactory = Mockito.mock(CatalogDataResourceProviderFactory.class);
-            Mockito.when(providerFactory.createResourceProvider(Mockito.any())).thenAnswer((Answer<ResourceProvider>) invocation -> Mockito
-                .mock(ResourceProvider.class));
+            Mockito.when(providerFactory.createResourceProvider(Mockito.any())).thenAnswer(
+                (Answer<ResourceProvider>) invocation -> nullFactory ? null
+                    : Mockito
+                        .mock(ResourceProvider.class));
             factory = providerFactory;
 
             factoryId = TEST_PROVIDER_FACTORY_ID + factoryCounter.getAndIncrement();
@@ -383,5 +456,6 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
             properties1.put(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_SERVICE_ID, factoryId);
             properties = properties1;
         }
+
     }
 }
