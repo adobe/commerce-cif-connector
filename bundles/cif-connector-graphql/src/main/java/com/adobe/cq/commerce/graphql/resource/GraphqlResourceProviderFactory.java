@@ -94,12 +94,12 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
             return null;
         }
 
-        // Get root category id
-        String magentoRootCategoryId = properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class);
+        // Check Magento root category id
+        String rootCategoryId = properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class);
         try {
-            Integer.valueOf(magentoRootCategoryId);
+            Integer.valueOf(rootCategoryId);
         } catch (NumberFormatException x) {
-            LOGGER.warn("Invalid root category ID: " + magentoRootCategoryId);
+            LOGGER.warn("Invalid {} {} at {}", Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, rootCategoryId, root.getPath());
             return null;
         }
 

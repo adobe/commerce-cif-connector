@@ -71,12 +71,7 @@ class ResourceMapper<T> {
         storeView = properties.getInherited(Constants.MAGENTO_STORE_PROPERTY, String.class);
 
         // Get root category id
-        String property = properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class);
-        try {
-            this.rootCategoryId = Integer.valueOf(property);
-        } catch (NumberFormatException x) {
-            LOGGER.warn("Invalid root category ID: " + property);
-        }
+        rootCategoryId = Integer.valueOf(properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
 
         if (config.catalogCachingEnabled() && config.catalogCachingSchedulerEnabled()) {
             scheduleCacheRefresh();
