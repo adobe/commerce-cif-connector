@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
@@ -88,8 +89,17 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
         }
 
         String catalogIdentifier = properties.getInherited(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, String.class);
-        if (catalogIdentifier == null) {
+        if (StringUtils.isBlank(catalogIdentifier)) {
             LOGGER.warn("Could not find cq:catalogIdentifier property for given resource at " + root.getPath());
+            return null;
+        }
+
+        // Get root category id
+        String magentoRootCategoryId = properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class);
+        try {
+            Integer.valueOf(magentoRootCategoryId);
+        } catch (NumberFormatException x) {
+            LOGGER.warn("Invalid root category ID: " + magentoRootCategoryId);
             return null;
         }
 
