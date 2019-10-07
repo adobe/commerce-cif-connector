@@ -16,6 +16,7 @@ package com.adobe.cq.commerce.graphql.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,8 +52,8 @@ class ResourceMapper<T> {
     private volatile boolean initDone = false;
     private volatile ReentrantLock initLock = new ReentrantLock();
 
-    private volatile Map<String, CategoryTree> categoryByPaths;
-    private volatile Map<Integer, String> categoryPathsById;
+    private volatile Map<String, CategoryTree> categoryByPaths = Collections.emptyMap();
+    private volatile Map<Integer, String> categoryPathsById = Collections.emptyMap();
 
     private Scheduler scheduler;
     private GraphqlDataService graphqlDataService;
@@ -129,6 +130,10 @@ class ResourceMapper<T> {
             if (config.catalogCachingEnabled()) {
                 initDone = true;
             }
+        } catch (Exception x) {
+            LOGGER.warn("Failed to refresh category cache for root category {} and store view {} : {}", rootCategoryId, storeView,
+                x.getLocalizedMessage());
+            LOGGER.warn("", x);
         } finally {
             initLock.unlock();
         }
@@ -140,7 +145,7 @@ class ResourceMapper<T> {
     private void buildAllCategoryPaths() {
         CategoryTree categoryTree = graphqlDataService.getCategoryTree(rootCategoryId, storeView);
         if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
-            LOGGER.error("The Magento catalog is null or empty");
+            LOGGER.warn("The Magento catalog is null or empty");
             return;
         }
 
@@ -315,7 +320,7 @@ class ResourceMapper<T> {
             }
         }
 
-        if (children.isEmpty()) {
+        if (children.isEmpty() && StringUtils.isNotBlank(parentCifId)) {
             try {
                 List<ProductInterface> products = graphqlDataService.getCategoryProducts(Integer.valueOf(parentCifId), storeView);
                 if (products != null && !products.isEmpty()) {
