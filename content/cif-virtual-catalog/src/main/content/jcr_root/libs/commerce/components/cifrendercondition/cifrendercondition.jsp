@@ -29,7 +29,7 @@
 
     Resource content = resourceResolver.getResource(path);
     boolean decision = true;
-    if ( content.adaptTo(Node.class) == null) {
+    if ( content == null || content.adaptTo(Node.class) == null) {
         decision = false;
     }
     request.setAttribute(RenderCondition.class.getName(), new SimpleRenderCondition(decision));

@@ -28,5 +28,14 @@
     "jcr:content": {
       "jcr:primaryType":"cq:PageContent"
     }
+  },
+  "pageE": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType":"cq:PageContent",
+      "cq:catalogIdentifier": "my-catalog",
+      "cq:magentoStore": "default",
+      "magentoRootCategoryId": "a"
+    }
   }
 }

@@ -201,14 +201,18 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         // register valid
         if (valid) {
             final ResourceProvider provider = factory.createResourceProvider(root);
-            final ResourceProvider oldProvider = providers.put(rootPath, provider);
+            // provider is null when there's a misconfiguration in the root resource
+            final ResourceProvider oldProvider = provider == null ? providers.remove(rootPath) : providers.put(rootPath, provider);
 
             // unregister in case there was a provider registered before
-            if (!provider.equals(oldProvider)) {
+            if (provider == null && oldProvider != null) {
+                unregisterService(oldProvider);
+            } else if (provider != null && oldProvider == null) {
+                registerService(rootPath, provider);
+                return true;
+            } else if (provider != null && !provider.equals(oldProvider)) {
                 log.debug("(Re-)registering resource provider {}.", rootPath);
-                if (oldProvider != null) {
-                    unregisterService(oldProvider);
-                }
+                unregisterService(oldProvider);
                 registerService(rootPath, provider);
                 return true;
             } else {
@@ -338,7 +342,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                     nodeRemoved = true;
                     actions.put(path, false);
                 } else if ((eventType == Event.PROPERTY_CHANGED || eventType == Event.PROPERTY_ADDED || eventType == Event.PROPERTY_REMOVED)
-                    && isRegistredPath(path)) {
+                    && isRelevantPath(path)) {
                     // force re-registering
                     nodeAdded = true;
                     nodeRemoved = true;
@@ -369,13 +373,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         }
     }
 
-    private boolean isRegistredPath(String path) {
-        for (String provider : providers.keySet()) {
-            if (path.startsWith(provider)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isRelevantPath(String path) {
+        return findDataRoots(resolver).stream().map(Resource::getPath).anyMatch(path::startsWith);
     }
 
     @Reference(

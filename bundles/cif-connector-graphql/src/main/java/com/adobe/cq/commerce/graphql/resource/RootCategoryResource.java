@@ -38,7 +38,7 @@ import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_T
  * virtual product tree.
  */
 class RootCategoryResource extends ResourceWrapper {
-    static final String RESOURCE_TYPE = "commerce/components/ccifrootfolder";
+    static final String RESOURCE_TYPE = "commerce/components/cifrootfolder";
     private Integer rootCategoryId;
 
     /**

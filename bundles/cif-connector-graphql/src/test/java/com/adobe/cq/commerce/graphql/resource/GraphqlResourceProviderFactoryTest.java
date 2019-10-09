@@ -76,6 +76,15 @@ public class GraphqlResourceProviderFactoryTest {
     }
 
     @Test
+    public void testReturnNullForPageWithInvalidRootCategoryIdentifier() {
+        // Get page without catalog identifier
+        Resource root = context.resourceResolver().getResource("/content/pageE");
+
+        ResourceProvider<?> provider = factory.createResourceProvider(root);
+        Assert.assertNull(provider);
+    }
+
+    @Test
     public void testBindings() {
         Assert.assertEquals(1, factory.getAllCatalogIdentifiers().size());
         factory.unbindGraphqlDataService(client, null);
