@@ -15,7 +15,8 @@
 <coral-columnview-item data-sly-attribute.variant="${helper.hasChildren && 'drilldown'}"
                        class="foundation-collection-item ${helper.isCategory && 'cq-commerce-picker-selectable'}"
                        data-foundation-picker-collection-item-value="${helper.selectionId}"
-                       data-foundation-collection-item-id="${resource.path}">
+                       data-foundation-collection-item-id="${resource.path}"
+                       data-granite-collection-item-id="${resource.path}">
     <coral-columnview-item-thumbnail>
         <coral-icon data-sly-test.needsCloudFolderIcon="${helper.isCloudFolder}" class="foundation-collection-item-thumbnail" icon="cloud"/>
         <coral-icon data-sly-test.needsFolderIcon="${!needsCloudFolderIcon && helper.isFolder && !helper.thumbnailImageUrl}" class="foundation-collection-item-thumbnail" icon="folder"/>
