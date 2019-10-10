@@ -35,6 +35,12 @@ This installs everything by default to `localhost:4502` without any context path
 * `aem.port`: the port number of the AEM instance
 * `aem.contextPath`: the context path of your AEM instance (if not `/`)
 
+### Inclusion as a Maven dependency
+
+While the Connector can be installed via source as mentioned above, you may want to just include it as a dependency in your own Maven project.  If doing so, and using the Filevault Package Maven Plugin, make sure to add a configuration to allow for indices as this project makes use of them:
+
+<allowIndexDefinitions>true</allowIndexDefinitions>
+
 ## System Requirements
 
 For simplicity, we only provide the version requirements of the `all` package. If you need to check the versions of other modules, simply checkout the corresponding `cif-connector-all-x.y.z` tag and check the versions of other modules in the corresponding POM files or in the POM of the `all` project.
