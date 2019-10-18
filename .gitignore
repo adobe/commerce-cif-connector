@@ -8,3 +8,7 @@
 *.iml
 pom.xml.releaseBackup
 release.properties
+
+# Directory Cache Files
+.DS_Store
+thumbs.db
