@@ -172,23 +172,38 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     }
 
     @Override
-    public List<ProductInterface> searchProducts(String text, Integer currentPage, Integer pageSize, String storeView) {
-        return searchProductsImpl(text, currentPage, pageSize, storeView);
+    public List<ProductInterface> searchProducts(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
+        return searchProductsImpl(text, categoryId, currentPage, pageSize, storeView);
     }
 
-    private List<ProductInterface> searchProductsImpl(String text, Integer currentPage, Integer pageSize, String storeView) {
+    private List<ProductInterface> searchProductsImpl(String text, Integer categoryId, Integer currentPage, Integer pageSize,
+        String storeView) {
 
-        LOGGER.debug("Performing product search with '{}' (page: {}, size: {})", text, currentPage, pageSize);
+        if (categoryId == null) {
+            LOGGER.debug("Performing product search with '{}' (page: {}, size: {})", text, currentPage, pageSize);
+        } else {
+            LOGGER.debug("Performing product search with '{}' in category {} (page: {}, size: {})", text, categoryId, currentPage,
+                pageSize);
+        }
 
         // Search parameters
         ProductsArgumentsDefinition searchArgs;
         if (StringUtils.isNotEmpty(text)) {
             ProductSortInput sortInput = new ProductSortInput().setSku(SortEnum.ASC);
-            searchArgs = s -> s.search(text).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
+            if (categoryId == null) {
+                searchArgs = s -> s.search(text).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
+            } else {
+                ProductFilterInput filter = new ProductFilterInput();
+                filter.setCategoryId(new FilterTypeInput().setEq(String.valueOf(categoryId)));
+                searchArgs = s -> s.search(text).filter(filter).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
+            }
         } else {
             // If the search is empty, we perform a "dummy" search (sku != null) that matches all products
             FilterTypeInput input = new FilterTypeInput().setNotnull("");
             ProductFilterInput filter = new ProductFilterInput().setSku(input);
+            if (categoryId != null) {
+                filter.setCategoryId(new FilterTypeInput().setEq(String.valueOf(categoryId)));
+            }
             searchArgs = s -> s.filter(filter).currentPage(currentPage).pageSize(pageSize);
         }
 

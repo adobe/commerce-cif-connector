@@ -57,7 +57,10 @@
                 <configuration>
                     <exportScr>true</exportScr>
                     <instructions>
-                        <Export-Package>!*</Export-Package>
+                        <Export-Package>!*,
+                            com.adobe.cq.commerce.gui.components.common.cifcategoryfield,
+                            com.adobe.cq.commerce.gui.components.common.cifproductfield
+                        </Export-Package>
                         <Import-Package>
                             !javax.annotation,
                             *

@@ -12,26 +12,26 @@
  *
  ******************************************************************************/
 
-package libs.commerce.gui.components.common.cifproductfield.datasources.search;
+package com.adobe.cq.commerce.gui.components.common.cifproductfield.impl;
 
 import java.io.IOException;
-
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import javax.servlet.ServletException;
+import javax.servlet.Servlet;
 
-import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.commons.collections4.iterators.TransformIterator;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-
-import org.apache.commons.collections4.Transformer;
-import org.apache.commons.collections4.iterators.TransformIterator;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceWrapper;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
+import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.osgi.service.component.annotations.Component;
+
+import com.adobe.cq.commerce.graphql.search.CatalogSearchSupport;
 import com.adobe.granite.ui.components.Config;
 import com.adobe.granite.ui.components.ExpressionHelper;
 import com.adobe.granite.ui.components.ExpressionResolver;
@@ -39,36 +39,50 @@ import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class search extends SlingSafeMethodsServlet {
-    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
-            throws ServletException, IOException {
-        final String VIRTUAL_PRODUCT_QUERY_LANGUAGE = "virtualProductOmnisearchQuery";
+import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.*;
+
+@Component(
+    service = Servlet.class,
+    name = "CIFProductFieldSearchDataSourceServlet",
+    immediate = true,
+    property = {
+        "sling.servlet.resourceTypes=commerce/gui/components/common/cifproductfield/datasources/search",
+        "sling.servlet.methods=GET"
+    })
+public class SearchDataSourceServlet extends SlingSafeMethodsServlet {
+    static final String VIRTUAL_PRODUCT_QUERY_LANGUAGE = "virtualProductOmnisearchQuery";
+
+    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         final String PARAMETER_OFFSET = "_commerce_offset";
         final String PARAMETER_LIMIT = "_commerce_limit";
         final Config cfg = new Config(request.getResource().getChild(Config.DATASOURCE));
         final SlingScriptHelper sling = ((SlingBindings) request.getAttribute(SlingBindings.class.getName())).getSling();
-        final ExpressionHelper ex = new ExpressionHelper(sling.getService(ExpressionResolver.class), request);;
+        final ExpressionHelper ex = new ExpressionHelper(sling.getService(ExpressionResolver.class), request);
         final String itemRT = cfg.get("itemResourceType", String.class);
         final long offset = ex.get(cfg.get("offset", "0"), long.class);
         final long limit = ex.get(cfg.get("limit", "20"), long.class);
 
-        Map<String, Object> queryParameters = new HashMap<>();
-        queryParameters.putAll(request.getParameterMap());
+        Map<String, Object> queryParameters = new HashMap<>(request.getParameterMap());
         queryParameters.put(PARAMETER_OFFSET, String.valueOf(offset));
         queryParameters.put(PARAMETER_LIMIT, String.valueOf(limit));
+
+        final String rootPath = request.getParameter("root");
+
+        String rootCategoryId = new CatalogSearchSupport(request.getResourceResolver()).findCategoryId(rootPath);
+        if (rootCategoryId != null) {
+            queryParameters.put(CATEGORY_ID_PARAMETER, rootCategoryId);
+            queryParameters.put(CATEGORY_PATH_PARAMETER, rootPath);
+        }
         String queryString = new ObjectMapper().writeValueAsString(queryParameters);
         Iterator<Resource> virtualResults = request.getResourceResolver().findResources(queryString, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
 
-        final DataSource ds = new SimpleDataSource(new TransformIterator<>(virtualResults, new Transformer<Resource, Resource>() {
-            public Resource transform(Resource r) {
-                return new ResourceWrapper(r) {
-                    public String getResourceType() {
-                        return itemRT;
-                    }
-                };
+        final DataSource ds = new SimpleDataSource(new TransformIterator<>(virtualResults, r -> new ResourceWrapper(r) {
+            public String getResourceType() {
+                return itemRT;
             }
         }));
 
         request.setAttribute(DataSource.class.getName(), ds);
     }
+
 }

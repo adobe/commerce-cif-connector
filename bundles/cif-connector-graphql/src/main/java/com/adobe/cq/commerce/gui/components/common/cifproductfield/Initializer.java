@@ -12,45 +12,40 @@
  *
  ******************************************************************************/
 
-package libs.commerce.gui.components.common.cifproductfield;
+package com.adobe.cq.commerce.gui.components.common.cifproductfield;
 
-import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
-import com.adobe.cq.sightly.WCMUsePojo;
-import com.adobe.granite.ui.components.ValueMapResourceWrapper;
-import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
-import com.day.cq.commons.inherit.InheritanceValueMap;
-import com.day.cq.i18n.I18n;
-import com.day.cq.wcm.api.Page;
-import com.day.cq.wcm.api.PageManager;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.util.Text;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 
-import com.adobe.granite.ui.components.ExpressionResolver;
+import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
+import com.adobe.cq.commerce.graphql.search.CatalogSearchSupport;
+import com.adobe.cq.sightly.WCMUsePojo;
 import com.adobe.granite.ui.components.ExpressionHelper;
+import com.adobe.granite.ui.components.ExpressionResolver;
+import com.adobe.granite.ui.components.ValueMapResourceWrapper;
+import com.day.cq.i18n.I18n;
 
 public class Initializer extends WCMUsePojo {
 
-    private static final String DEFAULT_FILTER = "folderOrProduct";
-    private static final String DEFAULT_PICKER_SRC = "/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html";
-    private static final String DEFAULT_SUGGESTION_SRC = "/mnt/overlay/commerce/gui/content/common/cifproductfield/suggestion{.offset,limit}.html";
-    private static final String FIELD_SUPER_TYPE = "commerce/gui/components/common/productfield";
-    private static final boolean DEFAULT_SELECTION_MULTIPLE = false;
-    private static final String DEFAULT_SELECTION_TYPE = "id";
-    private static final String PN_CATALOG_PATH = "cq:catalogPath";
+    static final String DEFAULT_FILTER = "folderOrProduct";
+    static final String DEFAULT_PICKER_SRC = "/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html";
+    static final String DEFAULT_SUGGESTION_SRC = "/mnt/overlay/commerce/gui/content/common/cifproductfield/suggestion{.offset,limit}.html";
+    static final String FIELD_SUPER_TYPE = "commerce/gui/components/common/productfield";
+    static final boolean DEFAULT_SELECTION_MULTIPLE = false;
+    static final String DEFAULT_SELECTION_TYPE = "id";
 
     @Override
-    public void activate() throws Exception {
+    public void activate() {
         final ValueMap properties = getProperties();
         final I18n i18n = new I18n(getRequest());
         final ExpressionHelper ex = new ExpressionHelper(getSlingScriptHelper().getService(ExpressionResolver.class), getRequest());
         final CommerceBasePathsService cbps = getSlingScriptHelper().getService(CommerceBasePathsService.class);
 
-        //configure default properties for productfield
-        String defaultRootPath = findCatalogPath(this);
-        if (defaultRootPath == null) {
+        // configure default properties for productfield
+        String suffix = getRequest().getRequestPathInfo().getSuffix();
+        String defaultRootPath = new CatalogSearchSupport(getResourceResolver()).findCatalogPath(suffix);
+        if (StringUtils.isBlank(defaultRootPath)) {
             defaultRootPath = cbps.getProductsBasePath();
         }
         final String rootPath = ex.getString(properties.get("rootPath", defaultRootPath));
@@ -72,12 +67,13 @@ public class Initializer extends WCMUsePojo {
         final String emptyText = i18n.getVar(properties.get("emptyText", i18n.get(defaultEmptyText)));
 
         final String selectionCount = multiple ? "multiple" : "single";
-        String pickerSrc = DEFAULT_PICKER_SRC + "?root=" + Text.escape(rootPath) + "&filter=" + Text.escape(filter) + "&selectionCount=" + selectionCount + "&selectionId=" + selectionId;
+        String pickerSrc = DEFAULT_PICKER_SRC + "?root=" + Text.escape(rootPath) + "&filter=" + Text.escape(filter) + "&selectionCount="
+            + selectionCount + "&selectionId=" + selectionId;
         String suggestionSrc = DEFAULT_SUGGESTION_SRC + "?root=" + Text.escape(rootPath) + "&filter=product{&query}";
         pickerSrc = properties.get("pickerSrc", pickerSrc);
         suggestionSrc = properties.get("suggestionSrc", suggestionSrc);
 
-        //suggestions disabled
+        // suggestions disabled
         suggestionSrc = "";
 
         ValueMapResourceWrapper wrapper = new ValueMapResourceWrapper(getResource(), FIELD_SUPER_TYPE);
@@ -89,24 +85,9 @@ public class Initializer extends WCMUsePojo {
         wrapperProperties.put("pickerSrc", pickerSrc);
         wrapperProperties.put("suggestionSrc", suggestionSrc);
         wrapperProperties.put("emptyText", emptyText);
-
         wrapperProperties.put("forceselection", true);
 
         getSlingScriptHelper().include(wrapper);
     }
 
-    public static String findCatalogPath(WCMUsePojo pojo) {
-        String componentPath = pojo.getRequest().getRequestPathInfo().getSuffix();
-        if (StringUtils.isNotBlank(componentPath)) {
-            Page parentPage = pojo.getResourceResolver().adaptTo(PageManager.class).getContainingPage(componentPath);
-            if (parentPage != null) {
-                InheritanceValueMap inheritedProperties = new HierarchyNodeInheritanceValueMap(parentPage.getContentResource());
-                String catalogPath = inheritedProperties.getInherited(PN_CATALOG_PATH, String.class);
-                if (StringUtils.isNotBlank(catalogPath)) {
-                    return catalogPath;
-                }
-            }
-        }
-        return null;
-    }
 }

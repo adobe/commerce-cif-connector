@@ -39,6 +39,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.api.Product;
 import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
+import com.adobe.cq.commerce.graphql.search.CatalogSearchSupport;
 import com.adobe.granite.omnisearch.spi.core.OmniSearchHandler;
 import com.adobe.granite.xss.XSSAPI;
 import com.day.cq.search.Predicate;
@@ -56,6 +57,8 @@ import com.day.cq.wcm.core.contentfinder.Hit;
 import com.day.cq.wcm.core.contentfinder.ViewHandler;
 import com.day.cq.wcm.core.contentfinder.ViewQuery;
 
+import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.CATEGORY_ID_PARAMETER;
+import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.CATEGORY_PATH_PARAMETER;
 import static com.day.cq.commons.jcr.JcrConstants.JCR_LASTMODIFIED;
 import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED;
 
@@ -75,6 +78,8 @@ public class GraphqlProductViewHandler extends ViewHandler {
     private static final String PRODUCT_COMMERCE_TYPE = "product";
     private static final String TAGS_PROP = "tags";
     private static final String CQ_TAGS_PROP = "cq:tags";
+    private static final String PAGE_EDITOR_PATH = "editor.html";
+    private static final String REFERER_HEADER = "Referer";
 
     @Reference(target = "(component.name=com.adobe.cq.commerce.impl.omnisearch.ProductsOmniSearchHandler)")
     OmniSearchHandler omniSearchHandler;
@@ -151,21 +156,38 @@ public class GraphqlProductViewHandler extends ViewHandler {
     protected ViewQuery createQuery(SlingHttpServletRequest request,
         Session session, String queryString) throws RepositoryException {
 
-        PredicateGroup gqlPredicateGroup = new PredicateGroup();
         queryString = preserveWildcards(queryString);
 
-        gqlPredicateGroup = PredicateConverter.createPredicatesFromGQL(queryString);
-        tagManager = request.getResourceResolver().adaptTo(TagManager.class);
+        PredicateGroup gqlPredicateGroup = PredicateConverter.createPredicatesFromGQL(queryString);
+        ResourceResolver resolver = request.getResourceResolver();
+        tagManager = resolver.adaptTo(TagManager.class);
         Set<String> predicateSet = customizePredicateGroup(gqlPredicateGroup);
 
         // set default start path
         RequestPathInfo pathInfo = request.getRequestPathInfo();
-        final CommerceBasePathsService cbps = request.getResourceResolver().adaptTo(CommerceBasePathsService.class);
+        CommerceBasePathsService cbps = resolver.adaptTo(CommerceBasePathsService.class);
         String defaultStartPath = cbps.getProductsBasePath();
         String startPath = (pathInfo.getSuffix() != null && pathInfo.getSuffix().startsWith(defaultStartPath)) ? pathInfo.getSuffix()
             : defaultStartPath;
         if (!predicateSet.contains(PathPredicateEvaluator.PATH)) {
             gqlPredicateGroup.add(new Predicate(PathPredicateEvaluator.PATH).set(PathPredicateEvaluator.PATH, startPath));
+        }
+
+        String refererHeader = request.getHeader(REFERER_HEADER);
+        if (StringUtils.isNotBlank(refererHeader)) {
+            int p = refererHeader.lastIndexOf(PAGE_EDITOR_PATH);
+            String pagePath = refererHeader.substring(p + PAGE_EDITOR_PATH.length());
+            if (pagePath.endsWith(".html")) {
+                pagePath = pagePath.substring(0, pagePath.length() - ".html".length());
+            }
+
+            CatalogSearchSupport catalogSearch = new CatalogSearchSupport(resolver);
+            String catalogPath = catalogSearch.findCatalogPath(pagePath);
+            String rootCategoryId = catalogSearch.findCategoryId(catalogPath);
+            if (rootCategoryId != null) {
+                gqlPredicateGroup.add(new Predicate(CATEGORY_ID_PARAMETER).set(CATEGORY_ID_PARAMETER, rootCategoryId));
+                gqlPredicateGroup.add(new Predicate(CATEGORY_PATH_PARAMETER).set(CATEGORY_PATH_PARAMETER, catalogPath));
+            }
         }
 
         // append node type constraint to match product data index /etc/commerce/oak:index/commerce
@@ -193,7 +215,7 @@ public class GraphqlProductViewHandler extends ViewHandler {
                 .set(Predicate.PARAM_SORT, Predicate.SORT_DESCENDING));
         }
 
-        return new GQLViewQuery(request.getResourceResolver(), omniSearchHandler, xssAPI, gqlPredicateGroup);
+        return new GQLViewQuery(resolver, omniSearchHandler, xssAPI, gqlPredicateGroup);
     }
 
     /**

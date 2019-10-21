@@ -12,7 +12,7 @@
  *
  ******************************************************************************/
 
-package com.adobe.cq.commerce.gui.components.common.cifproductfield;
+package com.adobe.cq.commerce.gui.components.common.cifproductfield.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
