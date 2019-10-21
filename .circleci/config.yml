@@ -1,28 +1,5 @@
 version: 2.1
 
-# This is a reusable command to perform a maven release
-commands:
-  release:
-    description: "Performs a maven release in the specified folder"
-    parameters:
-      folder:
-        type: string
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-      - run:
-          name: Release
-          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
-          # already checks out the git tag like 'mvn release:perform' would do. 
-          command: |
-            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            cd << parameters.folder >>
-            mvn -B -s /home/circleci/project/.circleci/settings.xml clean deploy -P release-sign-artifacts
-            rm -rf /home/circleci/.gnupg
-
 executors:
   cif_executor:
     docker:
@@ -60,41 +37,23 @@ jobs:
           name: Upload Code Coverage
           command: bash <(curl -s https://codecov.io/bash) -F unittests
           
-  release_cif_connector_parent:
+  release:
     executor: cif_executor
     steps:
-      - release:
-          folder: "parent"
-          
-  release_cif_connector_graphql:
-    executor: cif_executor
-    steps:
-      - release:
-          folder: "bundles/cif-connector-graphql"
-            
-  release_cif_virtual_catalog:
-    executor: cif_executor
-    steps:
-      - release:
-          folder: "bundles/cif-virtual-catalog"
-            
-  release_cif_connector_content:
-    executor: cif_executor
-    steps:
-      - release:
-          folder: "content/cif-connector"
-            
-  release_cif_virtual_catalog_content:
-    executor: cif_executor
-    steps:
-      - release:
-          folder: "content/cif-virtual-catalog"
-            
-  release_cif_connector_all:
-    executor: cif_executor
-    steps:
-      - release:
-          folder: "all"
+      - checkout
+      - restore_cache:
+          keys: 
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
+      - run:
+          name: Release
+          # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
+          # already checks out the git tag like 'mvn release:perform' would do.
+          # The "skip-it" property ensures that we do not release the integration tests sub-modules
+          command: |
+            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
+            mvn -B -s /home/circleci/project/.circleci/settings.xml clean deploy -Prelease-sign-artifacts -Dskip-it
+            rm -rf /home/circleci/.gnupg
 
 workflows:
   version: 2
@@ -105,56 +64,11 @@ workflows:
             tags:
               only: /.*/
               
-      - release_cif_connector_parent:
+      - release:
           requires:
             - build
           filters:
             branches:
               ignore: /.*/
             tags:
-              only: /^cif-connector-parent-\d+\.\d+\.\d+$/
-              
-      - release_cif_connector_graphql:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^cif-connector-graphql-\d+\.\d+\.\d+$/
-              
-      - release_cif_virtual_catalog:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^cif-virtual-catalog-\d+\.\d+\.\d+$/
-              
-      - release_cif_connector_content:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^cif-connector-content-\d+\.\d+\.\d+$/
-              
-      - release_cif_virtual_catalog_content:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^cif-virtual-catalog-content-\d+\.\d+\.\d+$/
-              
-      - release_cif_connector_all:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^cif-connector-all-\d+\.\d+\.\d+$/
+              only: /^cif-connector-reactor-\d+\.\d+\.\d+$/
