@@ -35,6 +35,12 @@ This installs everything by default to `localhost:4502` without any context path
 * `aem.port`: the port number of the AEM instance
 * `aem.contextPath`: the context path of your AEM instance (if not `/`)
 
+### Inclusion as a Maven dependency
+
+While the Connector can be installed via source as mentioned above, you may want to just include it as a dependency in your own Maven project.  If doing so, and using the Filevault Package Maven Plugin, make sure to add a configuration to allow for indices as this project makes use of them:
+
+<allowIndexDefinitions>true</allowIndexDefinitions>
+
 ## System Requirements
 
 For simplicity, we only provide the version requirements of the `all` package. If you need to check the versions of other modules, simply checkout the corresponding `cif-connector-all-x.y.z` tag and check the versions of other modules in the corresponding POM files or in the POM of the `all` project.
@@ -156,9 +162,11 @@ mvn clean verify -Ptest-all -Dsling.it.instance.url.1=http://localhost:4502 -Dsl
 
 ## Releases to Maven Central
 
-Releases are triggered by manually running `mvn release:prepare release:clean` on the `master` branch in one of the modules/subprojects of this repository. Once you choose the release and the next snapshot versions, this commits the change along with a release git tag like for example `cif-connector-all-x.y.z`. Note that the commits are not automatically pushed to the git repository, so you have some time to check your changes and then manually push them. The push then triggers a dedicated `CircleCI` build that performs the deployment of the tagged artifact to Maven Central.
+Releases are triggered by manually running `mvn release:prepare release:clean -Dskip-it` on the `master` branch in the **top-level folder** of this repository. Once you choose the release and the next snapshot versions, this commits the change along with a release git tag like for example `cif-connector-reactor-x.y.z`. Note that the commits are not automatically pushed to the git repository, so you have some time to check your changes and then manually push them. The push then triggers a dedicated `CircleCI` build that performs the deployment of all the artifacts to Maven Central.
 
-Important: do **not** trigger releases from the reactor (top-level) project because we release each module independently.
+Note that the `skip-it` property ensures that the integration tests sub-modules are not released.
+
+Important: starting with version `0.6.0`, we changed the release strategy to a "reactor" release when all the artifacts are released with the same version. This makes it easier to perform releases and simplifies versioning.
 
 ### Contributing
  

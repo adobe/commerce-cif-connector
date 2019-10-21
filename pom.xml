@@ -15,11 +15,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+    <parent>
+        <groupId>com.adobe.commerce.cif</groupId>
+        <artifactId>cif-connector-parent</artifactId>
+        <version>0.6.0-SNAPSHOT</version>
+        <relativePath>parent/pom.xml</relativePath>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.adobe.commerce.cif</groupId>
     <artifactId>cif-connector-reactor</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.0-SNAPSHOT</version>
 
     <name>CIF Connector Reactor</name>
     <description>Maven Multi-module project for the CIF connector project</description>
@@ -31,10 +36,25 @@
         <module>content/cif-connector</module>
         <module>bundles/cif-connector-graphql</module>
         <module>all</module>
-        <module>it/content</module>
-        <module>it/http</module>
-        <module>it/mock-server</module>
     </modules>
+    
+    <!-- We have a dedicated profile for integration tests -->
+    <!-- They are included by default unless we perform a release -->
+    <profiles>
+        <profile>
+            <id>integration-tests</id>
+            <activation>
+                <property>
+                    <name>!skip-it</name>
+                </property>
+            </activation>
+            <modules>
+                <module>it/content</module>
+                <module>it/http</module>
+                <module>it/mock-server</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <scm>
         <connection>scm:git:https://github.com/adobe/commerce-cif-connector.git</connection>
