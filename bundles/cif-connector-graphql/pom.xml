@@ -158,7 +158,7 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>magento-graphql</artifactId>
-            <version>3.0.1-magento232</version>
+            <version>4.0.0-magento233</version>
             <scope>provided</scope>
         </dependency>
 
@@ -166,7 +166,7 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>cif-virtual-catalog</artifactId>
-            <version>0.1.0</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 

@@ -31,8 +31,8 @@
 
     <modules>
         <module>parent</module>
-        <module>content/cif-virtual-catalog</module>
         <module>bundles/cif-virtual-catalog</module>
+        <module>content/cif-virtual-catalog</module>
         <module>content/cif-connector</module>
         <module>bundles/cif-connector-graphql</module>
         <module>all</module>
