@@ -173,7 +173,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     @Override
     public List<ProductInterface> searchProducts(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
-        return searchProductsImpl(text, categoryId, currentPage, pageSize, storeView);
+        return searchProductsImpl(text, null, currentPage, pageSize, storeView);
     }
 
     private List<ProductInterface> searchProductsImpl(String text, Integer categoryId, Integer currentPage, Integer pageSize,

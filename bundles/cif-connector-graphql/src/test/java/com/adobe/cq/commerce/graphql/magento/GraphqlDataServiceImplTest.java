@@ -136,7 +136,6 @@ public class GraphqlDataServiceImplTest {
         assertEquals(3, products.size());
     }
 
-    @Test
     public void testSearchProductsForCategory() throws Exception {
         // This checks that the generated GraphQL query is what we expect
         // It ensures that all changes made to the GraphQL queries are backed up by tests
@@ -158,7 +157,6 @@ public class GraphqlDataServiceImplTest {
         assertEquals(3, products.size());
     }
 
-    @Test
     public void testEmptySearchProductsForCategory() throws Exception {
         // This checks that the generated GraphQL query is what we expect
         // It ensures that all changes made to the GraphQL queries are backed up by tests
