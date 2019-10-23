@@ -108,7 +108,7 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
             }
         }
 
-        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, categoryId, pagination.getLeft(),
+        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, pagination.getLeft(),
             pagination.getRight(), storeView);
 
         // The Magento page might start before 'offset' and be bigger than 'limit', so we extract exactly what we need

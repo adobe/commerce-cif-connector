@@ -37,14 +37,13 @@ public interface GraphqlDataService {
      * Performs a full-text search and returns the matching products.
      * 
      * @param text The full-text search.
-     * @param categoryId identifier of the category at the root of category tree where the search is performed
      * @param currentPage Specifies which page of results to return. The default value is 1.
      * @param pageSize Specifies the maximum number of results to return at once. This attribute is optional.
      * @param storeView An optional Magento store view, can be null.
      * @return The list of matching products or an empty list if the search doesn't match any product.
      * @exception RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
      */
-    public List<ProductInterface> searchProducts(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView);
+    public List<ProductInterface> searchProducts(String text, Integer currentPage, Integer pageSize, String storeView);
 
     /**
      * Returns the Magento category tree for the given category id.
