@@ -35,6 +35,8 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.api.Product;
@@ -73,6 +75,7 @@ import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED;
         "sling.servlet.paths=/bin/wcm/contentfinder/cifproduct/view"
     })
 public class GraphqlProductViewHandler extends ViewHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlProductViewHandler.class);
 
     private static final String PROPERTY_STEP = "*/";
     private static final String PRODUCT_COMMERCE_TYPE = "product";
@@ -174,7 +177,7 @@ public class GraphqlProductViewHandler extends ViewHandler {
         }
 
         String refererHeader = request.getHeader(REFERER_HEADER);
-        if (StringUtils.isNotBlank(refererHeader)) {
+        if (StringUtils.isNotBlank(refererHeader) && refererHeader.contains(PAGE_EDITOR_PATH + "/")) {
             int p = refererHeader.lastIndexOf(PAGE_EDITOR_PATH);
             String pagePath = refererHeader.substring(p + PAGE_EDITOR_PATH.length());
             if (pagePath.endsWith(".html")) {
@@ -188,6 +191,8 @@ public class GraphqlProductViewHandler extends ViewHandler {
                 gqlPredicateGroup.add(new Predicate(CATEGORY_ID_PARAMETER).set(CATEGORY_ID_PARAMETER, rootCategoryId));
                 gqlPredicateGroup.add(new Predicate(CATEGORY_PATH_PARAMETER).set(CATEGORY_PATH_PARAMETER, catalogPath));
             }
+        } else {
+            LOGGER.warn("The path of the edited page cannot be determined");
         }
 
         // append node type constraint to match product data index /etc/commerce/oak:index/commerce

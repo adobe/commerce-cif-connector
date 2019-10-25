@@ -68,7 +68,7 @@ public class Initializer extends WCMUsePojo {
 
         final String selectionCount = multiple ? "multiple" : "single";
         String pickerSrc = DEFAULT_PICKER_SRC + "?root=" + Text.escape(rootPath) + "&filter=" + Text.escape(filter) + "&selectionCount="
-            + selectionCount + "&selectionId=" + selectionId;
+            + selectionCount + "&selectionId=" + Text.escape(selectionId);
         String suggestionSrc = DEFAULT_SUGGESTION_SRC + "?root=" + Text.escape(rootPath) + "&filter=product{&query}";
         pickerSrc = properties.get("pickerSrc", pickerSrc);
         suggestionSrc = properties.get("suggestionSrc", suggestionSrc);
