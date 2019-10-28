@@ -109,8 +109,23 @@ public class InitializerTest extends FieldInitializerTest {
     }
 
     @Test
-    public void testCatalogPath() {
+    public void testCatalogPathForComponentDialog() {
+        when(request.getRequestURI()).thenReturn(CatalogSearchSupport.COMPONENT_DIALIG_URI_MARKER);
         when(requestPathInfo.getSuffix()).thenReturn("component/path");
+        contentResourceProperties.put(CatalogSearchSupport.PN_CATALOG_PATH, "catalog/path");
+
+        initializer.init(bindings);
+
+        assertNotNull(includedResourceSample);
+        ValueMap properties = includedResourceSample.getValueMap();
+        assertNotNull(properties);
+        assertEquals("catalog/path", properties.get("rootPath", String.class));
+    }
+
+    @Test
+    public void testCatalogPathForPageProperties() {
+        when(request.getRequestURI()).thenReturn(CatalogSearchSupport.PAGE_PROPERTIES_URI_MARKER);
+        when(request.getParameter("item")).thenReturn("component/path");
         contentResourceProperties.put(CatalogSearchSupport.PN_CATALOG_PATH, "catalog/path");
 
         initializer.init(bindings);

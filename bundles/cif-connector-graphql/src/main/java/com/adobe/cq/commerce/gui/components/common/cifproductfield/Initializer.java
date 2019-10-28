@@ -43,8 +43,7 @@ public class Initializer extends WCMUsePojo {
         final CommerceBasePathsService cbps = getSlingScriptHelper().getService(CommerceBasePathsService.class);
 
         // configure default properties for productfield
-        String suffix = getRequest().getRequestPathInfo().getSuffix();
-        String defaultRootPath = new CatalogSearchSupport(getResourceResolver()).findCatalogPath(suffix);
+        String defaultRootPath = new CatalogSearchSupport(getResourceResolver()).findCatalogPathForPicker(getRequest());
         if (StringUtils.isBlank(defaultRootPath)) {
             defaultRootPath = cbps.getProductsBasePath();
         }

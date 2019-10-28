@@ -15,6 +15,7 @@
 package com.adobe.cq.commerce.graphql.search;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
@@ -28,6 +29,8 @@ import com.day.cq.wcm.api.PageManager;
 
 public class CatalogSearchSupport {
     public static final String PN_CATALOG_PATH = "cq:catalogPath";
+    public static final String COMPONENT_DIALIG_URI_MARKER = "/_cq_dialog.html/";
+    public static final String PAGE_PROPERTIES_URI_MARKER = "/sites/properties.html";
     private ResourceResolver resolver;
 
     public CatalogSearchSupport(ResourceResolver resolver) {
@@ -74,7 +77,7 @@ public class CatalogSearchSupport {
      * @return the value of the {@link #PN_CATALOG_PATH} property or {@code null} if not found
      */
     public String findCatalogPath(String path) {
-        if (!StringUtils.isNotBlank(path)) {
+        if (StringUtils.isBlank(path)) {
             return null;
         }
         Page parentPage = resolver.adaptTo(PageManager.class).getContainingPage(path);
@@ -83,5 +86,25 @@ public class CatalogSearchSupport {
         }
         InheritanceValueMap inheritedProperties = new HierarchyNodeInheritanceValueMap(parentPage.getContentResource());
         return inheritedProperties.getInherited(PN_CATALOG_PATH, String.class);
+    }
+
+    /**
+     * Searches for the {@link #PN_CATALOG_PATH} property of the current site using algorithms specific to pickers.
+     *
+     * @param request the current {@code SlingHttpServletRequest}
+     *
+     * @return the value of the {@link #PN_CATALOG_PATH} property or or {@code null} if not found
+     */
+    public String findCatalogPathForPicker(SlingHttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        if (requestURI.contains(COMPONENT_DIALIG_URI_MARKER)) {
+            String suffix = request.getRequestPathInfo().getSuffix();
+            return findCatalogPath(suffix);
+        } else if (requestURI.contains(PAGE_PROPERTIES_URI_MARKER)) {
+            String item = request.getParameter("item");
+            return findCatalogPath(item);
+        }
+
+        return null;
     }
 }

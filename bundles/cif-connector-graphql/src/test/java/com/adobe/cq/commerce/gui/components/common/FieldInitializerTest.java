@@ -47,6 +47,7 @@ public class FieldInitializerTest {
     protected Resource includedResourceSample;
     protected ModifiableValueMapDecorator valueMap;
     protected ValueMap contentResourceProperties;
+    protected SlingHttpServletRequest request;
     protected RequestPathInfo requestPathInfo;
 
     @Before
@@ -64,7 +65,8 @@ public class FieldInitializerTest {
             includedResourceSample = (Resource) invocationOnMock.getArguments()[0];
             return null;
         }).when(sling).include(any(Resource.class));
-        SlingHttpServletRequest request = mock(SlingHttpServletRequest.class);
+        request = mock(SlingHttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("some_request_uri");
         bindings.put(SlingBindings.REQUEST, request);
         requestPathInfo = mock(RequestPathInfo.class);
         when(request.getRequestPathInfo()).thenReturn(requestPathInfo);
