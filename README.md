@@ -39,7 +39,7 @@ This installs everything by default to `localhost:4502` without any context path
 
 While the Connector can be installed via source as mentioned above, you may want to just include it as a dependency in your own Maven project.  If doing so, and using the Filevault Package Maven Plugin, make sure to add a configuration to allow for indices as this project makes use of them:
 
-<allowIndexDefinitions>true</allowIndexDefinitions>
+allowIndexDefinitions=true
 
 ## System Requirements
 
