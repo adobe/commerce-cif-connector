@@ -17,13 +17,12 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.1.4</version>
+        <version>0.6.0-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cif-connector-graphql</artifactId>
-    <version>0.4.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
     
     <name>CIF Connector - GraphQL Bundle</name>
@@ -100,21 +99,6 @@
             
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
             
@@ -171,7 +155,7 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>magento-graphql</artifactId>
-            <version>3.0.1-magento232</version>
+            <version>4.0.0-magento233</version>
             <scope>provided</scope>
         </dependency>
 
@@ -179,7 +163,7 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>cif-virtual-catalog</artifactId>
-            <version>0.1.0</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 

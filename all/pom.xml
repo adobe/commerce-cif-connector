@@ -17,13 +17,12 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.1.4</version>
+        <version>0.6.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cif-connector-all</artifactId>
-    <version>0.5.1-SNAPSHOT</version>
     <packaging>content-package</packaging>
 
     <name>CIF Connector - All content package</name>
@@ -95,21 +94,6 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
 
@@ -120,26 +104,26 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-connector-graphql</artifactId>
-            <version>0.4.0</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-virtual-catalog</artifactId>
-            <version>0.2.0</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-connector-content</artifactId>
-            <version>0.2.1</version>
+            <version>${project.version}</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cif-virtual-catalog-content</artifactId>
-            <version>0.3.0</version>
+            <version>${project.version}</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
@@ -152,7 +136,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>magento-graphql</artifactId>
-            <version>3.0.1-magento232</version>
+            <version>4.0.0-magento233</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
