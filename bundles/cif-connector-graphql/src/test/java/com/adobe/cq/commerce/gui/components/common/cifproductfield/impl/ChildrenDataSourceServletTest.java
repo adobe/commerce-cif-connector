@@ -12,7 +12,7 @@
  *
  ******************************************************************************/
 
-package com.adobe.cq.commerce.gui.components.common.cifproductfield;
+package com.adobe.cq.commerce.gui.components.common.cifproductfield.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +36,7 @@ import org.mockito.stubbing.Answer;
 
 import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
 import com.adobe.cq.commerce.common.ValueMapDecorator;
-import com.adobe.cq.commerce.gui.components.common.cifproductfield.ChildrenDataSourceServlet.Filter;
+import com.adobe.cq.commerce.gui.components.common.cifproductfield.impl.ChildrenDataSourceServlet.Filter;
 import com.adobe.granite.rest.utils.ModifiableMappedValueMapDecorator;
 import com.adobe.granite.ui.components.Config;
 import com.adobe.granite.ui.components.ExpressionResolver;
@@ -389,7 +389,7 @@ public class ChildrenDataSourceServletTest {
         return mockFolderResource("folder" + (int) (100 * Math.random()));
     }
 
-    private Resource mockFolderResource(String name) {
+    static Resource mockFolderResource(String name) {
         Resource resource = mock(Resource.class);
         ValueMap properties = new ModifiableMappedValueMapDecorator(new HashMap<>());
         properties.put("sling:resourceType", "sling:Folder");

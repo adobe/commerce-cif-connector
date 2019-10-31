@@ -66,11 +66,11 @@ public class GraphqlQueryLanguageProviderTest {
         // The search request coming from com.adobe.cq.commerce.impl.omnisearch.ProductsOmniSearchHandler is serialized in JSON
         String jsonRequest = getResource("commerce-products-omni-search-request.json");
 
-        Mockito.when(graphqlDataService.searchProducts(any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        Mockito.when(graphqlDataService.searchProducts(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
         queryLanguageProvider.findResources(ctx, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
 
         // mock query has limit = 20 and offset = 20 --> so we expect page 2 and size 20
-        Mockito.verify(graphqlDataService).searchProducts(eq("gloves"), eq(2), eq(20), any());
+        Mockito.verify(graphqlDataService).searchProducts(eq("gloves"), any(), eq(2), eq(20), any());
 
         assertNull(queryLanguageProvider.findResources(ctx, jsonRequest, "whatever"));
     }
@@ -85,11 +85,11 @@ public class GraphqlQueryLanguageProviderTest {
         GraphqlResponse<Query, Error> response = QueryDeserializer.getGson().fromJson(json, type);
         List<ProductInterface> products = response.getData().getProducts().getItems();
 
-        Mockito.when(graphqlDataService.searchProducts(any(), any(), any(), any())).thenReturn(products);
+        Mockito.when(graphqlDataService.searchProducts(any(), any(), any(), any(), any())).thenReturn(products);
         Iterator<Resource> it = queryLanguageProvider.findResources(ctx, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
 
         // The mock query has limit = 2 and offset = 4 --> so we expect page 3 and size 2
-        Mockito.verify(graphqlDataService).searchProducts(eq("gloves"), eq(3), eq(2), any());
+        Mockito.verify(graphqlDataService).searchProducts(eq("gloves"), any(), eq(3), eq(2), any());
 
         // The JSON response contains 3 products but the query requested 2 products
         assertEquals(2, Iterators.size(it));
@@ -105,11 +105,11 @@ public class GraphqlQueryLanguageProviderTest {
         GraphqlResponse<Query, Error> response = QueryDeserializer.getGson().fromJson(json, type);
         List<ProductInterface> products = response.getData().getProducts().getItems();
 
-        Mockito.when(graphqlDataService.searchProducts(any(), any(), any(), any())).thenReturn(products);
+        Mockito.when(graphqlDataService.searchProducts(any(), any(), any(), any(), any())).thenReturn(products);
         Iterator<Resource> it = queryLanguageProvider.findResources(ctx, jsonRequest, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
 
         // No limit and offset in query --> so we expect page 1 and size 20
-        Mockito.verify(graphqlDataService).searchProducts(eq("gloves"), eq(1), eq(20), any());
+        Mockito.verify(graphqlDataService).searchProducts(eq("gloves"), any(), eq(1), eq(20), any());
 
         // The JSON response contains 3 products and the query requested 20 products
         assertEquals(3, Iterators.size(it));

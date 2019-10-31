@@ -25,7 +25,12 @@
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                     name="selectionId"
-                    value="${granite:encodeURIComponent(param.selectionId)}"/>
+                    value="${param.selectionId}"/>
+            <rootpath
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                    name="root"
+                    value="${param.root}"/>
         </form>
         <views jcr:primaryType="nt:unstructured">
             <card

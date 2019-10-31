@@ -38,9 +38,12 @@ import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
+public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlQueryLanguageProvider.class);
+
+    public static final String CATEGORY_ID_PARAMETER = "categoryId";
+    public static final String CATEGORY_PATH_PARAMETER = "categoryPath";
 
     static final String VIRTUAL_PRODUCT_QUERY_LANGUAGE = "virtualProductOmnisearchQuery";
     private static final String[] SUPPORTED_LANGUAGES = { VIRTUAL_PRODUCT_QUERY_LANGUAGE };
@@ -77,7 +80,7 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
 
         Map<String, Object> queryParameters = stringToMap(query);
 
-        String fulltext = getFullText(queryParameters);
+        String fulltext = extractParameter(FULLTEXT_PARAMETER, queryParameters);
         Integer offset = queryParameters.containsKey(OFFSET_PARAMETER) ? Integer.valueOf(queryParameters.get(OFFSET_PARAMETER).toString())
             : Integer.valueOf(0);
         Integer limit = queryParameters.containsKey(LIMIT_PARAMETER) ? Integer.valueOf(queryParameters.get(LIMIT_PARAMETER).toString())
@@ -88,8 +91,25 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
         // Convert offset and limit to Magento page number and size
         Pair<Integer, Integer> pagination = toMagentoPageNumberAndSize(offset, limit);
 
-        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, pagination.getLeft(), pagination.getRight(),
-            storeView);
+        String categoryIdParam = extractParameter(CATEGORY_ID_PARAMETER, queryParameters);
+        String categoryPathParam = extractParameter(CATEGORY_PATH_PARAMETER, queryParameters);
+
+        // drop requests to other resource providers
+        if (StringUtils.isNotBlank(categoryPathParam) && !categoryPathParam.startsWith(resourceMapper.getRoot())) {
+            return Collections.emptyIterator();
+        }
+
+        Integer categoryId = null;
+        if (StringUtils.isNotBlank(categoryIdParam)) {
+            try {
+                categoryId = Integer.parseInt(categoryIdParam);
+            } catch (NumberFormatException x) {
+                LOGGER.warn("Invalid root category id {}", categoryIdParam);
+            }
+        }
+
+        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, categoryId, pagination.getLeft(),
+            pagination.getRight(), storeView);
 
         // The Magento page might start before 'offset' and be bigger than 'limit', so we extract exactly what we need
         int start = offset - ((pagination.getLeft() - 1) * pagination.getRight());
@@ -123,7 +143,7 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
      * returns a range of items that "encompasses" the given offset and limit. The corresponding
      * page might start before the <code>offset</code> and might contain more than <code>limit</code> products.
      * This means that one might have to "re-extract" the right range of products from the page.
-     * 
+     *
      * @param offset The range offset.
      * @param limit The range limit.
      * @return A page number/size pair encompassing the given range.
@@ -147,19 +167,15 @@ class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
         }
     }
 
-    private String getFullText(Map<String, Object> queryParams) {
+    private String extractParameter(String parameterName, Map<String, Object> queryParams) {
         Set<Map.Entry<String, Object>> entries = queryParams.entrySet();
-        Iterator<Map.Entry<String, Object>> it = entries.iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Object> entry = it.next();
-            if (entry.getKey().contains(FULLTEXT_PARAMETER)) {
-                if (entry.getValue() == null) {
-                    continue;
-                }
-                if (entry.getValue() instanceof String) {
-                    return entry.getValue().toString();
-                } else if (entry.getValue() instanceof List) {
-                    return StringUtils.join((List<String>) entry.getValue(), ' ');
+        for (Map.Entry<String, Object> entry : entries) {
+            if (entry.getKey().contains(parameterName)) {
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    return value.toString();
+                } else if (value instanceof List) {
+                    return StringUtils.join((List) value, ' ');
                 }
             }
         }
