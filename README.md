@@ -39,19 +39,22 @@ This installs everything by default to `localhost:4502` without any context path
 
 While the Connector can be installed via source as mentioned above, you may want to just include it as a dependency in your own Maven project.  If doing so, and using the Filevault Package Maven Plugin, make sure to add a configuration to allow for indices as this project makes use of them:
 
-<allowIndexDefinitions>true</allowIndexDefinitions>
+allowIndexDefinitions=true
 
 ## System Requirements
 
-For simplicity, we only provide the version requirements of the `all` package. If you need to check the versions of other modules, simply checkout the corresponding `cif-connector-all-x.y.z` tag and check the versions of other modules in the corresponding POM files or in the POM of the `all` project.
+Starting with version `0.6.0`, all connector artifacts will be released with the same version number (reactor release).
 
-| CIF Connector All   | AEM 6.4 | AEM 6.5 | Magento | Java |
-|---------------------|---------|---------|---------|------|
-| 0.5.0               | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.4.0               | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.3.0               | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.2.0               | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
-| 0.1.0               | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
+For previous versions, we only provide the version requirements of the `all` package. If you need to check the versions of other modules, simply checkout the corresponding `cif-connector-all-x.y.z` tag and check the versions of other modules in the corresponding POM files or in the POM of the `all` project.
+
+| CIF Connector | AEM 6.4 | AEM 6.5 | Magento | Java |
+|---------------|---------|---------|---------|------|
+| 0.6.0         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
+| 0.5.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
+| 0.4.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
+| 0.3.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
+| 0.2.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
+| 0.1.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
 
 ## CIF Magento GraphQL Configuration
 
