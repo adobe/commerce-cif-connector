@@ -17,7 +17,7 @@ The main parts of the project are:
     * **cif-virtual-catalog**: the bundle that permits to bind products in the AEM Commerce console
 * **content**: contains the following content packages in the sub-folders
     * **cif-connector-graphql**: the content package for the CIF GraphQL connector
-    * **cif-virtual-catalog**: the content package for the virtual catalog connector
+    * **cif-virtual-catalog**: the content package for the virtual catalogue connector
 
 ## Installation
 
@@ -165,7 +165,7 @@ mvn clean verify -Ptest-all -Dsling.it.instance.url.1=http://localhost:4502 -Dsl
 
 ## Releases to Maven Central
 
-Releases are triggered by manually running `mvn release:prepare release:clean -Dskip-it` on the `master` branch in the **top-level folder** of this repository. Once you choose the release and the next snapshot versions, this commits the change along with a release git tag like for example `cif-connector-reactor-x.y.z`. Note that the commits are not automatically pushed to the git repository, so you have some time to check your changes and then manually push them. The push then triggers a dedicated `CircleCI` build that performs the deployment of all the artifacts to Maven Central.
+Releases are triggered by manually running `mvn release: prepare release: clean -Dskip-it` on the `master` branch in the **top-level folder** of this repository. Once you choose the release and the next snapshot versions, this commits the change along with a release git tag like for example `cif-connector-reactor-x.y.z`. Note that the commits are not automatically pushed to the git repository, so you have some time to check your changes and then manually push them. The push then triggers a dedicated `CircleCI` build that performs the deployment of all the artifacts to Maven Central.
 
 Note that the `skip-it` property ensures that the integration tests sub-modules are not released.
 
