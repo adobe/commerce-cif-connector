@@ -27,6 +27,9 @@
     <filter root="/libs/commerce/gui/content/common/cifproductfield"/>
     <filter root="/libs/commerce/gui/content/common/cifcategoryfield"/>
 
+    <!-- overlay for the asset metadata editor -->
+    <filter root="/libs/dam/content/schemaeditors/forms/default/image/items/tabs/items/tab4"/>
+
     <!-- remove default config for products search in editor -->
     <filter root="/libs/settings/cq/search/facets/products" />
     

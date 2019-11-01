@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Commerce"
+    sling:resourceType="granite/ui/components/coral/foundation/container"
+    granite:rel="aem-assets-metadata-form-tab"
+    granite:class="cq-dam-asset-metadata-commerce"
+    listOrder="3">
+    <items jcr:primaryType="nt:unstructured">
+        <col1
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/container"
+            granite:rel="aem-assets-metadata-form-column"
+            listOrder="0"/>
+        <col2
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/container"
+            granite:rel="aem-assets-metadata-form-column"
+            listOrder="1">
+            <items jcr:primaryType="nt:unstructured">
+                <productSku
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="commerce/gui/components/common/cifproductfield"
+                    fieldDescription="SKU of the related products."
+                    fieldLabel="Product SKUs"
+                    multiple="true"
+                    filter="folderOrProduct"
+                    name="./jcr:content/metadata/cq:productSku"
+                    selectionId="sku"/>
+            </items>
+        </col2>
+        <col3
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/container"
+            granite:rel="aem-assets-metadata-form-column"
+            listOrder="2"/>
+    </items>
+</jcr:root>
