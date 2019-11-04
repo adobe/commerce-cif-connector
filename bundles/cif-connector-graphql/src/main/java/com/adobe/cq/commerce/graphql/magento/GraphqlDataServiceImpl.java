@@ -278,10 +278,9 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         // Search parameters
         CategoryArgumentsDefinition searchArgs = q -> q.id(categoryId);
 
-        // Main query
+        // Main query: we set a pageSize of 100'000 because there isn't any way to specify "unlimited"
         CategoryTreeQueryDefinition queryArgs = q -> q
-            .products(p -> p
-                .items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY));
+            .products(o -> o.pageSize(100000), p -> p.items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY));
 
         String queryString = Operations.query(query -> query.category(searchArgs, queryArgs)).toString();
         GraphqlResponse<Query, Error> response = execute(queryString, storeView);
