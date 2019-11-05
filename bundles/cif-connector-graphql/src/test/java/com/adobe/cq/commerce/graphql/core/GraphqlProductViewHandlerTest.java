@@ -14,11 +14,15 @@
 
 package com.adobe.cq.commerce.graphql.core;
 
+import java.util.HashMap;
+
 import javax.jcr.RepositoryException;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestPathInfo;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.wrappers.ModifiableValueMapDecorator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +33,13 @@ import com.adobe.granite.omnisearch.spi.core.OmniSearchHandler;
 import com.day.cq.search.PredicateGroup;
 import com.day.cq.search.result.SearchResult;
 import com.day.cq.tagging.TagManager;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.core.contentfinder.ViewQuery;
+
+import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.CATEGORY_ID_PARAMETER;
+import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.CATEGORY_PATH_PARAMETER;
+import static com.adobe.cq.commerce.graphql.search.CatalogSearchSupport.PN_CATALOG_PATH;
 
 public class GraphqlProductViewHandlerTest {
 
@@ -95,5 +105,32 @@ public class GraphqlProductViewHandlerTest {
         ViewQuery viewQuery = viewHandler.createQuery(servletRequest, null, "rating:5");
         PredicateGroup predicateGroup = ((GraphqlProductViewHandler.GQLViewQuery) viewQuery).predicateGroup;
         Assert.assertEquals(predicateGroup.getByName("1_property").get("property"), "rating");
+    }
+
+    @Test
+    public void testCategoryConstraintSearchQuery() throws RepositoryException {
+        Mockito.when(servletRequest.getHeader("Referer")).thenReturn("editor.html/test/page.html");
+        PageManager pageManager = Mockito.mock(PageManager.class);
+        Mockito.when(resourceResolver.adaptTo(PageManager.class)).thenReturn(pageManager);
+        Page page = Mockito.mock(Page.class);
+        Mockito.when(pageManager.getContainingPage("/test/page")).thenReturn(page);
+        Resource contentResource = Mockito.mock(Resource.class);
+        Mockito.when(page.getContentResource()).thenReturn(contentResource);
+        ModifiableValueMapDecorator valueMap = new ModifiableValueMapDecorator(new HashMap<>());
+        Mockito.when(contentResource.getValueMap()).thenReturn(valueMap);
+        valueMap.put(PN_CATALOG_PATH, "/catalog/path");
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.when(resourceResolver.getResource("/catalog/path")).thenReturn(resource);
+        ModifiableValueMapDecorator properties = new ModifiableValueMapDecorator(new HashMap<>());
+        Mockito.when(resource.getValueMap()).thenReturn(properties);
+        properties.put("cq:commerceType", "category");
+        properties.put("cifId", "1");
+
+        ViewQuery viewQuery = viewHandler.createQuery(servletRequest, null, "query=trail");
+        PredicateGroup predicateGroup = ((GraphqlProductViewHandler.GQLViewQuery) viewQuery).predicateGroup;
+        Assert.assertNotNull(predicateGroup.getByName("3_" + CATEGORY_ID_PARAMETER));
+        Assert.assertEquals(predicateGroup.getByName("3_" + CATEGORY_ID_PARAMETER).get(CATEGORY_ID_PARAMETER), "1");
+        Assert.assertNotNull(predicateGroup.getByName("4_" + CATEGORY_PATH_PARAMETER));
+        Assert.assertEquals(predicateGroup.getByName("4_" + CATEGORY_PATH_PARAMETER).get(CATEGORY_PATH_PARAMETER), "/catalog/path");
     }
 }
