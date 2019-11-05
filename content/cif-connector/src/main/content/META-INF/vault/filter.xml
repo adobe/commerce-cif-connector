@@ -38,4 +38,10 @@
         <exclude pattern="/apps/commerce(/.*)?"/>
         <include pattern="/apps/commerce/scaffolding"/>
     </filter>
+
+    <!-- Remove unused legacy Commerce admin links -->
+    <filter root="/libs/cq/core/content/nav/commerce/catalogs"/>
+    <filter root="/libs/cq/core/content/nav/commerce/collections"/>
+    <filter root="/libs/cq/core/content/nav/commerce/orders"/>
+    <filter root="/libs/cq/core/content/nav/tools/commerce"/>
 </workspaceFilter>

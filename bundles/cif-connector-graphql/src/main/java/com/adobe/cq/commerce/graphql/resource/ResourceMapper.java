@@ -183,7 +183,12 @@ class ResourceMapper<T> {
         categoryByPathsMap.put(categoryTree.getUrlPath(), categoryTree);
         categoryPathsByIdMap.put(categoryTree.getId(), categoryTree.getUrlPath());
 
-        Iterator<CategoryTree> it = categoryTree.getChildren().iterator();
+        List<CategoryTree> children = categoryTree.getChildren();
+        if (children == null) {
+            return;
+        }
+
+        Iterator<CategoryTree> it = children.iterator();
         while (it.hasNext()) {
             CategoryTree child = it.next();
             if (StringUtils.isAnyBlank(child.getName(), child.getUrlPath())) {
@@ -315,8 +320,11 @@ class ResourceMapper<T> {
 
         CategoryTree categoryTree = categoryByPaths.get(key);
         if (categoryTree != null) {
-            for (CategoryTree child : categoryTree.getChildren()) {
-                children.add(new CategoryResource(resolver, root + "/" + child.getUrlPath(), child));
+            List<CategoryTree> subChildren = categoryTree.getChildren();
+            if (subChildren != null) {
+                for (CategoryTree child : subChildren) {
+                    children.add(new CategoryResource(resolver, root + "/" + child.getUrlPath(), child));
+                }
             }
         }
 
