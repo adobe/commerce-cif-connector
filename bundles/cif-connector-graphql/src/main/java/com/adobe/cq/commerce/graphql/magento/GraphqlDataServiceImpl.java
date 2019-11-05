@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +40,8 @@ import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.client.RequestOptions;
 import com.adobe.cq.commerce.graphql.resource.Constants;
+import com.adobe.cq.commerce.magento.graphql.CategoryProducts;
+import com.adobe.cq.commerce.magento.graphql.CategoryProductsQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.CategoryTreeQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.FilterTypeInput;
@@ -70,7 +73,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     // We maintain some caches to speed up all lookups
     private Cache<String, Optional<ProductInterface>> productCache;
-    private Cache<Integer, Optional<List<ProductInterface>>> categoryCache;
+    private Cache<String, Optional<CategoryProducts>> categoryCache;
 
     protected Map<String, GraphqlClient> clients = new ConcurrentHashMap<>();
 
@@ -262,27 +265,52 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return category;
     }
 
+    private String toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize) {
+        return StringUtils.join(categoryId, currentPage, pageSize);
+    }
+
     @Override
     public List<ProductInterface> getCategoryProducts(Integer categoryId, String storeView) {
         try {
-            return categoryCache.get(categoryId, () -> getCategoryProductsImpl(categoryId, storeView)).orElse(null);
+            String cacheKey = toCategoryCacheKey(categoryId, null, null);
+            Callable<? extends Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, null, null, storeView);
+            CategoryProducts categoryProducts = categoryCache.get(cacheKey, loader).orElse(null);
+            return categoryProducts != null ? categoryProducts.getItems() : null;
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Optional<List<ProductInterface>> getCategoryProductsImpl(Integer categoryId, String storeView) {
+    @Override
+    public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
+        try {
+            String cacheKey = toCategoryCacheKey(categoryId, currentPage, pageSize);
+            Callable<? extends Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, currentPage, pageSize,
+                storeView);
+            return categoryCache.get(cacheKey, loader).orElse(null);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Optional<CategoryProducts> getCategoryProductsImpl(Integer categoryId, Integer currentPage, Integer pageSize,
+        String storeView) {
 
         LOGGER.debug("Trying to fetch products for category " + categoryId);
 
         // Search parameters
-        CategoryArgumentsDefinition searchArgs = q -> q.id(categoryId);
+        CategoryArgumentsDefinition argsDef = q -> q.id(categoryId);
 
-        // Main query: we set a pageSize of 100'000 because there isn't any way to specify "unlimited"
-        CategoryTreeQueryDefinition queryArgs = q -> q
-            .products(o -> o.pageSize(100000), p -> p.items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY));
+        // Main query
+        CategoryProductsQueryDefinition productsQueryDef = p -> p.totalCount().items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY);
+        CategoryTreeQueryDefinition categoryQueryDef;
+        if (currentPage != null || pageSize != null) {
+            categoryQueryDef = q -> q.products(o -> o.currentPage(currentPage).pageSize(pageSize), productsQueryDef);
+        } else {
+            categoryQueryDef = q -> q.products(productsQueryDef);
+        }
 
-        String queryString = Operations.query(query -> query.category(searchArgs, queryArgs)).toString();
+        String queryString = Operations.query(query -> query.category(argsDef, categoryQueryDef)).toString();
         GraphqlResponse<Query, Error> response = execute(queryString, storeView);
 
         Query query = response.getData();
@@ -296,7 +324,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
             productCache.put(product.getSku(), Optional.of(product));
         }
 
-        return Optional.ofNullable(products);
+        return Optional.ofNullable(category.getProducts());
     }
 
     public GraphqlDataServiceConfiguration getConfiguration() {

@@ -2,6 +2,7 @@
   "data": {
     "category": {
       "products": {
+        "total_count": 2,
         "items": [
           {
             "__typename": "ConfigurableProduct",
