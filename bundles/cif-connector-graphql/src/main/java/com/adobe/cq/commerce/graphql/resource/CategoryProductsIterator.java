@@ -94,9 +94,7 @@ public class CategoryProductsIterator implements Iterator<Resource> {
 
     @Override
     public Resource next() {
-        Resource next = items.get(nextIndex);
-        nextIndex++;
-        return next;
+        return items.get(nextIndex++);
     }
 
 }
