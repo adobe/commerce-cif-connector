@@ -150,7 +150,7 @@ public class CommerceTestBase {
         polling.poll(30000, 1000);
 
         // Wait a bit more so that other bundles can restart
-        Thread.sleep(5000);
+        Thread.sleep(2000);
     }
 
     private static void restartVirtualCatalogBundle(OsgiConsoleClient osgiConsoleClient) throws ClientException, TimeoutException,

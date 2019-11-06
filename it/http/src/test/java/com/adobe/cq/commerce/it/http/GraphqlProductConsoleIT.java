@@ -69,7 +69,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
             .addParameter("./jcr:primaryType", "sling:Folder")
             .build();
         cAdminAuthor.doPost("/var/commerce/products/", params, SC_CREATED);
-        Thread.sleep(5000);
+        Thread.sleep(2000);
     }
 
     @Before
