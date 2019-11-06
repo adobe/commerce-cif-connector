@@ -330,7 +330,7 @@ class ResourceMapper<T> {
 
         if (children.isEmpty() && StringUtils.isNotBlank(parentCifId)) {
             try {
-                return new CategoryProductsIterator(parent, graphqlDataService, null, key);
+                return new CategoryProductsIterator(parent, graphqlDataService, null, storeView);
 
                 /*
                  * List<ProductInterface> products = graphqlDataService.getCategoryProducts(Integer.valueOf(parentCifId), storeView);

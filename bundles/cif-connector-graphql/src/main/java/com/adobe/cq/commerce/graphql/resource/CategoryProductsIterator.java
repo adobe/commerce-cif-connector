@@ -38,6 +38,16 @@ public class CategoryProductsIterator implements Iterator<Resource> {
 
     private GraphqlDataService graphqlDataService;
 
+    /**
+     * Builds an interator that dynamically loads category products "page by page". The loading of products is
+     * triggered by calls to {@link #hasNext()}: based on the page size and on the pages already fetched, the iterator
+     * will decide if a new page of data must be loaded.
+     * 
+     * @param category The category resource.
+     * @param graphqlDataService The service to fetch categor and product data.
+     * @param pageSize The page size when fetching data.
+     * @param storeView The Magento store view used to access the Magento catalog.
+     */
     public CategoryProductsIterator(Resource category, GraphqlDataService graphqlDataService, Integer pageSize, String storeView) {
         this.category = category;
         this.categoryId = category.getValueMap().get(Constants.CIF_ID, Integer.class);
@@ -53,7 +63,7 @@ public class CategoryProductsIterator implements Iterator<Resource> {
             return true; // We already have the next product in the items list
         }
 
-        if (!hasMoreProducts()) {
+        if (!canLoadMoreProducts()) {
             return false; // We already fetched all the products
         }
 
@@ -74,7 +84,7 @@ public class CategoryProductsIterator implements Iterator<Resource> {
         return true;
     }
 
-    private boolean hasMoreProducts() {
+    private boolean canLoadMoreProducts() {
         return totalCount == null || totalCount > items.size();
     }
 

@@ -58,16 +58,6 @@ public interface GraphqlDataService {
     public CategoryTree getCategoryTree(Integer categoryId, String storeView);
 
     /**
-     * Returns the products of the given category id.
-     * 
-     * @param categoryId The category id.
-     * @param storeView An optional Magento store view, can be null.
-     * @return The list of products for this category.
-     * @exception RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
-     */
-    public List<ProductInterface> getCategoryProducts(Integer categoryId, String storeView);
-
-    /**
      * Returns the paginated products results for the given category id and pagination arguments.
      * 
      * @param categoryId The category id.

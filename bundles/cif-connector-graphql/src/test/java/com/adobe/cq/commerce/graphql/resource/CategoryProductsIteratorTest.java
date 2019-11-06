@@ -51,7 +51,7 @@ public class CategoryProductsIteratorTest {
         ValueMap valueMap = new ValueMapDecorator(Collections.singletonMap(Constants.CIF_ID, CATEGORY_ID));
         when(category.getValueMap()).thenReturn(valueMap);
         when(category.getPath()).thenReturn(CATALOG_ROOT_PATH);
-        
+
         graphqlDataService = mock(GraphqlDataService.class);
 
         String json1 = getResource("magento-graphql-category-products-page1.json");

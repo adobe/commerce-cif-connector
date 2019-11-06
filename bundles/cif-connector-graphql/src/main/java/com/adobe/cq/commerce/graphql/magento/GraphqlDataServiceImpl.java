@@ -41,7 +41,6 @@ import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.client.RequestOptions;
 import com.adobe.cq.commerce.graphql.resource.Constants;
 import com.adobe.cq.commerce.magento.graphql.CategoryProducts;
-import com.adobe.cq.commerce.magento.graphql.CategoryProductsQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.CategoryTreeQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.FilterTypeInput;
@@ -270,18 +269,6 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     }
 
     @Override
-    public List<ProductInterface> getCategoryProducts(Integer categoryId, String storeView) {
-        try {
-            String cacheKey = toCategoryCacheKey(categoryId, null, null);
-            Callable<? extends Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, null, null, storeView);
-            CategoryProducts categoryProducts = categoryCache.get(cacheKey, loader).orElse(null);
-            return categoryProducts != null ? categoryProducts.getItems() : null;
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
         try {
             String cacheKey = toCategoryCacheKey(categoryId, currentPage, pageSize);
@@ -302,15 +289,11 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         CategoryArgumentsDefinition argsDef = q -> q.id(categoryId);
 
         // Main query
-        CategoryProductsQueryDefinition productsQueryDef = p -> p.totalCount().items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY);
-        CategoryTreeQueryDefinition categoryQueryDef;
-        if (currentPage != null || pageSize != null) {
-            categoryQueryDef = q -> q.products(o -> o.currentPage(currentPage).pageSize(pageSize), productsQueryDef);
-        } else {
-            categoryQueryDef = q -> q.products(productsQueryDef);
-        }
+        CategoryTreeQueryDefinition queryDef = q -> q.products(
+            o -> o.currentPage(currentPage).pageSize(pageSize),
+            p -> p.totalCount().items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY));
 
-        String queryString = Operations.query(query -> query.category(argsDef, categoryQueryDef)).toString();
+        String queryString = Operations.query(query -> query.category(argsDef, queryDef)).toString();
         GraphqlResponse<Query, Error> response = execute(queryString, storeView);
 
         Query query = response.getData();
