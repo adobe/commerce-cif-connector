@@ -37,6 +37,12 @@
     </filter>
 
     <filter root="/libs/commerce/gui/components/authoring/editor/pagepreview"/>
-    
+
     <filter root="/libs/wcm/core/content/editor/jcr:content/content/items/content/header/items/headerbar/items/pageinfopopover/items/list/items" mode="merge"/>
+
+    <!-- Remove unused legacy Commerce admin links -->
+    <filter root="/libs/cq/core/content/nav/commerce/catalogs"/>
+    <filter root="/libs/cq/core/content/nav/commerce/collections"/>
+    <filter root="/libs/cq/core/content/nav/commerce/orders"/>
+    <filter root="/libs/cq/core/content/nav/tools/commerce"/>
 </workspaceFilter>
