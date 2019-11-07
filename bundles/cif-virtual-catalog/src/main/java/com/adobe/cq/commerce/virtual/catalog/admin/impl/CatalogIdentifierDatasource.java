@@ -60,7 +60,7 @@ public class CatalogIdentifierDatasource extends SlingSafeMethodsServlet {
         cardinality = ReferenceCardinality.OPTIONAL,
         bind = "bindCatalogIdentifierService",
         unbind = "unbindCatalogIdentifierService")
-    private CatalogIdentifierService catalogIdentifierService;
+    private volatile CatalogIdentifierService catalogIdentifierService;
 
     protected void bindCatalogIdentifierService(CatalogIdentifierService service, Map<String, String> props) {
         this.catalogIdentifierService = service;
