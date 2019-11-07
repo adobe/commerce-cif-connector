@@ -265,7 +265,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     }
 
     private String toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize) {
-        return StringUtils.join(categoryId, currentPage, pageSize);
+        return StringUtils.joinWith("-", categoryId, currentPage, pageSize);
     }
 
     @Override
