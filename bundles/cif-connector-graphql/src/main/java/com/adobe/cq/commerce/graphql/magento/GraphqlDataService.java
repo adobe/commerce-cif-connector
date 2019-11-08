@@ -16,6 +16,7 @@ package com.adobe.cq.commerce.graphql.magento;
 
 import java.util.List;
 
+import com.adobe.cq.commerce.magento.graphql.CategoryProducts;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
 
@@ -57,14 +58,16 @@ public interface GraphqlDataService {
     public CategoryTree getCategoryTree(Integer categoryId, String storeView);
 
     /**
-     * Returns the products of the given category id.
+     * Returns the paginated products results for the given category id and pagination arguments.
      * 
      * @param categoryId The category id.
+     * @param currentPage The current page number to be fetched, Magento pagination starts with page 1.
+     * @param pageSize The page size.
      * @param storeView An optional Magento store view, can be null.
      * @return The list of products for this category.
      * @exception RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
      */
-    public List<ProductInterface> getCategoryProducts(Integer categoryId, String storeView);
+    public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView);
 
     /**
      * Returns the OSGi configuration of that GraphQL client.
