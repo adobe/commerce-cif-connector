@@ -38,6 +38,7 @@ import com.adobe.cq.commerce.graphql.resource.Constants;
 import com.adobe.cq.commerce.graphql.testing.Utils;
 import com.adobe.cq.commerce.graphql.testing.Utils.GetQueryMatcher;
 import com.adobe.cq.commerce.graphql.testing.Utils.HeadersMatcher;
+import com.adobe.cq.commerce.magento.graphql.CategoryProducts;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
@@ -192,8 +193,9 @@ public class GraphqlDataServiceImplTest {
         String query = getResource("graphql-queries/category-products.txt");
 
         Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK, query);
-        List<ProductInterface> products = dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, null);
-        assertEquals(5, products.size());
+        CategoryProducts categoryProducts = dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, null);
+        assertEquals(5, categoryProducts.getTotalCount().intValue());
+        assertEquals(5, categoryProducts.getItems().size());
     }
 
     @Test

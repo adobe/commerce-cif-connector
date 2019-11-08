@@ -78,7 +78,8 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     }
 
     @AfterClass
-    public static void cleanup() throws ClientException {
+    public static void cleanup() throws ClientException, InterruptedException {
+        Thread.sleep(5000);
         cAdminAuthor.deletePage(new String[] { JCR_BASE_PATH }, true, false, SC_OK);
     }
 
