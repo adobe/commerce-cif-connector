@@ -71,6 +71,6 @@ public class AssetMetadataEditorExtensionIT {
         // check product field label
         Assert.assertEquals(1, doc.select(String.format(FIELD_LABEL_SELECTOR, "Product SKUs")).size());
         // check product field name
-        Assert.assertEquals(1, doc.select(String.format(FIELD_NAME_SELECTOR, "./jcr:content/metadata/cq:productSku")).size());
+        Assert.assertEquals(1, doc.select(String.format(FIELD_NAME_SELECTOR, "./jcr:content/metadata/cq:relatedProducts")).size());
     }
 }
