@@ -25,7 +25,7 @@
                     fieldLabel="Product SKUs"
                     multiple="true"
                     filter="folderOrProduct"
-                    name="./jcr:content/metadata/cq:productSku"
+                    name="./jcr:content/metadata/cq:relatedProducts"
                     selectionId="sku"/>
             </items>
         </col2>
