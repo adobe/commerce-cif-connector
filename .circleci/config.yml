@@ -1,42 +1,124 @@
 version: 2.1
 
 executors:
-  cif_executor:
+  build-executor:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:11-stretch-node
+    working_directory: /home/circleci
 
 jobs:
   build:
-    executor: cif_executor
+    executor: build-executor
     steps:
       - checkout
+
       - restore_cache:
           keys: 
             - maven-repo-v1-{{ checksum "pom.xml" }}
             - maven-repo-v1-
+
       - run:
           name: Build
-          command: |
-            java -version
-            mvn -v
-            mvn -B clean install -s .circleci/settings.xml
+          command: node .circleci/ci/build.js
+
       - save_cache:
           paths:
-            - ~/.m2
+            - .m2
           key: maven-repo-v1-{{ checksum "pom.xml" }}
-      - run:
-          name: Collect and save all test results
-          command: |
-            mkdir -p ~/test-results/junit/
-            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - configuration.json
+            - bundles/*/target/*.jar
+            - content/*/target/*.zip
+            - it/content/target/*.zip
+
       - store_test_results:
-          path: ~/test-results
+          path: test-results
+
       - store_artifacts:
-          path: ~/test-results/junit
+          path: test-results/junit
+
       - run:
           name: Upload Code Coverage
           command: bash <(curl -s https://codecov.io/bash) -F unittests
-          
+
+
+  integration-test-652:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk11
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+
+
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.2
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+
+    working_directory: /home/circleci/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys: 
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
+
+      - attach_workspace:
+          at: /home/circleci/repo
+
+      - run:
+          name: Integration tests
+          command: node .circleci/ci/it-tests.js
+
+      - store_test_results:
+          path: it/http/target/failsafe-reports
+
+      - store_artifacts:
+          path: it/http/target/failsafe-reports
+
+
+  integration-test-646:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk8
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+
+
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.4.6
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+
+    working_directory: /home/circleci/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys: 
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
+
+      - attach_workspace:
+          at: /home/circleci/repo
+
+      - run:
+          name: Integration tests
+          command: node .circleci/ci/it-tests.js
+
+      - store_test_results:
+          path: it/http/target/failsafe-reports
+
+      - store_artifacts:
+          path: it/http/target/failsafe-reports
+
+
   release:
     executor: cif_executor
     steps:
@@ -63,6 +145,20 @@ workflows:
           filters:
             tags:
               only: /.*/
+
+      - integration-test-652:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+
+      - integration-test-646:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
               
       - release:
           requires:
