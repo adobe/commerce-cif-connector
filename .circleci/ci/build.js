@@ -29,4 +29,4 @@ ci.sh('mvn -B clean install -s .circleci/settings.xml');
 ci.stage('Collect test results');
 const testFolder = path.resolve(process.cwd(), 'test-results/junit');
 ci.sh(`mkdir -p ${testFolder}`);
-ci.sh(`find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ${testFolder}/ \;`);
+ci.sh(`find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ${testFolder}/ \\;`);
