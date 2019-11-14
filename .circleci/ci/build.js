@@ -19,8 +19,6 @@ const path = require('path');
 
 ci.context();
 
-
-
 ci.stage('Project Configuration');
 const configuration = ci.collectConfiguration();
 console.log(configuration);

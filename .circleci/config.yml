@@ -4,7 +4,7 @@ executors:
   build-executor:
     docker:
       - image: circleci/openjdk:11-stretch-node
-    working_directory: /home/circleci
+    working_directory: /home/circleci/build
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
           key: maven-repo-v1-{{ checksum "pom.xml" }}
 
       - persist_to_workspace:
-          root: /home/circleci
+          root: /home/circleci/build
           paths:
             - configuration.json
             - bundles/*/target/*.jar

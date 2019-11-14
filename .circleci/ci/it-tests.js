@@ -18,14 +18,17 @@ const ci = new (require('./ci.js'))();
 
 ci.context();
 
+
 ci.stage('Project Configuration');
-let config = ci.restoreConfiguration();
+const config = ci.restoreConfiguration();
 console.log(config);
+const buildPath = '/home/circleci/build';
+const qpPath = '/home/circleci/cq';
+
 
 ci.stage("Integration Tests");
 
-
-ci.dir('/home/circleci/cq', () => {
+ci.dir(qpPath, () => {
     // Connect to QP
     ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
 
@@ -35,11 +38,11 @@ ci.dir('/home/circleci/cq', () => {
         --bundle com.adobe.commerce.cif:graphql-client:1.1.1:jar \
         --bundle com.adobe.commerce.cif:magento-graphql:4.0.0-magento233:jar \
         --bundle com.adobe.cq:core.wcm.components.all:2.4.0:zip \
-        --install-file /home/circleci/repo/bundles/cif-connector-graphql/target/cif-connector-graphql-${config.modules['cif-connector-graphql'].version}.jar \
-        --install-file /home/circleci/repo/bundles/cif-virtual-catalog/target/cif-virtual-catalog-${config.modules['cif-virtual-catalog'].version}.jar \
-        --install-file /home/circleci/repo/content/cif-connector/target/cif-connector-content-${config.modules['cif-connector-content'].version}.zip \
-        --install-file /home/circleci/repo/content/cif-virtual-catalog/target/cif-virtual-catalog-content-${config.modules['cif-virtual-catalog-content'].version}.zip \
-        --install-file /home/circleci/repo/it/content/target/it-test-content-${config.modules['it-test-content'].version}.zip`);
+        --install-file ${path.resolve(buildPath, 'bundles/cif-connector-graphql/target', `cif-connector-graphql-${config.modules['cif-connector-graphql'].version}.jar`)} \
+        --install-file ${path.resolve(buildPath, 'bundles/cif-virtual-catalog/target', `cif-virtual-catalog-${config.modules['cif-virtual-catalog'].version}.jar`)} \
+        --install-file ${path.resolve(buildPath, 'content/cif-connector/target', `cif-connector-content-${config.modules['cif-connector-content'].version}.zip`)} \
+        --install-file ${path.resolve(buildPath, 'content/cif-virtual-catalog/target' `cif-virtual-catalog-content-${config.modules['cif-virtual-catalog-content'].version}.zip`)} \
+        --install-file ${path.resolve(buildPath, 'it/content/target', `it-test-content-${config.modules['it-test-content'].version}.zip`)}`);
 });
 
 // Run integration tests
@@ -49,7 +52,7 @@ ci.sh(`mvn clean verify -U -B \
     -Dsling.it.instance.runmode.1=author \
     -Dsling.it.instances=1`);
 
-ci.dir('/home/circleci/cq', () => {
+ci.dir(qpPath, () => {
     // Stop CQ
     ci.sh('./qp.sh -v stop --id author');
 });
