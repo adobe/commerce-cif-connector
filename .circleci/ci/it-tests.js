@@ -15,9 +15,9 @@
 'use strict';
 
 const ci = new (require('./ci.js'))();
+const path = require('path');
 
 ci.context();
-
 
 ci.stage('Project Configuration');
 const config = ci.restoreConfiguration();
@@ -27,7 +27,6 @@ const qpPath = '/home/circleci/cq';
 
 
 ci.stage("Integration Tests");
-
 ci.dir(qpPath, () => {
     // Connect to QP
     ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
