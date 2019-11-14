@@ -120,13 +120,15 @@ jobs:
 
 
   release:
-    executor: cif_executor
+    executor: build-executor
     steps:
       - checkout
+
       - restore_cache:
           keys: 
             - maven-repo-v1-{{ checksum "pom.xml" }}
             - maven-repo-v1-
+
       - run:
           name: Release
           # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
@@ -136,6 +138,7 @@ jobs:
             echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
             mvn -B -s /home/circleci/project/.circleci/settings.xml clean deploy -Prelease-sign-artifacts -Dskip-it
             rm -rf /home/circleci/.gnupg
+
 
 workflows:
   version: 2
