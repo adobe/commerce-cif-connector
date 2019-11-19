@@ -79,13 +79,19 @@ class ProductResource extends SyntheticResource {
         Map<String, Object> map = new HashMap<>();
         map.put(JcrConstants.JCR_TITLE, product.getName());
         map.put(JcrConstants.JCR_PRIMARYTYPE, JcrConstants.NT_UNSTRUCTURED);
-        map.put(JcrConstants.JCR_DESCRIPTION, product.getDescription().getHtml());
         map.put(PRODUCT_IDENTIFIER, product.getId());
         map.put(SKU, activeVariantSku != null ? activeVariantSku : product.getSku());
         map.put(SLUG, product.getUrlKey());
         map.put(ResourceResolver.PROPERTY_RESOURCE_TYPE, PRODUCT_RESOURCE_TYPE);
-        map.put(JcrConstants.JCR_LASTMODIFIED, convertToDate(product.getUpdatedAt()));
         map.put(CommerceConstants.PN_COMMERCE_PROVIDER, Constants.MAGENTO_GRAPHQL_PROVIDER);
+
+        if (product.getDescription() != null) {
+            map.put(JcrConstants.JCR_DESCRIPTION, product.getDescription().getHtml());
+        }
+
+        if (product.getUpdatedAt() != null) {
+            map.put(JcrConstants.JCR_LASTMODIFIED, convertToDate(product.getUpdatedAt()));
+        }
 
         String formattedPrice = toFormattedPrice(product);
         if (StringUtils.isNotBlank(formattedPrice)) {
@@ -107,8 +113,12 @@ class ProductResource extends SyntheticResource {
     }
 
     private String toFormattedPrice(ProductInterface product) {
+        if (product.getPrice() == null || product.getPrice().getRegularPrice() == null) {
+            return null;
+        }
+
         Money money = product.getPrice().getRegularPrice().getAmount();
-        return money.getCurrency() + " " + money.getValue();
+        return money != null ? (money.getCurrency() + " " + money.getValue()) : null;
     }
 
     @Override

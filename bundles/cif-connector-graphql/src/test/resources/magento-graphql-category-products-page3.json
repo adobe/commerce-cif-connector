@@ -1,0 +1,19 @@
+{
+  "category": {
+    "products": {
+      "total_count": 8,
+      "items": [
+        {
+          "__typename": "SimpleProduct",
+          "id": 7,
+          "sku": "product-7"
+        },
+        {
+          "__typename": "SimpleProduct",
+          "id": 8,
+          "sku": "product-8"
+        }
+      ]
+    }
+  }
+}

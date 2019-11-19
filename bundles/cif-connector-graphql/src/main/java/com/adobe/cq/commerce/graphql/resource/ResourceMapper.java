@@ -330,13 +330,7 @@ class ResourceMapper<T> {
 
         if (children.isEmpty() && StringUtils.isNotBlank(parentCifId)) {
             try {
-                List<ProductInterface> products = graphqlDataService.getCategoryProducts(Integer.valueOf(parentCifId), storeView);
-                if (products != null && !products.isEmpty()) {
-                    for (ProductInterface product : products) {
-                        String path = parentPath + "/" + product.getSku();
-                        children.add(new ProductResource(resolver, path, product));
-                    }
-                }
+                return new CategoryProductsIterator(parent, graphqlDataService, 20, storeView);
             } catch (Exception e) {
                 LOGGER.error("Error while fetching category products for " + parentPath + " (" + parentCifId + ")", e);
             }
