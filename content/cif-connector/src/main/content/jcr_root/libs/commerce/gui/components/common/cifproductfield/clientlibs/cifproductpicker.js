@@ -12,8 +12,8 @@
  *
  ******************************************************************************/
 
-(function(window, document, Granite, $) {
-    "use strict";
+(function(window, document, Granite) {
+    'use strict';
     /**
      * The context component can specify the following properties for the picker:
      * pickersrc, root, filter, selectioncount, selectionid.
@@ -25,40 +25,42 @@
      * Selector for CIF product picker context component
      * @type {string}
      */
-    var relActivator = ".cq-commerce-cifproductpicker-activator";
+    var relActivator = '.cq-commerce-cifproductpicker-activator';
 
     /**
      * Event type for picker selection.
      * @type {string}
      */
-    var eventType = "cifProductPickerSelection";
+    var eventType = 'cifProductPickerSelection';
 
     /**
      * Default picker URL.
      * @type {string}
      */
-    var defaultPickerSrc = "/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html";
+    var defaultPickerSrc = '/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html';
     /**
      * Default root path shown by the picker when opened.
      * @type {string}
      */
-    var defaultRootPath = "/var/commerce/products";
-    var defaultSelectionCount = "single";
-    var defaultFilter = "folderOrProduct";
-    var defaultSelectionId = "id";
+    var defaultRootPath = '/var/commerce/products';
+    var defaultSelectionCount = 'single';
+    var defaultFilter = 'folderOrProduct';
+    var defaultSelectionId = 'id';
 
     var show = function(control, state, handleSelections) {
         state.api.attach(this);
 
-        state.api.pick(control[0], []).then(function(selections) {
-            handleSelections(selections);
-            close(control, state);
+        state.api.pick(control[0], []).then(
+            function(selections) {
+                handleSelections(selections);
+                close(control, state);
+            },
+            function() {
+                close(control, state, handleSelections);
+            }
+        );
 
-        }, function() {
-            close(control, state, handleSelections);
-        });
-
-        if ("focus" in state.api) {
+        if ('focus' in state.api) {
             state.api.focus(last);
         } else {
             state.el.focus();
@@ -74,11 +76,10 @@
         if (callback) {
             callback();
         }
-
     };
 
     var getState = function(control) {
-        var KEY_STATE =  relActivator + ".internal.state";
+        var KEY_STATE = relActivator + '.internal.state';
 
         var state = control.data(KEY_STATE);
 
@@ -95,7 +96,6 @@
     };
 
     var cifProductPicker = function(control, pickerSrc, handleSelections) {
-
         var state = getState(control);
 
         if (state.loading) {
@@ -113,29 +113,36 @@
 
             state.loading = true;
 
-            $.ajax({
+            Granite.$.ajax({
                 url: pickerSrc,
                 cache: false
-            }).then(function (html) {
-                return $(window).adaptTo("foundation-util-htmlparser").parse(html);
-            }).then(function (fragment) {
-                return $(fragment).children()[0];
-            }).then(function (pickerEl) {
-                state.el = pickerEl;
-                state.api = $(pickerEl).adaptTo("foundation-picker");
+            })
+                .then(function(html) {
+                    return Granite.$(window)
+                        .adaptTo('foundation-util-htmlparser')
+                        .parse(html);
+                })
+                .then(function(fragment) {
+                    return Granite.$(fragment).children()[0];
+                })
+                .then(
+                    function(pickerEl) {
+                        state.el = pickerEl;
+                        state.api = Granite.$(pickerEl).adaptTo('foundation-picker');
 
-                show(control, state, handleSelections);
-            }, function () {
-                state.loading = false;
-            });
+                        show(control, state, handleSelections);
+                    },
+                    function() {
+                        state.loading = false;
+                    }
+                );
         }
     };
 
-    $(document).on("click", relActivator, function (e) {
+    var clickActivator = function(e) {
         e.preventDefault();
 
-        var control = $(document).find(relActivator);
-        var test = control[0].dataset.foundationCollectionAction;
+        var control = Granite.$(document).find(relActivator);
         var pickerConfig = control.data();
         var pickerSrc = pickerConfig.pickersrc;
         if (!pickerSrc) {
@@ -159,14 +166,29 @@
                 selectionId = defaultSelectionId;
             }
 
-            pickerSrc = pickerSrc + "?root=" + root + "&filter=" + filter + "&selectionCount=" + selectionCount +
-                "&selectionId=" + selectionId;
+            pickerSrc =
+                pickerSrc +
+                '?root=' +
+                root +
+                '&filter=' +
+                filter +
+                '&selectionCount=' +
+                selectionCount +
+                '&selectionId=' +
+                selectionId;
         }
         var handleSelections = function(selections) {
-            control.trigger(eventType, {"selections": selections});
+            control.trigger(eventType, { selections: selections });
         };
 
         cifProductPicker(control, pickerSrc, handleSelections);
-    });
+    };
 
-})(window, document, Granite, Granite.$);
+    Granite.$(document).on('click', relActivator, clickActivator);
+
+    if (window.CifTesting) {
+        window.CifTesting.CifProductPickerTest = {
+            clickActivator: clickActivator
+        };
+    }
+})(window, document, window.CifTesting ? window.CifTesting.Granite : Granite);

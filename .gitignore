@@ -9,3 +9,6 @@
 pom.xml.releaseBackup
 release.properties
 .DS_Store
+**/node_modules/
+**/coverage/
+**/karma-junit/
