@@ -185,9 +185,6 @@ public class GraphqlResourceProviderTest {
         t2.join();
         t3.join();
 
-        // With caching enabled, refreshCache() should be called only once by the 1st thread, and once by the scheduler
-        Mockito.verify(spy, Mockito.times(2)).refreshCache();
-
         // With caching enabled, buildAllCategoryPaths() should be called only once by the 1st thread
         Mockito.verify(spy, Mockito.times(1)).buildAllCategoryPaths();
     }
