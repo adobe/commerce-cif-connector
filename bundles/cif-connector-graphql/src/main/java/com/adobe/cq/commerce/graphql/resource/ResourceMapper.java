@@ -135,7 +135,9 @@ class ResourceMapper<T> {
                 x.getLocalizedMessage());
             LOGGER.warn("", x);
         } finally {
-            initLock.unlock();
+            if (initLock.isHeldByCurrentThread()) {
+                initLock.unlock();
+            }
         }
     }
 
