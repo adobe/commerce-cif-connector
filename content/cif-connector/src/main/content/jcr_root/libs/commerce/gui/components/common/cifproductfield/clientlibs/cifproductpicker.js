@@ -49,7 +49,6 @@
 
     var show = function(control, state, handleSelections) {
         state.api.attach(this);
-
         state.api.pick(control[0], []).then(
             function(selections) {
                 handleSelections(selections);
@@ -80,9 +79,7 @@
 
     var getState = function(control) {
         var KEY_STATE = relActivator + '.internal.state';
-
         var state = control.data(KEY_STATE);
-
         if (!state) {
             state = {
                 el: null,
@@ -97,7 +94,6 @@
 
     var cifProductPicker = function(control, pickerSrc, handleSelections) {
         var state = getState(control);
-
         if (state.loading) {
             return;
         }
@@ -112,7 +108,6 @@
             }
 
             state.loading = true;
-
             Granite.$.ajax({
                 url: pickerSrc,
                 cache: false
@@ -146,8 +141,6 @@
         var pickerConfig = control.data();
         var pickerSrc = pickerConfig.pickersrc;
         if (!pickerSrc) {
-            pickerSrc = defaultPickerSrc;
-
             var root = pickerConfig.root;
             if (!root) {
                 root = defaultRootPath;
@@ -160,14 +153,13 @@
             if (!selectionCount) {
                 selectionCount = defaultSelectionCount;
             }
-
             var selectionId = pickerConfig.selectionid;
             if (!selectionId) {
                 selectionId = defaultSelectionId;
             }
 
             pickerSrc =
-                pickerSrc +
+                defaultPickerSrc +
                 '?root=' +
                 root +
                 '&filter=' +
@@ -177,6 +169,7 @@
                 '&selectionId=' +
                 selectionId;
         }
+
         var handleSelections = function(selections) {
             control.trigger(eventType, { selections: selections });
         };
