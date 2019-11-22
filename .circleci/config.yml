@@ -1,21 +1,48 @@
-version: 2.1
+version: 2
 
-executors:
-  build-executor:
-    docker:
-      - image: circleci/openjdk:11-stretch-node
-    working_directory: /home/circleci/build
+commands:
+  restore_cache: &restore_cache
+    restore_cache:
+      keys: 
+        - maven-repo-v1-{{ checksum "pom.xml" }}
+        - maven-repo-v1-
 
-jobs:
-  build:
-    executor: build-executor
+  integration_test_steps: &integration_test_steps
     steps:
       - checkout
 
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
+      - *restore_cache
+
+      - attach_workspace:
+          at: /home/circleci/build
+
+      - run:
+          name: Integration tests
+          command: node .circleci/ci/it-tests.js
+
+      - store_test_results:
+          path: it/http/target/failsafe-reports
+
+      - store_artifacts:
+          path: it/http/target/failsafe-reports
+
+  docker_auth: &docker_auth
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_PASS
+
+
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:11-stretch-node
+
+    working_directory: /home/circleci/build
+
+    steps:
+      - checkout
+
+      - *restore_cache
 
       - run:
           name: Build
@@ -48,86 +75,39 @@ jobs:
   integration-test-652:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk11
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-
+        <<: *docker_auth
 
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.2
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
+        <<: *docker_auth
 
     working_directory: /home/circleci/build
 
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-
-      - attach_workspace:
-          at: /home/circleci/build
-
-      - run:
-          name: Integration tests
-          command: node .circleci/ci/it-tests.js
-
-      - store_test_results:
-          path: it/http/target/failsafe-reports
-
-      - store_artifacts:
-          path: it/http/target/failsafe-reports
+    <<: *integration_test_steps
 
 
   integration-test-646:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk8
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-
+        <<: *docker_auth
 
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.4.6
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
+        <<: *docker_auth
 
+    working_directory: /home/circleci/build
+
+    <<: *integration_test_steps
+
+
+  release:
+    docker:
+      - image: circleci/openjdk:11-stretch-node
+  
     working_directory: /home/circleci/build
 
     steps:
       - checkout
 
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
-
-      - attach_workspace:
-          at: /home/circleci/build
-
-      - run:
-          name: Integration tests
-          command: node .circleci/ci/it-tests.js
-
-      - store_test_results:
-          path: it/http/target/failsafe-reports
-
-      - store_artifacts:
-          path: it/http/target/failsafe-reports
-
-
-  release:
-    executor: build-executor
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
+      - *restore_cache
 
       - run:
           name: Release
