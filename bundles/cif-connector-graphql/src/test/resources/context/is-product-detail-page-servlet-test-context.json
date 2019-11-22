@@ -1,0 +1,31 @@
+{
+  "nopage": {
+  },
+
+  "nocontentpage": {
+    "jcr:primaryType": "cq:Page"
+  },
+
+  "notemplatepage": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent"
+    }
+  },
+
+  "novalidpage": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent",
+      "cq:template": "any"
+    }
+  },
+
+  "validpage": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent",
+      "cq:template": "any/settings/wcm/templates/product-page"
+    }
+  }
+}
