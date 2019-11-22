@@ -16,6 +16,9 @@
  * Actions for the preview of product detail pages.
  */
 
+window.CIF = window.CIF || {};
+window.CIF.PagePreview = {};
+
 (function(window, document, Granite, $) {
     'use strict';
 
@@ -72,10 +75,6 @@
 
     Granite.$(document).on('cifProductPickerSelection', relPdpPreview, handlePdpPreview);
 
-    if (window.CifTesting) {
-        window.CifTesting.PagePreviewTest = {
-            handlePdpPreview: handlePdpPreview,
-            createPreviewUrl: createPreviewUrl
-        };
-    }
-})(window, document, window.CifTesting ? window.CifTesting.Granite : Granite);
+    window.CIF.PagePreview.handlePdpPreview = handlePdpPreview;
+    window.CIF.PagePreview.createPreviewUrl = createPreviewUrl;
+})(window, document, window.CIF.Granite ? window.CIF.Granite : Granite);

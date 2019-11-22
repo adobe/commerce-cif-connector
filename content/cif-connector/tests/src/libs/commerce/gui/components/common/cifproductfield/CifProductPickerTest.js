@@ -17,9 +17,9 @@
 import '../../../../../../../../src/main/content/jcr_root/libs/commerce/gui/components/common/cifproductfield/clientlibs/cifproductpicker.js';
 
 describe('CifProductPickerTest', () => {
-    var clickActivator = window.CifTesting.CifProductPickerTest.clickActivator;
+    var clickActivator = window.CIF.CifProductPicker.clickActivator;
     var event = { preventDefault: function() {} };
-    var dollar = window.CifTesting.Granite.$;
+    var dollar = window.CIF.Granite.$;
     var button;
 
     before(() => {

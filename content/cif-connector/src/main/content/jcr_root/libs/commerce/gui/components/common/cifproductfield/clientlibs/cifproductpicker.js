@@ -12,6 +12,9 @@
  *
  ******************************************************************************/
 
+window.CIF = window.CIF || {};
+window.CIF.CifProductPicker = {};
+
 (function(window, document, Granite) {
     'use strict';
     /**
@@ -179,9 +182,5 @@
 
     Granite.$(document).on('click', relActivator, clickActivator);
 
-    if (window.CifTesting) {
-        window.CifTesting.CifProductPickerTest = {
-            clickActivator: clickActivator
-        };
-    }
-})(window, document, window.CifTesting ? window.CifTesting.Granite : Granite);
+    window.CIF.CifProductPicker.clickActivator = clickActivator;
+})(window, document, window.CIF.Granite ? window.CIF.Granite : Granite);

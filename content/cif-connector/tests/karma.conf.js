@@ -29,7 +29,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
         'node_modules/@babel/polyfill/dist/polyfill.js',
-        'src/CifTesting.js',
+        'src/CIF.js',
         '../src/main/content/jcr_root/libs/commerce/gui/components/authoring/editor/pagepreview/clientlibs/*.js',
         '../src/main/content/jcr_root/libs/commerce/gui/components/common/cifproductfield/clientlibs/*.js',
         'src/**/*Test.js'

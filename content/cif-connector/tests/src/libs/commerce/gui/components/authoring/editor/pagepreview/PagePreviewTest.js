@@ -18,7 +18,7 @@ import '../../../../../../../../../src/main/content/jcr_root/libs/commerce/gui/c
 
 describe('PagePreviewTest', () => {
     it('test createPreviewUrl()', () => {
-        var createPreviewUrl = window.CifTesting.PagePreviewTest.createPreviewUrl;
+        var createPreviewUrl = window.CIF.PagePreview.createPreviewUrl;
 
         assert.equal(null, createPreviewUrl(null, null));
         assert.equal(null, createPreviewUrl('editor.html', null));
@@ -28,9 +28,9 @@ describe('PagePreviewTest', () => {
     });
 
     it('test handlePdpPreview()', () => {
-        var handlePdpPreview = window.CifTesting.PagePreviewTest.handlePdpPreview;
+        var handlePdpPreview = window.CIF.PagePreview.handlePdpPreview;
 
-        window.CifTesting.Granite.author.ContentFrame.location = '/editor.html/products/product-page.html';
+        window.CIF.Granite.author.ContentFrame.location = '/editor.html/products/product-page.html';
 
         sinon.spy(window, 'open');
 
@@ -54,7 +54,7 @@ describe('PagePreviewTest', () => {
         assert.isTrue(window.open.calledTwice);
         assert.equal('/editor.html/products/product-page.slug.html', window.open.getCall(1).args[0]);
 
-        window.CifTesting.Granite.author.ContentFrame.location = '/editor.html/products/page.html';
+        window.CIF.Granite.author.ContentFrame.location = '/editor.html/products/page.html';
         handlePdpPreview(null, { selections: [{ value: 'slug' }, { value: 'slugs' }] });
         assert.isTrue(window.open.calledThrice);
         assert.equal('/editor.html/products/page.slug.html', window.open.getCall(2).args[0]);
