@@ -17,7 +17,7 @@
 describe('CifProductPickerTest', () => {
     var clickActivator = window.CIF.CifProductPicker.clickActivator;
     var event = { preventDefault: function() {} };
-    var dollar = window.CIF.Granite.$;
+    var dollar = Granite.$;
     var button;
 
     before(() => {
@@ -112,7 +112,7 @@ describe('CifProductPickerTest', () => {
 
     it('test getState()', () => {
         var getState = window.CIF.CifProductPicker.getState;
-        var control = window.CIF.Granite.$(document).find(window.CIF.CifProductPicker.relActivator);
+        var control = Granite.$(document).find(window.CIF.CifProductPicker.relActivator);
 
         var state = getState(control);
 
@@ -130,7 +130,7 @@ describe('CifProductPickerTest', () => {
     it('test cifProductPicker()', () => {
         var getState = window.CIF.CifProductPicker.getState;
         var cifProductPicker = window.CIF.CifProductPicker.cifProductPicker;
-        var control = window.CIF.Granite.$(document).find(window.CIF.CifProductPicker.relActivator);
+        var control = Granite.$(document).find(window.CIF.CifProductPicker.relActivator);
         var state = getState(control);
 
         cifProductPicker(control, 'pickersrc', null);
@@ -162,7 +162,7 @@ describe('CifProductPickerTest', () => {
     it('test close()', () => {
         var getState = window.CIF.CifProductPicker.getState;
         var close = window.CIF.CifProductPicker.close;
-        var control = window.CIF.Granite.$(document).find(window.CIF.CifProductPicker.relActivator);
+        var control = Granite.$(document).find(window.CIF.CifProductPicker.relActivator);
         var state = getState(control);
         state.api = {
             detach: function() {}
@@ -187,7 +187,7 @@ describe('CifProductPickerTest', () => {
     it('test show()', () => {
         var getState = window.CIF.CifProductPicker.getState;
         var show = window.CIF.CifProductPicker.show;
-        var control = window.CIF.Granite.$(document).find(window.CIF.CifProductPicker.relActivator);
+        var control = Granite.$(document).find(window.CIF.CifProductPicker.relActivator);
         var state = getState(control);
         state.api = {
             attach: function() {},

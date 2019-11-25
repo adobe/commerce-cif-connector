@@ -14,7 +14,7 @@
 
 window.CIF = window.CIF || {};
 
-window.CIF.Granite = {
+Granite = {
     author: { ContentFrame: { location: '' } },
     $: function() {
         return {

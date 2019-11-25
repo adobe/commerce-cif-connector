@@ -29,7 +29,7 @@ describe('PagePreviewTest', () => {
     it('test handlePdpPreview()', () => {
         var handlePdpPreview = window.CIF.PagePreview.handlePdpPreview;
 
-        window.CIF.Granite.author.ContentFrame.location = '/editor.html/products/product-page.html';
+        Granite.author.ContentFrame.location = '/editor.html/products/product-page.html';
 
         sinon.spy(window, 'open');
 
@@ -53,7 +53,7 @@ describe('PagePreviewTest', () => {
         assert.isTrue(window.open.calledTwice);
         assert.equal('/editor.html/products/product-page.slug.html', window.open.getCall(1).args[0]);
 
-        window.CIF.Granite.author.ContentFrame.location = '/editor.html/products/page.html';
+        Granite.author.ContentFrame.location = '/editor.html/products/page.html';
         handlePdpPreview(null, { selections: [{ value: 'slug' }, { value: 'slugs' }] });
         assert.isTrue(window.open.calledThrice);
         assert.equal('/editor.html/products/page.slug.html', window.open.getCall(2).args[0]);

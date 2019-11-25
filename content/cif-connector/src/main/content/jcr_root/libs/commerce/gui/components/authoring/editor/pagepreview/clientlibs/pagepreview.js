@@ -77,4 +77,4 @@ window.CIF.PagePreview = {};
 
     window.CIF.PagePreview.handlePdpPreview = handlePdpPreview;
     window.CIF.PagePreview.createPreviewUrl = createPreviewUrl;
-})(window, document, window.CIF.Granite ? window.CIF.Granite : Granite);
+})(window, document, Granite);

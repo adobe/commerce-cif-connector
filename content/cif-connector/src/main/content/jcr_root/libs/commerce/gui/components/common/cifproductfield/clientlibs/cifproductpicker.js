@@ -189,4 +189,4 @@ window.CIF.CifProductPicker = {};
     window.CIF.CifProductPicker.cifProductPicker = cifProductPicker;
     window.CIF.CifProductPicker.close = close;
     window.CIF.CifProductPicker.show = show;
-})(window, document, window.CIF.Granite ? window.CIF.Granite : Granite);
+})(window, document, Granite);
