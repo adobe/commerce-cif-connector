@@ -21,7 +21,7 @@
                                         <granite:rendercondition
                                             jcr:primaryType="nt:unstructured"
                                             path="${requestPathInfo.suffix}"
-                                            sling:resourceType="commerce/gui/components/authoring/editor/pagepreview/renderconditions/isproductpage"/>
+                                            sling:resourceType="commerce/gui/components/authoring/editor/pagepreview/renderconditions/isproductdetailpage"/>
                                     </previewpdp>
                                     <help/>
                                     <fragmentproperties/>

@@ -37,10 +37,10 @@ import com.day.cq.wcm.api.PageManager;
 
 @Component(
     service = Servlet.class,
-    name = "IsProductPageServletRenderConditionServlet",
+    name = "IsProductDetailPageRenderConditionServlet",
     immediate = true,
     property = {
-        "sling.servlet.resourceTypes=commerce/gui/components/authoring/editor/pagepreview/renderconditions/isproductpage",
+        "sling.servlet.resourceTypes=commerce/gui/components/authoring/editor/pagepreview/renderconditions/isproductdetailpage",
         "sling.servlet.methods=GET"
     })
 public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
