@@ -6,18 +6,10 @@
     "jcr:primaryType": "cq:Page"
   },
 
-  "notemplatepage": {
+  "noproductpage": {
     "jcr:primaryType": "cq:Page",
     "jcr:content": {
       "jcr:primaryType": "cq:PageContent"
-    }
-  },
-
-  "novalidpage": {
-    "jcr:primaryType": "cq:Page",
-    "jcr:content": {
-      "jcr:primaryType": "cq:PageContent",
-      "cq:template": "any"
     }
   },
 
@@ -25,7 +17,9 @@
     "jcr:primaryType": "cq:Page",
     "jcr:content": {
       "jcr:primaryType": "cq:PageContent",
-      "cq:template": "any/settings/wcm/templates/product-page"
+      "product": {
+        "sling:resourceType": "core/cif/components/commerce/product/v1/product"
+      }
     }
   }
 }

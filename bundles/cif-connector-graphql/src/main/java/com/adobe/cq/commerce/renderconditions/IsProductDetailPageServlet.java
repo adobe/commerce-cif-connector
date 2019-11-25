@@ -45,6 +45,8 @@ import com.day.cq.wcm.api.PageManager;
     })
 public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
 
+    static final String PRODUCT_RT = "core/cif/components/commerce/product/v1/product";
+
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
         final Config cfg = new Config(request.getResource());
         final SlingScriptHelper sling = ((SlingBindings) request.getAttribute(SlingBindings.class.getName())).getSling();
@@ -74,11 +76,26 @@ public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
             return false;
         }
 
-        String cqTemplate = pageContent.getValueMap().get("cq:template", String.class);
-        if (StringUtils.isBlank(cqTemplate)) {
+        boolean val = containsComponent(PRODUCT_RT, pageContent);
+
+        return val;
+    }
+
+    static boolean containsComponent(String resourceType, Resource resource) {
+        if (resource == null)
             return false;
+
+        if (resource.isResourceType(resourceType)) {
+            return true;
         }
 
-        return cqTemplate.endsWith("/settings/wcm/templates/product-page");
+        for (Resource child : resource.getChildren()) {
+            boolean val = containsComponent(resourceType, child);
+            if (val) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

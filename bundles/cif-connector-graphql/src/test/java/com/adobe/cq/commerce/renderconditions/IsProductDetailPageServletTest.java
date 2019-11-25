@@ -129,19 +129,8 @@ public class IsProductDetailPageServletTest {
     }
 
     @Test
-    public void testNoTemplatePage() throws Exception {
-        resourceProperties.put("path", "/content/notemplatepage");
-
-        servlet.doGet(request, response);
-
-        RenderCondition renderCondition = (RenderCondition) request.getAttribute(RenderCondition.class.getName());
-        assertNotNull(renderCondition);
-        assertFalse(renderCondition.check());
-    }
-
-    @Test
-    public void testNoValidPage() throws Exception {
-        resourceProperties.put("path", "/content/novalidpage");
+    public void testNoProductPage() throws Exception {
+        resourceProperties.put("path", "/content/noproductpage");
 
         servlet.doGet(request, response);
 
