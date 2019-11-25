@@ -10,19 +10,14 @@ commands:
   integration_test_steps: &integration_test_steps
     steps:
       - checkout
-
       - *restore_cache
-
       - attach_workspace:
           at: /home/circleci/build
-
       - run:
           name: Integration tests
           command: node .circleci/ci/it-tests.js
-
       - store_test_results:
           path: it/http/target/failsafe-reports
-
       - store_artifacts:
           path: it/http/target/failsafe-reports
 
@@ -36,23 +31,17 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:11-stretch-node
-
     working_directory: /home/circleci/build
-
     steps:
       - checkout
-
       - *restore_cache
-
       - run:
           name: Build
           command: node .circleci/ci/build.js
-
       - save_cache:
           paths:
             - .m2
           key: maven-repo-v1-{{ checksum "pom.xml" }}
-
       - persist_to_workspace:
           root: /home/circleci/build
           paths:
@@ -60,13 +49,10 @@ jobs:
             - bundles/*/target/*.jar
             - content/*/target/*.zip
             - it/content/target/*.zip
-
       - store_test_results:
           path: test-results
-
       - store_artifacts:
           path: test-results/junit
-
       - run:
           name: Upload Code Coverage
           command: bash <(curl -s https://codecov.io/bash) -F unittests
@@ -76,12 +62,9 @@ jobs:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk11
         <<: *docker_auth
-
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.2
         <<: *docker_auth
-
     working_directory: /home/circleci/build
-
     <<: *integration_test_steps
 
 
@@ -89,26 +72,19 @@ jobs:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk8
         <<: *docker_auth
-
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.4.6
         <<: *docker_auth
-
     working_directory: /home/circleci/build
-
     <<: *integration_test_steps
 
 
   release:
     docker:
       - image: circleci/openjdk:11-stretch-node
-  
     working_directory: /home/circleci/build
-
     steps:
       - checkout
-
       - *restore_cache
-
       - run:
           name: Release
           # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
@@ -142,7 +118,7 @@ workflows:
               only: /.*/
           requires:
             - build
-              
+
       - release:
           requires:
             - build
