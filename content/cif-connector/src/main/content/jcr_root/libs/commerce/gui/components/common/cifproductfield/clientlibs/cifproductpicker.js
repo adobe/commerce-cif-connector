@@ -49,6 +49,7 @@ window.CIF.CifProductPicker = {};
     var defaultSelectionCount = 'single';
     var defaultFilter = 'folderOrProduct';
     var defaultSelectionId = 'id';
+    var last = false;
 
     var show = function(control, state, handleSelections) {
         state.api.attach(this);
@@ -183,4 +184,9 @@ window.CIF.CifProductPicker = {};
     Granite.$(document).on('click', relActivator, clickActivator);
 
     window.CIF.CifProductPicker.clickActivator = clickActivator;
+    window.CIF.CifProductPicker.getState = getState;
+    window.CIF.CifProductPicker.relActivator = relActivator;
+    window.CIF.CifProductPicker.cifProductPicker = cifProductPicker;
+    window.CIF.CifProductPicker.close = close;
+    window.CIF.CifProductPicker.show = show;
 })(window, document, window.CIF.Granite ? window.CIF.Granite : Granite);

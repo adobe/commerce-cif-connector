@@ -14,8 +14,6 @@
 
 'use strict';
 
-import '../../../../../../../../../src/main/content/jcr_root/libs/commerce/gui/components/authoring/editor/pagepreview/clientlibs/pagepreview.js';
-
 describe('PagePreviewTest', () => {
     it('test createPreviewUrl()', () => {
         var createPreviewUrl = window.CIF.PagePreview.createPreviewUrl;
@@ -23,6 +21,7 @@ describe('PagePreviewTest', () => {
         assert.equal(null, createPreviewUrl(null, null));
         assert.equal(null, createPreviewUrl('editor.html', null));
         assert.equal(null, createPreviewUrl('editor.html', 'slug'));
+        assert.equal(null, createPreviewUrl('/editor', 'slug'));
         assert.equal('/editor.slug.html', createPreviewUrl('/editor.html', 'slug'));
         assert.equal('/editor.slug.html', createPreviewUrl('/editor.any.html', 'slug'));
     });

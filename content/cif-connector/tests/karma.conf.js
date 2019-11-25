@@ -12,8 +12,6 @@
  *
  ******************************************************************************/
 
-const webpackConfig = require('./webpack.config.js');
-
 module.exports = function(config) {
   config.set({
 
@@ -47,14 +45,7 @@ module.exports = function(config) {
       // source files, that you wanna generate coverage for
       // do not include tests or libraries
       // (these files will be instrumented by Istanbul)
-      'src/**/*.js': ['webpack'],
-      '../src/main/content/**/*.js': ['webpack']
-    },
-
-    webpack: webpackConfig({ karma: true }),
-
-    webpackMiddleware: {
-      stats: 'errors-only',
+      '../src/main/content/**/*.js': ['coverage']
     },
 
     // test results reporter to use

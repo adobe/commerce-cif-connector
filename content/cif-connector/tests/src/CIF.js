@@ -21,19 +21,26 @@ window.CIF.Granite = {
             on: function() {},
             find: function(selector) {
                 let el = document.querySelector(selector);
-                return {
-                    data: function() {
-                        var data = {};
-                        for (var i = 0, atts = el.attributes, n = atts.length; i < n; i++) {
-                            let name = atts[i].nodeName;
-                            if (name.startsWith('data-')) {
-                                data[name.substring('data-'.length)] = atts[i].value;
+                let edata = {
+                    data: function(key, value) {
+                        if (!key && !value) {
+                            var data = {};
+                            for (var i = 0, atts = el.attributes, n = atts.length; i < n; i++) {
+                                let name = atts[i].nodeName;
+                                if (name.startsWith('data-')) {
+                                    data[name.substring('data-'.length)] = atts[i].value;
+                                }
                             }
-                        }
 
-                        return data;
+                            return data;
+                        } else if (key && !value) {
+                            return edata[key];
+                        } else if (key && value) {
+                            return (edata[key] = value);
+                        }
                     }
                 };
+                return edata;
             }
         };
     }
