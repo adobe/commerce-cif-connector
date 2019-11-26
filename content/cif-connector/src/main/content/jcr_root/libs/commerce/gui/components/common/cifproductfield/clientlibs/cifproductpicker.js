@@ -183,10 +183,5 @@ window.CIF.CifProductPicker = {};
 
     Granite.$(document).on('click', relActivator, clickActivator);
 
-    window.CIF.CifProductPicker.clickActivator = clickActivator;
-    window.CIF.CifProductPicker.getState = getState;
-    window.CIF.CifProductPicker.relActivator = relActivator;
-    window.CIF.CifProductPicker.cifProductPicker = cifProductPicker;
-    window.CIF.CifProductPicker.close = close;
-    window.CIF.CifProductPicker.show = show;
+    window.CIF.CifProductPicker = { clickActivator, getState, relActivator, cifProductPicker, close, show };
 })(window, document, Granite);

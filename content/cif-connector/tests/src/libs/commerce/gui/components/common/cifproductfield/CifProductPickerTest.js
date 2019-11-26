@@ -157,6 +157,19 @@ describe('CifProductPickerTest', () => {
         cifProductPicker(control, 'pickersrc', null);
 
         assert.isFalse(dollar.ajax.calledOnce);
+
+        state.open = false;
+        state.api = {
+            attach: function() {},
+            pick: function() {
+                return { then: function() {} };
+            },
+            focus: function() {}
+        };
+
+        cifProductPicker(control, 'pickersrc', null);
+
+        assert.isFalse(dollar.ajax.calledOnce);
     });
 
     it('test close()', () => {
