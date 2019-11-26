@@ -31,9 +31,7 @@ describe('CifProductPickerTest', () => {
         );
         button = document.querySelector('.cq-commerce-cifproductpicker-activator');
         dollar.ajax = function(asd) {
-            return new Promise(function(resolve, reject) {
-                return resolve(asd);
-            });
+            return Promise.resolve(asd);
         };
     });
 

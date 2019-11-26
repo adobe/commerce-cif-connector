@@ -46,9 +46,7 @@ Granite = {
                 if (api == 'foundation-util-htmlparser') {
                     return {
                         parse: function() {
-                            return new Promise(function(resolve, reject) {
-                                return resolve({});
-                            });
+                            return Promise.resolve({});
                         }
                     };
                 } else if (api == 'foundation-picker') {
@@ -63,11 +61,7 @@ Granite = {
             },
 
             children: function() {
-                return [
-                    new Promise(function(resolve, reject) {
-                        return resolve(obj);
-                    })
-                ];
+                return [Promise.resolve(obj)];
             }
         };
     }

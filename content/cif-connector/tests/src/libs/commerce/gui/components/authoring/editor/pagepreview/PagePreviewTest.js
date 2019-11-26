@@ -57,5 +57,7 @@ describe('PagePreviewTest', () => {
         handlePdpPreview(null, { selections: [{ value: 'slug' }, { value: 'slugs' }] });
         assert.isTrue(window.open.calledThrice);
         assert.equal('/editor.html/products/page.slug.html', window.open.getCall(2).args[0]);
+
+        window.open.restore();
     });
 });

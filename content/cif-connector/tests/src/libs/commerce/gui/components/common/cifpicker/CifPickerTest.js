@@ -17,33 +17,13 @@
 describe('CifPickerTest', () => {
     var relActivator = 'relActivator';
     var pickerSrc = 'pickersrc';
-    var event = { preventDefault: function() {} };
     var dollar = Granite.$;
-    var button;
     var control;
     var getState;
 
     before(() => {
-        var body = document.querySelector('body');
-        body.insertAdjacentHTML(
-            'afterbegin',
-            `<button class="js-editor-PageInfo-closePopover cq-commerce-cifproductpicker-activator cq-commerce-pdp-preview-activator coral3-Button coral3-Button--secondary" 
-                          title="View with Product" 
-                          type="button" 
-                          autocomplete="off" 
-                          is="coral-button" 
-                          trackingfeature="" 
-                          trackingelement="view with product" 
-                          tracking="ON" 
-                          size="M" 
-                          variant="secondary"><coral-button-label>View with Product</coral-button-label></button>`
-        );
-        button = document.querySelector('.cq-commerce-cifproductpicker-activator');
-
         dollar.ajax = function(asd) {
-            return new Promise(function(resolve, reject) {
-                return resolve(asd);
-            });
+            return Promise.resolve(asd);
         };
         getState = window.CIF.CifPicker.getState;
     });
@@ -157,12 +137,17 @@ describe('CifPickerTest', () => {
         assert.isFalse(state.loading);
         assert.isTrue(state.open);
 
+        state.api.attach.restore();
+        state.api.pick.restore();
+        state.el.focus.restore();
+
         state.api.focus = function() {};
         sinon.spy(state.api, 'focus');
 
         show(control, state);
 
         assert.isTrue(state.api.focus.calledOnce);
+        state.api.focus.restore();
     });
 
     it('test close()', () => {
