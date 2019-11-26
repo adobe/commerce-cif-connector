@@ -164,15 +164,29 @@ public class GraphqlResourceProviderTest {
             }
         };
 
+        final Runnable schedulerJob = new Runnable() {
+            public void run() {
+                spy.refreshCache();
+            }
+        };
+
+        // One of the "init()" thread will initialize the cache, the other will block,
+        // and the scheduler thread will not be able to get the lock
+
         Thread t1 = new Thread(cacheRefreshJob);
         Thread t2 = new Thread(cacheRefreshJob);
+        Thread t3 = new Thread(schedulerJob);
+
         t1.start();
         t2.start();
+        t3.start();
+
         t1.join();
         t2.join();
+        t3.join();
 
-        // With caching enabled, refreshCache() should be called only once by the 1st thread
-        Mockito.verify(spy, Mockito.times(1)).refreshCache();
+        // With caching enabled, buildAllCategoryPaths() should be called only once by the 1st thread
+        Mockito.verify(spy, Mockito.times(1)).buildAllCategoryPaths();
     }
 
     @Test
