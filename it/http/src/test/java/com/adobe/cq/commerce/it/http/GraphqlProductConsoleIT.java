@@ -33,6 +33,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.adobe.cq.testing.mockserver.RequestResponseRule;
@@ -332,6 +333,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Assert.assertEquals(JCR_BASE_PATH + "/men/coats/meskwielt", elements.attr("data-path"));
     }
 
+    @Ignore // CIF-1094, re-enable when we will execute integration tests on CircleCI
     @Test
     public void testOmnisearchSuggestions() throws Exception {
 
