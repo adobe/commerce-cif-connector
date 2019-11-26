@@ -29,6 +29,7 @@ module.exports = function(config) {
         'node_modules/@babel/polyfill/dist/polyfill.js',
         'src/CIF.js',
         '../src/main/content/jcr_root/libs/commerce/gui/components/authoring/editor/pagepreview/clientlibs/*.js',
+        '../src/main/content/jcr_root/libs/commerce/gui/components/common/cifpicker/clientlibs/*.js',
         '../src/main/content/jcr_root/libs/commerce/gui/components/common/cifcategoryfield/clientlibs/*.js',
         '../src/main/content/jcr_root/libs/commerce/gui/components/common/cifproductfield/clientlibs/*.js',
         'src/**/*Test.js'

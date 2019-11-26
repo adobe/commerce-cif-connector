@@ -16,7 +16,7 @@ window.CIF = window.CIF || {};
 
 Granite = {
     author: { ContentFrame: { location: '' } },
-    $: function() {
+    $: function(obj) {
         return {
             on: function() {},
             find: function(selector) {
@@ -41,6 +41,33 @@ Granite = {
                     }
                 };
                 return edata;
+            },
+            adaptTo: function(api) {
+                if (api == 'foundation-util-htmlparser') {
+                    return {
+                        parse: function() {
+                            return new Promise(function(resolve, reject) {
+                                return resolve({});
+                            });
+                        }
+                    };
+                } else if (api == 'foundation-picker') {
+                    return {
+                        attach: function() {},
+                        pick: function() {
+                            return { then: function() {} };
+                        },
+                        focus: function() {}
+                    };
+                }
+            },
+
+            children: function() {
+                return [
+                    new Promise(function(resolve, reject) {
+                        return resolve(obj);
+                    })
+                ];
             }
         };
     }

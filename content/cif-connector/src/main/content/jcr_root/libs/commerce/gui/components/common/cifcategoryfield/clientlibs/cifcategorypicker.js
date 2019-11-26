@@ -13,7 +13,7 @@
  ******************************************************************************/
 
 window.CIF = window.CIF || {};
-window.CIF.CifProductPicker = {};
+window.CIF.CifCategoryPicker = {};
 
 (function(window, document, Granite) {
     'use strict';
@@ -25,30 +25,31 @@ window.CIF.CifProductPicker = {};
      */
 
     /**
-     * Selector for CIF product picker context component
+     * Selector for CIF category picker context component
      * @type {string}
      */
-    var relActivator = '.cq-commerce-cifproductpicker-activator';
+    var relActivator = '.cq-commerce-cifcategorypicker-activator';
 
     /**
      * Event type for picker selection.
      * @type {string}
      */
-    var eventType = 'cifProductPickerSelection';
+    var eventType = 'cifCategoryPickerSelection';
 
     /**
      * Default picker URL.
      * @type {string}
      */
-    var defaultPickerSrc = '/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html';
+    var defaultPickerSrc = '/mnt/overlay/commerce/gui/content/common/cifcategoryfield/picker.html';
     /**
      * Default root path shown by the picker when opened.
      * @type {string}
      */
     var defaultRootPath = '/var/commerce/products';
     var defaultSelectionCount = 'single';
-    var defaultFilter = 'folderOrProduct';
+    var defaultFilter = 'folderOrCategory';
     var defaultSelectionId = 'id';
+    var last = false;
 
     var clickActivator = function(e) {
         e.preventDefault();
@@ -95,5 +96,5 @@ window.CIF.CifProductPicker = {};
 
     Granite.$(document).on('click', relActivator, clickActivator);
 
-    window.CIF.CifProductPicker = { clickActivator, relActivator };
+    window.CIF.CifCategoryPicker = { clickActivator, relActivator };
 })(window, document, Granite);

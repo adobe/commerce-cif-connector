@@ -22,6 +22,7 @@
     </filter>
 
     <filter root="/libs/cif"/>
+    <filter root="/libs/commerce/gui/components/common/cifpicker"/>
     <filter root="/libs/commerce/gui/components/common/cifproductfield"/>
     <filter root="/libs/commerce/gui/components/common/cifcategoryfield"/>
     <filter root="/libs/commerce/gui/content/common/cifproductfield"/>
