@@ -14,7 +14,7 @@
 
 'use strict';
 
-describe('CifPickerTest', () => {
+describe('CifPicker', () => {
     var relActivator = 'relActivator';
     var pickerSrc = 'pickersrc';
     var dollar = Granite.$;
@@ -55,66 +55,70 @@ describe('CifPickerTest', () => {
         dollar.ajax.restore();
     });
 
-    it('test cifPicker()', () => {
+    it('does nothing if pickersrc is empty', () => {
         var cifPicker = window.CIF.CifPicker.cifPicker;
-
-        var state = getState(control, relActivator);
-        state.test = 'test';
-
-        cifPicker(control, relActivator, pickerSrc, null);
-
-        verifyCall(pickerSrc);
-
-        dollar.ajax.restore();
-        sinon.spy(dollar, 'ajax');
-        state.loading = true;
-
-        cifPicker(control, relActivator, pickerSrc, null);
-
-        assert.isFalse(dollar.ajax.calledOnce);
-
-        state.loading = false;
 
         cifPicker(control, relActivator, null, null);
 
         assert.isFalse(dollar.ajax.calledOnce);
+    });
 
-        state.el = control;
-        state.open = true;
+    it('shows the picker', () => {
+        var cifPicker = window.CIF.CifPicker.cifPicker;
 
         cifPicker(control, relActivator, pickerSrc, null);
 
-        assert.isFalse(dollar.ajax.calledOnce);
+        assert.isTrue(dollar.ajax.calledOnce);
+        assert.equal(pickerSrc, dollar.ajax.getCall(0).args[0].url);
+    });
 
-        state.open = false;
+    it("does't show the picker again if it's already showing", () => {
+        var cifPicker = window.CIF.CifPicker.cifPicker;
+
+        cifPicker(control, relActivator, pickerSrc, null);
+
+        assert.isTrue(dollar.ajax.calledOnce);
+        assert.equal(pickerSrc, dollar.ajax.getCall(0).args[0].url);
+
+        cifPicker(control, relActivator, pickerSrc, null);
+        assert.isFalse(dollar.ajax.calledTwice);
+    });
+
+    it('shows the picker which was used and closed earlier', () => {
+        var cifPicker = window.CIF.CifPicker.cifPicker;
+
+        cifPicker(control, relActivator, pickerSrc, null);
+
+        assert.isTrue(dollar.ajax.calledOnce);
+        assert.equal(pickerSrc, dollar.ajax.getCall(0).args[0].url);
+
+        var close = window.CIF.CifPicker.close;
+        var state = getState(control, relActivator);
         state.api = {
             attach: function() {},
+            detach: function() {},
             pick: function() {
                 return { then: function() {} };
             },
             focus: function() {}
         };
+        state.el = { any: 'thing' };
+        state.loading = false;
+
+        var showSpy = sinon.spy(window.CIF.CifPicker.show);
+
+        close(control, state);
 
         cifPicker(control, relActivator, pickerSrc, null);
 
-        assert.isFalse(dollar.ajax.calledOnce);
+        showSpy.calledOnce;
+
+        cifPicker(control, relActivator, pickerSrc, null);
+
+        showSpy.calledOnce;
     });
 
-    it('test getState()', () => {
-        var state = getState(control, relActivator);
-
-        assert.isNotNull(state);
-        assert.isNull(state.el);
-        assert.isFalse(state.open);
-        assert.isFalse(state.loading);
-
-        state.loading = true;
-
-        var state = getState(control, relActivator);
-        assert.isTrue(state.loading);
-    });
-
-    it('test show()', () => {
+    it('transfers focus to the picker after showing', () => {
         var show = window.CIF.CifPicker.show;
         var state = getState(control);
         state.api = {
@@ -125,20 +129,14 @@ describe('CifPickerTest', () => {
         };
 
         state.el = { focus: function() {} };
-        sinon.spy(state.api, 'attach');
-        sinon.spy(state.api, 'pick');
         sinon.spy(state.el, 'focus');
 
         show(control, state);
-        assert.isTrue(state.api.attach.calledOnce);
-        assert.isTrue(state.api.pick.calledOnce);
         assert.isTrue(state.el.focus.calledOnce);
 
         assert.isFalse(state.loading);
         assert.isTrue(state.open);
 
-        state.api.attach.restore();
-        state.api.pick.restore();
         state.el.focus.restore();
 
         state.api.focus = function() {};
@@ -150,7 +148,7 @@ describe('CifPickerTest', () => {
         state.api.focus.restore();
     });
 
-    it('test close()', () => {
+    it('close() puts the picker in closed state and invokes callback if available', () => {
         var close = window.CIF.CifPicker.close;
         var state = getState(control, relActivator);
         state.api = {

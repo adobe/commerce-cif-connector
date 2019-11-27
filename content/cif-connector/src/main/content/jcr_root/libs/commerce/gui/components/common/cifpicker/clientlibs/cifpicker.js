@@ -13,7 +13,7 @@
  ******************************************************************************/
 
 window.CIF = window.CIF || {};
-window.CIF.CifProductPicker = {};
+window.CIF.CifPicker = {};
 
 (function(window, document, Granite) {
     'use strict';
