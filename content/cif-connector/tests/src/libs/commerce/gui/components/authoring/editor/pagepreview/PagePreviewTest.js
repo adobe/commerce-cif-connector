@@ -14,47 +14,56 @@
 
 'use strict';
 
-describe('PagePreviewTest', () => {
-    it('test createPreviewUrl()', () => {
+describe('PagePreview', () => {
+    it('createPreviewUrl() returns null for invalid parameters', () => {
         var createPreviewUrl = window.CIF.PagePreview.createPreviewUrl;
 
         assert.equal(null, createPreviewUrl(null, null));
         assert.equal(null, createPreviewUrl('editor.html', null));
         assert.equal(null, createPreviewUrl('editor.html', 'slug'));
         assert.equal(null, createPreviewUrl('/editor', 'slug'));
+    });
+
+    it('createPreviewUrl() adds selector as new URL selector or replaces old selector with new selector', () => {
+        var createPreviewUrl = window.CIF.PagePreview.createPreviewUrl;
         assert.equal('/editor.slug.html', createPreviewUrl('/editor.html', 'slug'));
         assert.equal('/editor.slug.html', createPreviewUrl('/editor.any.html', 'slug'));
     });
 
-    it('test handlePdpPreview()', () => {
-        var handlePdpPreview = window.CIF.PagePreview.handlePdpPreview;
-
-        Granite.author.ContentFrame.location = '/editor.html/products/product-page.html';
-
+    it('handlePreview() does nothing for invalid selections', () => {
+        var handlePreview = window.CIF.PagePreview.handlePreview;
         sinon.spy(window, 'open');
 
-        handlePdpPreview(null, null);
+        handlePreview(null, null);
         assert.isFalse(window.open.calledOnce);
 
-        handlePdpPreview(null, {});
+        handlePreview(null, {});
         assert.isFalse(window.open.calledOnce);
 
-        handlePdpPreview(null, { selections: [] });
+        handlePreview(null, { selections: [] });
         assert.isFalse(window.open.calledOnce);
 
-        handlePdpPreview(null, { selections: 'any' });
+        handlePreview(null, { selections: 'any' });
         assert.isFalse(window.open.calledOnce);
 
-        handlePdpPreview(null, { selections: { value: 'slug' } });
+        window.open.restore();
+    });
+
+    it('handlePreview() opens page preview for the first selection', () => {
+        var handlePreview = window.CIF.PagePreview.handlePreview;
+        sinon.spy(window, 'open');
+        Granite.author.ContentFrame.location = '/editor.html/products/product-page.html';
+
+        handlePreview(null, { selections: { value: 'slug' } });
         assert.isTrue(window.open.calledOnce);
         assert.equal('/editor.html/products/product-page.slug.html', window.open.getCall(0).args[0]);
 
-        handlePdpPreview(null, { selections: [{ value: 'slug' }] });
+        handlePreview(null, { selections: [{ value: 'slug' }] });
         assert.isTrue(window.open.calledTwice);
         assert.equal('/editor.html/products/product-page.slug.html', window.open.getCall(1).args[0]);
 
         Granite.author.ContentFrame.location = '/editor.html/products/page.html';
-        handlePdpPreview(null, { selections: [{ value: 'slug' }, { value: 'slugs' }] });
+        handlePreview(null, { selections: [{ value: 'slug' }, { value: 'slug2' }] });
         assert.isTrue(window.open.calledThrice);
         assert.equal('/editor.html/products/page.slug.html', window.open.getCall(2).args[0]);
 

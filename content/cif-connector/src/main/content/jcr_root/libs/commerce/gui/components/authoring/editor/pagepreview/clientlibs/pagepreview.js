@@ -24,7 +24,7 @@ window.CIF.PagePreview = {};
 
     var relPdpPreview = '.cq-commerce-pdp-preview-activator';
 
-    var handlePdpPreview = function(e, data) {
+    var handlePreview = function(e, data) {
         if (!data) {
             return;
         }
@@ -47,8 +47,8 @@ window.CIF.PagePreview = {};
         }
     };
 
-    var createPreviewUrl = function(url, slug) {
-        if (!url || !slug) {
+    var createPreviewUrl = function(url, selector) {
+        if (!url || !selector) {
             return null;
         }
 
@@ -64,16 +64,16 @@ window.CIF.PagePreview = {};
         if (indHtml > -1) {
             var indSelector = urlName.slice(0, indHtml).lastIndexOf('.');
             if (indSelector > -1) {
-                previewUrl = urlPath + urlName.slice(0, indSelector) + '.' + slug + '.html';
+                previewUrl = urlPath + urlName.slice(0, indSelector) + '.' + selector + '.html';
             } else {
-                previewUrl = urlPath + urlName.slice(0, indHtml) + '.' + slug + '.html';
+                previewUrl = urlPath + urlName.slice(0, indHtml) + '.' + selector + '.html';
             }
         }
 
         return previewUrl;
     };
 
-    Granite.$(document).on('cifProductPickerSelection', relPdpPreview, handlePdpPreview);
+    Granite.$(document).on('cifProductPickerSelection', relPdpPreview, handlePreview);
 
-    window.CIF.PagePreview = { handlePdpPreview, createPreviewUrl };
+    window.CIF.PagePreview = { handlePreview, createPreviewUrl };
 })(window, document, Granite);

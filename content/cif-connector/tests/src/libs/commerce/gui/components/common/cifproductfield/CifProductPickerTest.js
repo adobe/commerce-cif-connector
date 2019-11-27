@@ -14,7 +14,7 @@
 
 'use strict';
 
-describe('CifProductPickerTest', () => {
+describe('CifProductPicker', () => {
     var clickActivator = window.CIF.CifProductPicker.clickActivator;
     var event = { preventDefault: function() {} };
     var dollar = Granite.$;
@@ -43,21 +43,21 @@ describe('CifProductPickerTest', () => {
         dollar.ajax.restore();
     });
 
-    it('test picker defaults', () => {
+    it('provides defaults settings for the picker', () => {
         clickActivator(event);
         verifyCall(
             '/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html?root=/var/commerce/products&filter=folderOrProduct&selectionCount=single&selectionId=id'
         );
     });
 
-    it('test pickersrc', () => {
+    it('supports custom pickersrc', () => {
         button.setAttribute('data-pickersrc', 'mypickersrc');
         clickActivator(event);
         verifyCall('mypickersrc');
         button.removeAttribute('data-pickersrc');
     });
 
-    it('test picker root', () => {
+    it('supports custom root path', () => {
         button.setAttribute('data-root', '/my/path');
         clickActivator(event);
         verifyCall(
@@ -66,7 +66,7 @@ describe('CifProductPickerTest', () => {
         button.removeAttribute('data-root');
     });
 
-    it('test selectioncount', () => {
+    it('supports custom selectioncount', () => {
         button.setAttribute('data-selectioncount', 'multiple');
         clickActivator(event);
         verifyCall(
@@ -75,7 +75,7 @@ describe('CifProductPickerTest', () => {
         button.removeAttribute('data-selectioncount');
     });
 
-    it('test selectionid', () => {
+    it('supports custom selectionid', () => {
         button.setAttribute('data-selectionid', 'slug');
         clickActivator(event);
         verifyCall(
@@ -84,7 +84,7 @@ describe('CifProductPickerTest', () => {
         button.removeAttribute('data-selectionid');
     });
 
-    it('test filter', () => {
+    it('supports custom filter', () => {
         button.setAttribute('data-filter', 'myfilter');
         clickActivator(event);
         verifyCall(
