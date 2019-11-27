@@ -114,7 +114,14 @@
                     <addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
                     <excludes combine.children="append">
                         <exclude>**/*.xml</exclude>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/*.css</exclude>
                         <exclude>**/META-INF/**/*</exclude>
+                        <exclude>**/node_modules/**/*</exclude>
+                        <exclude>**/.prettierrc</exclude>
+                        <exclude>**/.prettierignore</exclude>
+                        <exclude>**/coverage/**</exclude>
+                        <exclude>**/*.json</exclude>
                     </excludes>
                 </configuration>
             </plugin>

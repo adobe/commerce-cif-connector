@@ -1,0 +1,25 @@
+{
+  "nopage": {
+  },
+
+  "nocontentpage": {
+    "jcr:primaryType": "cq:Page"
+  },
+
+  "noproductpage": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent"
+    }
+  },
+
+  "validpage": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent",
+      "product": {
+        "sling:resourceType": "core/cif/components/commerce/product/v1/product"
+      }
+    }
+  }
+}

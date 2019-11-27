@@ -15,4 +15,6 @@
 <workspaceFilter version="1.0">
     <filter root="/apps/cloudcommerce/config"/>
     <filter root="/content/dam/ciftest"/>
+    <filter root="/conf/testproject"/>
+    <filter root="/content/testproject"/>
 </workspaceFilter>
