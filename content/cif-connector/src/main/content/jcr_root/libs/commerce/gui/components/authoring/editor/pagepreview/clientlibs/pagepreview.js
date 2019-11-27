@@ -23,6 +23,7 @@ window.CIF.PagePreview = {};
     'use strict';
 
     var relPdpPreview = '.cq-commerce-pdp-preview-activator';
+    var relPlpPreview = '.cq-commerce-plp-preview-activator';
 
     var handlePreview = function(e, data) {
         if (!data) {
@@ -74,6 +75,7 @@ window.CIF.PagePreview = {};
     };
 
     Granite.$(document).on('cifProductPickerSelection', relPdpPreview, handlePreview);
+    Granite.$(document).on('cifCategoryPickerSelection', relPlpPreview, handlePreview);
 
     window.CIF.PagePreview = { handlePreview, createPreviewUrl };
 })(window, document, Granite);
