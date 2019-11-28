@@ -34,8 +34,10 @@ import static org.apache.http.HttpStatus.SC_OK;
 
 public class PageEditorExtensionIT {
     private static final String PAGE_EDITOR_PATH = "/editor.html";
-    private static final String TEST_PAGE_PATH = "/content/testproject/testpdp.html";
+    private static final String TEST_PDP_PATH = "/content/testproject/testpdp.html";
     private static final String PREVIEW_PDP_BUTTON_SELECTOR = "#pageinfo-data > button.cq-commerce-cifproductpicker-activator.cq-commerce-pdp-preview-activator:contains(%s)";
+    private static final String TEST_PLP_PATH = "/content/testproject/testplp.html";
+    private static final String PREVIEW_PLP_BUTTON_SELECTOR = "#pageinfo-data > button.cq-commerce-cifcategorypicker-activator.cq-commerce-plp-preview-activator:contains(%s)";
 
     private static CommerceClient cAdminAuthor;
     private static CQAuthorClassRule cqBaseClassRule = new CQAuthorClassRule();
@@ -53,12 +55,23 @@ public class PageEditorExtensionIT {
 
     @Test
     public void testPreviewPdpButton() throws Exception {
-        String requestPath = PAGE_EDITOR_PATH + "/" + TEST_PAGE_PATH;
+        String requestPath = PAGE_EDITOR_PATH + "/" + TEST_PDP_PATH;
         SlingHttpResponse response = cAdminAuthor.doGet(requestPath, null, NO_CACHE_HEADERS, SC_OK);
 
         Document doc = Jsoup.parse(response.getContent());
 
         // check menu option "View with Product"
         Assert.assertEquals(1, doc.select(String.format(PREVIEW_PDP_BUTTON_SELECTOR, "View with Product")).size());
+    }
+
+    @Test
+    public void testPreviewPlpButton() throws Exception {
+        String requestPath = PAGE_EDITOR_PATH + "/" + TEST_PLP_PATH;
+        SlingHttpResponse response = cAdminAuthor.doGet(requestPath, null, NO_CACHE_HEADERS, SC_OK);
+
+        Document doc = Jsoup.parse(response.getContent());
+
+        // check menu option "View with Product"
+        Assert.assertEquals(1, doc.select(String.format(PREVIEW_PLP_BUTTON_SELECTOR, "View with Category")).size());
     }
 }

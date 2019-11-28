@@ -23,6 +23,20 @@
                                             path="${requestPathInfo.suffix}"
                                             sling:resourceType="commerce/gui/components/authoring/editor/pagepreview/renderconditions/isproductdetailpage"/>
                                     </previewpdp>
+                                    <previewplp
+                                            granite:rel="cq-commerce-cifcategorypicker-activator cq-commerce-plp-preview-activator"
+                                            granite:title="View with Category"
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/button"
+                                            text="View with Category">
+                                        <granite:data
+                                                jcr:primaryType="nt:unstructured"
+                                                selectionid="id"/>
+                                        <granite:rendercondition
+                                                jcr:primaryType="nt:unstructured"
+                                                path="${requestPathInfo.suffix}"
+                                                sling:resourceType="commerce/gui/components/authoring/editor/pagepreview/renderconditions/isproductlistpage"/>
+                                    </previewplp>
                                     <help/>
                                     <fragmentproperties/>
                                 </items>

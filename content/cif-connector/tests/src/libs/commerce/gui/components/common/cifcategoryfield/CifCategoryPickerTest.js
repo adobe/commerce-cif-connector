@@ -14,8 +14,8 @@
 
 'use strict';
 
-describe('CifProductPicker', () => {
-    var clickActivator = window.CIF.CifProductPicker.clickActivator;
+describe('CifCategoryPicker', () => {
+    var clickActivator = window.CIF.CifCategoryPicker.clickActivator;
     var event = { preventDefault: function() {} };
     var dollar = Granite.$;
     var button;
@@ -24,12 +24,12 @@ describe('CifProductPicker', () => {
         var body = document.querySelector('body');
         body.insertAdjacentHTML(
             'afterbegin',
-            `<button class="cq-commerce-cifproductpicker-activator cq-commerce-pdp-preview-activator" 
+            `<button class="cq-commerce-cifcategorypicker-activator cq-commerce-pdp-preview-activator" 
                           type="button" 
                           is="coral-button" 
                           variant="secondary"><coral-button-label>View with Product</coral-button-label></button>`
         );
-        button = document.querySelector('.cq-commerce-cifproductpicker-activator');
+        button = document.querySelector('.cq-commerce-cifcategorypicker-activator');
         dollar.ajax = function(asd) {
             return Promise.resolve(asd);
         };
@@ -46,11 +46,11 @@ describe('CifProductPicker', () => {
     it('provides default settings for the picker', () => {
         clickActivator(event);
         verifyCall(
-            '/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html?root=/var/commerce/products&filter=folderOrProduct&selectionCount=single&selectionId=id'
+            '/mnt/overlay/commerce/gui/content/common/cifcategoryfield/picker.html?root=/var/commerce/products&filter=folderOrCategory&selectionCount=single&selectionId=id'
         );
     });
 
-    it('supports custom pickersrc', () => {
+    it('test pickersrc', () => {
         button.setAttribute('data-pickersrc', 'mypickersrc');
         clickActivator(event);
         verifyCall('mypickersrc');
@@ -61,7 +61,7 @@ describe('CifProductPicker', () => {
         button.setAttribute('data-root', '/my/path');
         clickActivator(event);
         verifyCall(
-            '/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html?root=/my/path&filter=folderOrProduct&selectionCount=single&selectionId=id'
+            '/mnt/overlay/commerce/gui/content/common/cifcategoryfield/picker.html?root=/my/path&filter=folderOrCategory&selectionCount=single&selectionId=id'
         );
         button.removeAttribute('data-root');
     });
@@ -70,7 +70,7 @@ describe('CifProductPicker', () => {
         button.setAttribute('data-selectioncount', 'multiple');
         clickActivator(event);
         verifyCall(
-            '/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html?root=/var/commerce/products&filter=folderOrProduct&selectionCount=multiple&selectionId=id'
+            '/mnt/overlay/commerce/gui/content/common/cifcategoryfield/picker.html?root=/var/commerce/products&filter=folderOrCategory&selectionCount=multiple&selectionId=id'
         );
         button.removeAttribute('data-selectioncount');
     });
@@ -79,7 +79,7 @@ describe('CifProductPicker', () => {
         button.setAttribute('data-selectionid', 'slug');
         clickActivator(event);
         verifyCall(
-            '/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html?root=/var/commerce/products&filter=folderOrProduct&selectionCount=single&selectionId=slug'
+            '/mnt/overlay/commerce/gui/content/common/cifcategoryfield/picker.html?root=/var/commerce/products&filter=folderOrCategory&selectionCount=single&selectionId=slug'
         );
         button.removeAttribute('data-selectionid');
     });
@@ -88,7 +88,7 @@ describe('CifProductPicker', () => {
         button.setAttribute('data-filter', 'myfilter');
         clickActivator(event);
         verifyCall(
-            '/mnt/overlay/commerce/gui/content/common/cifproductfield/picker.html?root=/var/commerce/products&filter=myfilter&selectionCount=single&selectionId=id'
+            '/mnt/overlay/commerce/gui/content/common/cifcategoryfield/picker.html?root=/var/commerce/products&filter=myfilter&selectionCount=single&selectionId=id'
         );
         button.removeAttribute('data-filter');
     });
