@@ -42,7 +42,7 @@ ci.dir(qpPath, () => {
         --install-file ${path.resolve(buildPath, 'content/cif-connector/target', `cif-connector-content-${config.modules['cif-connector-content'].version}.zip`)} \
         --install-file ${path.resolve(buildPath, 'content/cif-virtual-catalog/target', `cif-virtual-catalog-content-${config.modules['cif-virtual-catalog-content'].version}.zip`)} \
         --install-file ${path.resolve(buildPath, 'it/content/target', `it-test-content-${config.modules['it-test-content'].version}.zip`)} \
-        --vm-options '-javaagent:${process.env.JACOCO_AGENT}=destfile=jacoco-it.exec`);
+        --vm-options '-javaagent:${process.env.JACOCO_AGENT}=destfile=jacoco-it.exec'`);
 });
 
 // Run integration tests
