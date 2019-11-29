@@ -57,7 +57,7 @@ ci.dir(qpPath, () => {
 });
 
 // Download logs from AEM container
-ci.dir('mkdir logs');
+ci.sh('mkdir logs');
 ci.dir('logs', () => {
     ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/error.log');
     ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/stdout.log');
