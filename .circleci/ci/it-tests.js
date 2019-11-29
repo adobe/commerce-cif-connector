@@ -55,3 +55,12 @@ ci.dir(qpPath, () => {
     // Stop CQ
     ci.sh('./qp.sh -v stop --id author');
 });
+
+// Download logs from AEM container
+ci.dir('mkdir logs');
+ci.dir('logs', () => {
+    ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/error.log');
+    ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/stdout.log');
+    ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/stderr.log');
+    ci.sh(`find . -name '*.log' -type f -size +32M -exec echo 'Truncating: ' {} \\; -execdir truncate --size 32M {} +`);
+});

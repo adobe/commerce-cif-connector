@@ -20,6 +20,8 @@ commands:
           path: it/http/target/failsafe-reports
       - store_artifacts:
           path: it/http/target/failsafe-reports
+      - store_artifacts:
+          path: logs
 
   docker_auth: &docker_auth
     auth:
