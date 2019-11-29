@@ -64,3 +64,14 @@ ci.dir('logs', () => {
     ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/stderr.log');
     ci.sh(`find . -name '*.log' -type f -size +32M -exec echo 'Truncating: ' {} \\; -execdir truncate --size 32M {} +`);
 });
+
+// Create coverage reports
+ci.dir('bundles/cif-connector-graphql', () => {
+    ci.sh('curl -O http://localhost:3000/crx-quickstart/jacoco-it.exec');
+    ci.sh(`mvn -B org.jacoco:jacoco-maven-plugin:${process.env.JACOCO_VERSION}:report -Djacoco.dataFile=jacoco-it.exec`);
+});
+
+ci.dir('bundles/cif-virtual-catalog', () => {
+    ci.sh('curl -O http://localhost:3000/crx-quickstart/jacoco-it.exec');
+    ci.sh(`mvn -B org.jacoco:jacoco-maven-plugin:${process.env.JACOCO_VERSION}:report -Djacoco.dataFile=jacoco-it.exec`);
+});
