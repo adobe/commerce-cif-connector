@@ -74,18 +74,23 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     private Cache<String, Optional<ProductInterface>> productCache;
     private Cache<String, Optional<CategoryProducts>> categoryCache;
 
-    protected Map<String, GraphqlClient> clients = new ConcurrentHashMap<>();
+    private Map<String, GraphqlClient> clients = new ConcurrentHashMap<>();
 
     @Reference(
         service = GraphqlClient.class,
         bind = "bindGraphqlClient",
         unbind = "unbindGraphqlClient",
-        cardinality = ReferenceCardinality.AT_LEAST_ONE,
+        cardinality = ReferenceCardinality.MULTIPLE,
         policy = ReferencePolicy.DYNAMIC)
     protected void bindGraphqlClient(GraphqlClient graphqlClient, Map<?, ?> properties) {
         String identifier = graphqlClient.getIdentifier();
         LOGGER.info("Registering GraphqlClient '{}'", identifier);
         clients.put(identifier, graphqlClient);
+
+        if (baseClient == null && configuration.identifier().equals(identifier)) {
+            LOGGER.info("GraphqlClient with identifier '{}' has been registered, the service is ready to handle requests.", identifier);
+            baseClient = graphqlClient;
+        }
     }
 
     protected void unbindGraphqlClient(GraphqlClient graphqlClient, Map<?, ?> properties) {
@@ -98,7 +103,14 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     public void activate(GraphqlDataServiceConfiguration conf) throws Exception {
         baseClient = clients.get(conf.identifier());
         if (baseClient == null) {
-            throw new RuntimeException("Cannot find GraphqlClient with identifier '" + conf.identifier() + "'");
+            // Because of the many:many OSGi dynamic dependencies between GraphqlDataServiceImpl and GraphqlClientImpl, we cannot enforce
+            // the dependency and hence services might not start in the right order. So we ignore the missing client, it might start later
+            // and would be set in the bindGraphqlClient() method.
+            // Important: we let all public methods fail with NullPointerException, so that the Sling ResourceProvider will get exceptions
+            // when trying to get resources. This is important, because it ensures that the resource provider will always try to refetch
+            // the resources (if we for example return an empty list, this would get cached by Sling).
+
+            LOGGER.warn("GraphqlClient '{}' not found: requests cannot be handled until that dependency is satisfied", conf.identifier());
         }
 
         configuration = conf;
