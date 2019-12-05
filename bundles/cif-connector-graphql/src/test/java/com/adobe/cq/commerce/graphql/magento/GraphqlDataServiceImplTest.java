@@ -107,10 +107,21 @@ public class GraphqlDataServiceImplTest {
         assertNull(dataService.getProductBySku(null, null));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testNoClient() throws Exception {
+    @Test
+    public void testLateClientBinding() throws Exception {
         dataService.unbindGraphqlClient(graphqlClient, null);
-        dataService.getProductBySku(SKU, null);
+        Exception exception = null;
+        try {
+            dataService.getProductBySku(SKU, null);
+        } catch (Exception e) {
+            exception = e;
+        }
+        assertNotNull(exception);
+
+        dataService.bindGraphqlClient(graphqlClient, null);
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        ProductInterface product = dataService.getProductBySku(SKU, null);
+        assertEquals(SKU, product.getSku());
     }
 
     @Test
