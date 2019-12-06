@@ -125,6 +125,25 @@ public class GraphqlDataServiceImplTest {
     }
 
     @Test
+    public void testWrongClient() throws Exception {
+        dataService.unbindGraphqlClient(graphqlClient, null);
+
+        GraphqlClientImpl wrongClient = new GraphqlClientImpl();
+        Whitebox.setInternalState(wrongClient, "identifier", "wrongid");
+        dataService.bindGraphqlClient(wrongClient, null);
+
+        Exception exception = null;
+        try {
+            dataService.getProductBySku(SKU, null);
+        } catch (Exception e) {
+            exception = e;
+        }
+        assertTrue(exception.getCause() instanceof NullPointerException);
+
+        dataService.unbindGraphqlClient(wrongClient, null);
+    }
+
+    @Test
     public void testNoProductBySku() throws Exception {
         Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_OK);
         assertNull(dataService.getProductBySku(SKU, null));
