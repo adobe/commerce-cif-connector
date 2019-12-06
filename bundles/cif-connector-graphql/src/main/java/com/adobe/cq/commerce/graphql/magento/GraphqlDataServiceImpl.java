@@ -87,7 +87,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.info("Registering GraphqlClient '{}'", identifier);
         clients.put(identifier, graphqlClient);
 
-        if (baseClient == null && configuration.identifier().equals(identifier)) {
+        if (configuration.identifier().equals(identifier)) {
             LOGGER.info("GraphqlClient with identifier '{}' has been registered, the service is ready to handle requests.", identifier);
             baseClient = graphqlClient;
         }
