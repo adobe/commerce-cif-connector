@@ -97,6 +97,11 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         String identifier = graphqlClient.getIdentifier();
         LOGGER.info("De-registering GraphqlClient '{}'", identifier);
         clients.remove(identifier);
+
+        if (configuration.identifier().equals(identifier)) {
+            LOGGER.info("GraphqlClient '{}' unregistered: requests cannot be handled until that dependency is satisfied", identifier);
+            baseClient = null;
+        }
     }
 
     @Activate

@@ -116,7 +116,7 @@ public class GraphqlDataServiceImplTest {
         } catch (Exception e) {
             exception = e;
         }
-        assertNotNull(exception);
+        assertTrue(exception.getCause() instanceof NullPointerException);
 
         dataService.bindGraphqlClient(graphqlClient, null);
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
