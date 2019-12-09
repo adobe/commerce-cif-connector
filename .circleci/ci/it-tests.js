@@ -42,7 +42,7 @@ try {
             --install-file ${path.resolve(buildPath, 'content/cif-connector/target', `cif-connector-content-${config.modules['cif-connector-content'].version}.zip`)} \
             --install-file ${path.resolve(buildPath, 'content/cif-virtual-catalog/target', `cif-virtual-catalog-content-${config.modules['cif-virtual-catalog-content'].version}.zip`)} \
             --install-file ${path.resolve(buildPath, 'it/content/target', `it-test-content-${config.modules['it-test-content'].version}.zip`)} \
-            --vm-options '-javaagent:${process.env.JACOCO_AGENT}=destfile=jacoco-it.exec'`);
+            --vm-options '-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=jacoco-it.exec'`);
     });
 
     // Run integration tests
@@ -58,17 +58,22 @@ try {
     });
 
     // Create coverage reports
-    ci.dir('bundles/cif-connector-graphql', () => {
-        ci.sh('curl -O http://localhost:3000/crx-quickstart/jacoco-it.exec');
-        ci.sh(`mvn -B org.jacoco:jacoco-maven-plugin:${process.env.JACOCO_VERSION}:report -Djacoco.dataFile=jacoco-it.exec`);
-        ci.sh('curl -s https://codecov.io/bash | bash -s -- -c -F integration -f target/site/jacoco/jacoco.xml');
-    });
+    const createCoverageReport = () => {
+        // Remove coverage report from unit tests
+        ci.sh('rm -rf target/site/jacoco');
 
-    ci.dir('bundles/cif-virtual-catalog', () => {
+        // Download Jacoco file from AEM container
         ci.sh('curl -O http://localhost:3000/crx-quickstart/jacoco-it.exec');
+
+        // Generate new report
         ci.sh(`mvn -B org.jacoco:jacoco-maven-plugin:${process.env.JACOCO_VERSION}:report -Djacoco.dataFile=jacoco-it.exec`);
+
+        // Upload report to codecov
         ci.sh('curl -s https://codecov.io/bash | bash -s -- -c -F integration -f target/site/jacoco/jacoco.xml');
-    });
+    };
+
+    ci.dir('bundles/cif-connector-graphql', createCoverageReport);
+    ci.dir('bundles/cif-virtual-catalog', createCoverageReport);
 
 } finally { // Always download logs from AEM container
     ci.sh('mkdir logs');
