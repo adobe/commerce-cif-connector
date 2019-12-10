@@ -70,6 +70,7 @@ jobs:
         <<: *docker_auth
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.2
         <<: *docker_auth
+    resource_class: large
     working_directory: /home/circleci/build
     <<: *integration_test_steps
 
@@ -80,6 +81,7 @@ jobs:
         <<: *docker_auth
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.4.6
         <<: *docker_auth
+    resource_class: large
     working_directory: /home/circleci/build
     <<: *integration_test_steps
 
