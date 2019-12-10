@@ -26,9 +26,6 @@ commands:
           path: bundles/cif-connector-graphql/target/site/jacoco
       - store_artifacts:
           path: bundles/cif-virtual-catalog/target/site/jacoco
-      - run:
-          name: Upload Code Coverage
-          command: bash <(curl -s https://codecov.io/bash) -F integration
 
   docker_auth: &docker_auth
     auth:
