@@ -17,7 +17,7 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.6.1-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     
@@ -114,7 +114,14 @@
                     <addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
                     <excludes combine.children="append">
                         <exclude>**/*.xml</exclude>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/*.css</exclude>
                         <exclude>**/META-INF/**/*</exclude>
+                        <exclude>**/node_modules/**/*</exclude>
+                        <exclude>**/.prettierrc</exclude>
+                        <exclude>**/.prettierignore</exclude>
+                        <exclude>**/coverage/**</exclude>
+                        <exclude>**/*.json</exclude>
                     </excludes>
                 </configuration>
             </plugin>

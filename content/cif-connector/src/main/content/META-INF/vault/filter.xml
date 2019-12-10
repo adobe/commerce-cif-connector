@@ -22,6 +22,7 @@
     </filter>
 
     <filter root="/libs/cif"/>
+    <filter root="/libs/commerce/gui/components/common/cifpicker"/>
     <filter root="/libs/commerce/gui/components/common/cifproductfield"/>
     <filter root="/libs/commerce/gui/components/common/cifcategoryfield"/>
     <filter root="/libs/commerce/gui/content/common/cifproductfield"/>
@@ -38,6 +39,10 @@
         <exclude pattern="/apps/commerce(/.*)?"/>
         <include pattern="/apps/commerce/scaffolding"/>
     </filter>
+
+    <filter root="/libs/commerce/gui/components/authoring/editor/pagepreview"/>
+
+    <filter root="/libs/wcm/core/content/editor/jcr:content/content/items/content/header/items/headerbar/items/pageinfopopover/items/list/items" mode="merge"/>
 
     <!-- Remove unused legacy Commerce admin links -->
     <filter root="/libs/cq/core/content/nav/commerce/catalogs"/>

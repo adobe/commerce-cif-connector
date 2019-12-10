@@ -64,22 +64,24 @@ public class GraphqlDataServiceImplTest {
     private static final String STORE_CODE = "Something";
 
     private GraphqlDataServiceImpl dataService;
+    private GraphqlClient graphqlClient;
     private HttpClient httpClient;
 
     @Before
     public void setUp() throws Exception {
         httpClient = Mockito.mock(HttpClient.class);
 
-        GraphqlClient baseClient = new GraphqlClientImpl();
-        Whitebox.setInternalState(baseClient, "gson", new Gson());
-        Whitebox.setInternalState(baseClient, "client", httpClient);
-        Whitebox.setInternalState(baseClient, "httpMethod", HttpMethod.POST);
+        graphqlClient = new GraphqlClientImpl();
+        Whitebox.setInternalState(graphqlClient, "identifier", "default");
+        Whitebox.setInternalState(graphqlClient, "gson", new Gson());
+        Whitebox.setInternalState(graphqlClient, "client", httpClient);
+        Whitebox.setInternalState(graphqlClient, "httpMethod", HttpMethod.POST);
 
         MockGraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
 
         dataService = new GraphqlDataServiceImpl();
-        dataService.clients.put("default", baseClient);
         dataService.activate(config);
+        dataService.bindGraphqlClient(graphqlClient, null);
     }
 
     private String getResource(String filename) throws IOException {
@@ -103,6 +105,42 @@ public class GraphqlDataServiceImplTest {
         assertEquals(15, configurableProduct.getVariants().size());
 
         assertNull(dataService.getProductBySku(null, null));
+    }
+
+    @Test
+    public void testLateClientBinding() throws Exception {
+        dataService.unbindGraphqlClient(graphqlClient, null);
+        Exception exception = null;
+        try {
+            dataService.getProductBySku(SKU, null);
+        } catch (Exception e) {
+            exception = e;
+        }
+        assertTrue(exception.getCause() instanceof NullPointerException);
+
+        dataService.bindGraphqlClient(graphqlClient, null);
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        ProductInterface product = dataService.getProductBySku(SKU, null);
+        assertEquals(SKU, product.getSku());
+    }
+
+    @Test
+    public void testWrongClient() throws Exception {
+        dataService.unbindGraphqlClient(graphqlClient, null);
+
+        GraphqlClientImpl wrongClient = new GraphqlClientImpl();
+        Whitebox.setInternalState(wrongClient, "identifier", "wrongid");
+        dataService.bindGraphqlClient(wrongClient, null);
+
+        Exception exception = null;
+        try {
+            dataService.getProductBySku(SKU, null);
+        } catch (Exception e) {
+            exception = e;
+        }
+        assertTrue(exception.getCause() instanceof NullPointerException);
+
+        dataService.unbindGraphqlClient(wrongClient, null);
     }
 
     @Test

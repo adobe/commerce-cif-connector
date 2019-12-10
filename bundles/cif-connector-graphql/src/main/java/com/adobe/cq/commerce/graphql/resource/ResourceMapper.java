@@ -135,14 +135,16 @@ class ResourceMapper<T> {
                 x.getLocalizedMessage());
             LOGGER.warn("", x);
         } finally {
-            initLock.unlock();
+            if (initLock.isHeldByCurrentThread()) {
+                initLock.unlock();
+            }
         }
     }
 
     /**
      * This method builds various category caches used to lookup categories and products in a faster way.
      */
-    private void buildAllCategoryPaths() {
+    protected void buildAllCategoryPaths() {
         CategoryTree categoryTree = graphqlDataService.getCategoryTree(rootCategoryId, storeView);
         if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
             LOGGER.warn("The Magento catalog is null or empty");
