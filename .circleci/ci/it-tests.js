@@ -15,14 +15,12 @@
 'use strict';
 
 const ci = new (require('./ci.js'))();
-const path = require('path');
 
 ci.context();
 
 ci.stage('Project Configuration');
 const config = ci.restoreConfiguration();
 console.log(config);
-const buildPath = '/home/circleci/build';
 const qpPath = '/home/circleci/cq';
 
 try {
@@ -59,10 +57,11 @@ try {
 
     // Create coverage reports
     const createCoverageReport = () => {
-        // Remove coverage report from unit tests
+        // Executing the integration tests runs also executes unit tests and generates a Jacoco report for them. To 
+        // strictly separate unit test from integration test coverage, we explicitly delete the unit test report first.
         ci.sh('rm -rf target/site/jacoco');
 
-        // Download Jacoco file from AEM container
+        // Download Jacoco file which is exposed by a webserver running inside the AEM container.
         ci.sh('curl -O http://localhost:3000/crx-quickstart/jacoco-it.exec');
 
         // Generate new report
@@ -78,6 +77,7 @@ try {
 } finally { // Always download logs from AEM container
     ci.sh('mkdir logs');
     ci.dir('logs', () => {
+        // A webserver running inside the AEM container exposes the logs folder, so we can download log files as needed.
         ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/error.log');
         ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/stdout.log');
         ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/stderr.log');
