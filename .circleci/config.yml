@@ -4,7 +4,8 @@ commands:
   restore_cache: &restore_cache
     restore_cache:
       keys: 
-        - maven-repo-v1-{{ checksum "pom.xml" }}
+        - maven-repo-v1-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+        - maven-repo-v1-{{ arch }}-{{ .Branch }}
         - maven-repo-v1-
 
   integration_test_steps: &integration_test_steps
@@ -18,10 +19,13 @@ commands:
           command: node .circleci/ci/it-tests.js
       - store_test_results:
           path: it/http/target/failsafe-reports
+      # Save test results as artifacts
       - store_artifacts:
           path: it/http/target/failsafe-reports
+      # Save AEM logs as artifacts
       - store_artifacts:
           path: logs
+      # Save Jacoco coverage report as artifact
       - store_artifacts:
           path: bundles/cif-connector-graphql/target/site/jacoco
       - store_artifacts:
@@ -47,7 +51,7 @@ jobs:
       - save_cache:
           paths:
             - .m2
-          key: maven-repo-v1-{{ checksum "pom.xml" }}
+          key: maven-repo-v1-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - persist_to_workspace:
           root: /home/circleci/build
           paths:

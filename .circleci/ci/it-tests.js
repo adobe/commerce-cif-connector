@@ -37,11 +37,11 @@ try {
             --bundle com.adobe.commerce.cif:graphql-client:1.1.1:jar \
             --bundle com.adobe.commerce.cif:magento-graphql:4.0.0-magento233:jar \
             --bundle com.adobe.cq:core.wcm.components.all:2.4.0:zip \
-            --install-file ${path.resolve(buildPath, 'bundles/cif-connector-graphql/target', `cif-connector-graphql-${config.modules['cif-connector-graphql'].version}.jar`)} \
-            --install-file ${path.resolve(buildPath, 'bundles/cif-virtual-catalog/target', `cif-virtual-catalog-${config.modules['cif-virtual-catalog'].version}.jar`)} \
-            --install-file ${path.resolve(buildPath, 'content/cif-connector/target', `cif-connector-content-${config.modules['cif-connector-content'].version}.zip`)} \
-            --install-file ${path.resolve(buildPath, 'content/cif-virtual-catalog/target', `cif-virtual-catalog-content-${config.modules['cif-virtual-catalog-content'].version}.zip`)} \
-            --install-file ${path.resolve(buildPath, 'it/content/target', `it-test-content-${config.modules['it-test-content'].version}.zip`)} \
+            ${ci.addQpFileDependency(config.modules['cif-connector-graphql'])} \
+            ${ci.addQpFileDependency(config.modules['cif-virtual-catalog'])} \
+            ${ci.addQpFileDependency(config.modules['cif-connector-content'])} \
+            ${ci.addQpFileDependency(config.modules['cif-virtual-catalog-content'])} \
+            ${ci.addQpFileDependency(config.modules['it-test-content'])} \
             --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
