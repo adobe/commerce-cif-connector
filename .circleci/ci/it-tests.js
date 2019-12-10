@@ -62,7 +62,7 @@ try {
         ci.sh('rm -rf target/site/jacoco');
 
         // Download Jacoco file which is exposed by a webserver running inside the AEM container.
-        ci.sh('curl -O http://localhost:3000/crx-quickstart/jacoco-it.exec');
+        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/jacoco-it.exec');
 
         // Generate new report
         ci.sh(`mvn -B org.jacoco:jacoco-maven-plugin:${process.env.JACOCO_VERSION}:report -Djacoco.dataFile=jacoco-it.exec`);
@@ -78,9 +78,10 @@ try {
     ci.sh('mkdir logs');
     ci.dir('logs', () => {
         // A webserver running inside the AEM container exposes the logs folder, so we can download log files as needed.
-        ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/error.log');
-        ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/stdout.log');
-        ci.sh('curl -O http://localhost:3000/crx-quickstart/logs/stderr.log');
+        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/error.log');
+        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/stdout.log');
+        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/stderr.log');
+        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/commerce.log');
         ci.sh(`find . -name '*.log' -type f -size +32M -exec echo 'Truncating: ' {} \\; -execdir truncate --size 32M {} +`);
     });
 }
