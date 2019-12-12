@@ -1,17 +1,33 @@
 coverage:
   status:
     project:
-      default:
+      default: off
+      unittests:
         enabled: true
         target: 80%
         threshold: null
         base: auto
+        flags: unittests
+      karma:
+        enabled: true
+        target: 80%
+        threshold: null
+        base: auto
+        flags: karma
     patch:
-      default:
+      default: off
+      unittests:
         enabled: true
         target: 80%
         threshold: null
         base: auto
+        flags: unittests
+      karma:
+        enabled: true
+        target: 80%
+        threshold: null
+        base: auto
+        flags: karma
 flags:
   unittests:
     paths:
