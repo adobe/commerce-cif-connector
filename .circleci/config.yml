@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@1.0.5
+
 executors:
   cif_executor:
     docker:
@@ -33,10 +36,34 @@ jobs:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-results/junit
+      - codecov/upload:
+          conf: .circleci/codecov.yml
+          flags: unittests
+
+  karma:
+    docker:
+      - image: circleci/node:lts-browsers
+    steps:
+      - checkout
       - run:
-          name: Upload Code Coverage
-          command: bash <(curl -s https://codecov.io/bash) -F unittests
-          
+          name: Provision
+          command: |
+            node -v
+            npm -v
+            npm install
+          working_directory: content/cif-connector/tests
+      - run:
+          name: Run Unit Tests (Karma)
+          command: npm test
+          working_directory: content/cif-connector/tests
+      - store_test_results:
+          path: content/cif-connector/tests/karma-junit
+      - store_artifacts:
+          path: content/cif-connector/tests/karma-junit
+      - codecov/upload:
+          conf: .circleci/codecov.yml
+          flags: karma
+
   release:
     executor: cif_executor
     steps:
@@ -63,7 +90,10 @@ workflows:
           filters:
             tags:
               only: /.*/
-              
+      - karma:
+          filters:
+            tags:
+              only: /.*/
       - release:
           requires:
             - build

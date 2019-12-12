@@ -12,3 +12,11 @@ coverage:
         target: 80%
         threshold: null
         base: auto
+flags:
+  unittests:
+    paths:
+      - bundles/cif-connector-graphql/
+      - bundles/cif-virtual-catalog/
+  karma:
+    paths:
+      - content/cif-connector/
