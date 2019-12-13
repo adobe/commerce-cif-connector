@@ -1,6 +1,9 @@
-version: 2
+version: 2.1
 
-commands:
+orbs:
+  codecov: codecov/codecov@1.0.5
+
+common:
   restore_cache: &restore_cache
     restore_cache:
       keys: 
@@ -36,7 +39,6 @@ commands:
       username: $DOCKER_USER
       password: $DOCKER_PASS
 
-
 jobs:
   build:
     docker:
@@ -63,9 +65,33 @@ jobs:
           path: test-results
       - store_artifacts:
           path: test-results/junit
+      - codecov/upload:
+          conf: .circleci/codecov.yml
+          flags: unittests
+
+  karma:
+    docker:
+      - image: circleci/node:lts-browsers
+    steps:
+      - checkout
       - run:
-          name: Upload Code Coverage
-          command: bash <(curl -s https://codecov.io/bash) -F unittests
+          name: Provision
+          command: |
+            node -v
+            npm -v
+            npm install
+          working_directory: content/cif-connector/tests
+      - run:
+          name: Run Unit Tests (Karma)
+          command: npm test
+          working_directory: content/cif-connector/tests
+      - store_test_results:
+          path: content/cif-connector/tests/karma-junit
+      - store_artifacts:
+          path: content/cif-connector/tests/karma-junit
+      - codecov/upload:
+          conf: .circleci/codecov.yml
+          flags: karma
 
 
   integration-test-652:
@@ -116,21 +142,24 @@ workflows:
           filters:
             tags:
               only: /.*/
-
+      - karma:
+          filters:
+            tags:
+              only: /.*/
       - integration-test-652:
           filters:
             tags:
               only: /.*/
           requires:
             - build
-
+            - karma
       - integration-test-646:
           filters:
             tags:
               only: /.*/
           requires:
             - build
-
+            - karma
       - release:
           requires:
             - build
