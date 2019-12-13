@@ -17,14 +17,14 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.1.4</version>
+        <version>0.7.2-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.adobe.commerce.cif.testing</groupId>
     <artifactId>it-http-tests</artifactId>
-    <version>0.0.11-SNAPSHOT</version>
+    <version>0.7.2-SNAPSHOT</version>
     <name>CIF Connector HTTP Integration Tests</name>
 
     <scm>
@@ -170,14 +170,14 @@
         <dependency>
             <groupId>com.adobe.commerce.cif.testing</groupId>
             <artifactId>mock-server</artifactId>
-            <version>0.1.7-SNAPSHOT</version>
+            <version>0.7.2-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif.testing</groupId>
             <artifactId>mock-server</artifactId>
-            <version>0.1.7-SNAPSHOT</version>
+            <version>0.7.2-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>

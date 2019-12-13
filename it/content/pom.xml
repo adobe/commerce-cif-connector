@@ -17,14 +17,14 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.1.4</version>
+        <version>0.7.2-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.adobe.commerce.cif.testing</groupId>
     <artifactId>it-test-content</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
+    <version>0.7.2-SNAPSHOT</version>
     <packaging>content-package</packaging>
 
     <name>CIF Connector - Test Content Package</name>
