@@ -3,39 +3,68 @@ version: 2.1
 orbs:
   codecov: codecov/codecov@1.0.5
 
-executors:
-  cif_executor:
-    docker:
-      - image: circleci/openjdk:8-jdk
+common:
+  restore_cache: &restore_cache
+    restore_cache:
+      keys: 
+        - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+        - maven-repo-v2-{{ arch }}-{{ .Branch }}
+        - maven-repo-v2-
+
+  integration_test_steps: &integration_test_steps
+    steps:
+      - checkout
+      - *restore_cache
+      - attach_workspace:
+          at: /home/circleci/build
+      - run:
+          name: Integration tests
+          command: node .circleci/ci/it-tests.js
+      - store_test_results:
+          path: it/http/target/failsafe-reports
+      # Save test results as artifacts
+      - store_artifacts:
+          path: it/http/target/failsafe-reports
+      # Save AEM logs as artifacts
+      - store_artifacts:
+          path: logs
+      # Save Jacoco coverage report as artifact
+      - store_artifacts:
+          path: bundles/cif-connector-graphql/target/site/jacoco
+      - store_artifacts:
+          path: bundles/cif-virtual-catalog/target/site/jacoco
+
+  docker_auth: &docker_auth
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_PASS
 
 jobs:
   build:
-    executor: cif_executor
+    docker:
+      - image: circleci/openjdk:11-stretch-node
+    working_directory: /home/circleci/build
     steps:
       - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
+      - *restore_cache
       - run:
           name: Build
-          command: |
-            java -version
-            mvn -v
-            mvn -B clean install -s .circleci/settings.xml
+          command: node .circleci/ci/build.js
       - save_cache:
           paths:
-            - ~/.m2
-          key: maven-repo-v1-{{ checksum "pom.xml" }}
-      - run:
-          name: Collect and save all test results
-          command: |
-            mkdir -p ~/test-results/junit/
-            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+            - /home/circleci/.m2
+          key: maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+      - persist_to_workspace:
+          root: /home/circleci/build
+          paths:
+            - configuration.json
+            - bundles/*/target/*.jar
+            - content/*/target/*.zip
+            - it/content/target/*.zip
       - store_test_results:
-          path: ~/test-results
+          path: test-results
       - store_artifacts:
-          path: ~/test-results/junit
+          path: test-results/junit
       - codecov/upload:
           conf: .circleci/codecov.yml
           flags: unittests
@@ -64,14 +93,36 @@ jobs:
           conf: .circleci/codecov.yml
           flags: karma
 
+
+  integration-test-652:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk11
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.2
+        <<: *docker_auth
+    resource_class: large
+    working_directory: /home/circleci/build
+    <<: *integration_test_steps
+
+
+  integration-test-646:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk8
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.4.6
+        <<: *docker_auth
+    resource_class: large
+    working_directory: /home/circleci/build
+    <<: *integration_test_steps
+
+
   release:
-    executor: cif_executor
+    docker:
+      - image: circleci/openjdk:11-stretch-node
+    working_directory: /home/circleci/build
     steps:
       - checkout
-      - restore_cache:
-          keys: 
-            - maven-repo-v1-{{ checksum "pom.xml" }}
-            - maven-repo-v1-
+      - *restore_cache
       - run:
           name: Release
           # Only performs a 'mvn deploy' after the 'mvn release:prepare' because circleCI
@@ -81,6 +132,7 @@ jobs:
             echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
             mvn -B -s /home/circleci/project/.circleci/settings.xml clean deploy -Prelease-sign-artifacts -Dskip-it
             rm -rf /home/circleci/.gnupg
+
 
 workflows:
   version: 2
@@ -94,6 +146,20 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - integration-test-652:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+            - karma
+      - integration-test-646:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+            - karma
       - release:
           requires:
             - build

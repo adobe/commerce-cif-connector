@@ -77,5 +77,5 @@ window.CIF.PagePreview = {};
     Granite.$(document).on('cifProductPickerSelection', relPdpPreview, handlePreview);
     Granite.$(document).on('cifCategoryPickerSelection', relPlpPreview, handlePreview);
 
-    window.CIF.PagePreview = { handlePreview, createPreviewUrl };
+    window.CIF.PagePreview = { handlePreview: handlePreview, createPreviewUrl: createPreviewUrl };
 })(window, document, Granite);

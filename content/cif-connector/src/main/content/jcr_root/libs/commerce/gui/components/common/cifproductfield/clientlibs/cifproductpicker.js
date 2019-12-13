@@ -95,5 +95,5 @@ window.CIF.CifProductPicker = {};
 
     Granite.$(document).on('click', relActivator, clickActivator);
 
-    window.CIF.CifProductPicker = { clickActivator, relActivator };
+    window.CIF.CifProductPicker = { clickActivator: clickActivator, relActivator: relActivator };
 })(window, document, Granite);

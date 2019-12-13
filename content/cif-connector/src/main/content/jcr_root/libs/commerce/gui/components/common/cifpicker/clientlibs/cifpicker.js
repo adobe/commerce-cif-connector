@@ -103,5 +103,5 @@ window.CIF.CifPicker = {};
         }
     };
 
-    window.CIF.CifPicker = { cifPicker, getState, show, close };
+    window.CIF.CifPicker = { cifPicker: cifPicker, getState: getState, show: show, close: close };
 })(window, document, Granite);
