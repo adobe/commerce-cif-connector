@@ -1,0 +1,20 @@
+name-template: "CIF Connector $NEXT_MINOR_VERSION"
+categories:
+  - title: "Features & Enhancements"
+    labels:
+      - "feature"
+      - "enhancement"
+  - title: "Bug Fixes"
+    labels:
+      - "fix"
+      - "bugfix"
+      - "bug"
+exclude-labels:
+  - "releng"
+template: |
+  ## Changes
+  This release introduces the following new features and bug fixes:
+
+  $CHANGES
+
+  For a list containing all the fixed issues see [all the change details](https://github.com/adobe/commerce-cif-connector/compare/$PREVIOUS_TAG...cif-connector-reactor-$NEXT_MINOR_VERSION).
