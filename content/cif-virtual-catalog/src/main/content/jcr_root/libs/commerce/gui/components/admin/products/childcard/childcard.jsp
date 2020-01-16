@@ -53,9 +53,11 @@
     if (product != null) {
         imageUrl = (product != null) ? CommerceHelper.getProductCardThumbnail(request.getContextPath(), product) : "";
         attrs.addClass("card-asset");
+        /* 'stack' has no effect
         if (hasVariantChildren(resource)) {
             attrs.addClass("stack");
         }
+        */
     } else {
         imageUrl = request.getContextPath() + xssAPI.getValidHref(resource.getPath()) + ".folderthumbnail.jpg?width=240&height=160";
         isFolder = true;

@@ -57,6 +57,11 @@
 </coral-columnview-item><%!
 
     private boolean hasChildren(Resource resource, boolean isProduct) {
+        Boolean hasChildren = resource.getValueMap().get("hasChildren", Boolean.class);
+        if (hasChildren != null) {
+            return hasChildren;
+        }
+        
         for (Iterator<Resource> it = resource.listChildren(); it.hasNext();) {
             Resource r = it.next();
             if (isProduct) {

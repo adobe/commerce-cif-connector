@@ -61,6 +61,7 @@ class CategoryResource extends SyntheticResource {
             } else {
                 map.put(LEAF_CATEGORY, false);
             }
+            map.put("hasChildren", category.getChildren().size() + category.getProductCount() > 0);
         } else {
             map.put(JcrConstants.JCR_TITLE, MAGENTO_GRAPHQL_PROVIDER);
         }

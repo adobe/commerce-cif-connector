@@ -67,6 +67,16 @@ class GraphqlQueries {
                 .product(SIMPLE_PRODUCT_QUERY)));
 
     /**
+     * Query for the direct product children of a category.
+     */
+    static final ProductInterfaceQueryDefinition CHILD_PRODUCT_QUERY = q -> q
+        .id()
+        .sku()
+        .name()
+        .updatedAt()
+        .thumbnail(t -> t.url());
+
+    /**
      * Generic "lambda" query for category tree WITHOUT "children" part.
      * The "children" part cannot be added because it would otherwise introduce an infinite recursion.
      */
