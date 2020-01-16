@@ -220,7 +220,7 @@ public class GraphqlDataServiceImplTest {
         assertEquals(ROOT_CATEGORY_ID, categoryTree.getId());
         assertEquals(ROOT_CATEGORY_NAME, categoryTree.getName());
 
-        assertEquals(4, categoryTree.getChildren().size());
+        assertEquals(5, categoryTree.getChildren().size());
         assertEquals("21", categoryTree.getChildrenCount());
     }
 
