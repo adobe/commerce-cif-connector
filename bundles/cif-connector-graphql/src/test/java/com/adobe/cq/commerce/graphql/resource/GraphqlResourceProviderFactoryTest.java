@@ -15,6 +15,7 @@
 package com.adobe.cq.commerce.graphql.resource;
 
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,10 +23,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.adobe.cq.commerce.graphql.magento.GraphqlAemContext;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl;
 import com.adobe.cq.commerce.graphql.magento.MockGraphqlDataServiceConfiguration;
+import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GraphqlResourceProviderFactoryTest {
 
@@ -37,7 +44,15 @@ public class GraphqlResourceProviderFactoryTest {
 
     @Before
     public void setUp() throws Exception {
+
+        ConfigurationResourceResolver configurationResourceResolver = mock(ConfigurationResourceResolver.class);
+        Resource mockConfigurationResource = mock(Resource.class);
+        when(mockConfigurationResource.getValueMap()).thenReturn(new ValueMapDecorator(ImmutableMap.<String, Object>of("cq:graphqlClient", "my-catalog")));
+        when(configurationResourceResolver.getResource(any(Resource.class), any(String.class), any(String.class))).thenReturn(mockConfigurationResource);
+        context.registerService(configurationResourceResolver);
         factory = new GraphqlResourceProviderFactory<>();
+
+        context.registerInjectActivateService(factory);
 
         client = Mockito.mock(GraphqlDataServiceImpl.class);
         MockGraphqlDataServiceConfiguration config = Mockito.spy(new MockGraphqlDataServiceConfiguration());

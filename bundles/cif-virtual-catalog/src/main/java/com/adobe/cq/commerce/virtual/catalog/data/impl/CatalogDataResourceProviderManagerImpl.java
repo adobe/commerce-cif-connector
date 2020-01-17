@@ -42,6 +42,8 @@ import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -97,6 +99,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     @Reference
     private ResourceResolverFactory resolverFactory = null;
+
+    @Reference
+    private ConfigurationResourceResolver configurationResourceResolver;
 
     /**
      * Service resource resolver (read only usage)
@@ -193,6 +198,15 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             log.error("No providerId property found on node {}. Registering this data root will fail", rootPath);
             valid = false;
         }
+
+        if (StringUtils.isNotEmpty("cq:conf")) {
+            Resource configurationResource = configurationResourceResolver.getResource(root, "settings","commerce/default");
+            log.debug("Found configurations resource... {}", configurationResource != null);
+            if (configurationResource != null) {
+                ValueMap properties = configurationResource.getValueMap();
+            }
+        }
+
         if ((factory = providerFactories.get(providerId)) == null) {
             log.error("No factory found for provider id {}. Registering this data root will fail", providerId);
             valid = false;

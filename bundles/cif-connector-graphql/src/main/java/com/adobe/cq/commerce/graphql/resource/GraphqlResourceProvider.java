@@ -43,9 +43,9 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
     private ResourceMapper<T> resourceMapper;
     private GraphqlQueryLanguageProvider<T> queryLanguageProvider;
 
-    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, InheritanceValueMap properties) {
+    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, ValueMap properties) {
         this.root = root;
-        rootCategoryId = Integer.valueOf(properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
+        rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
         resourceMapper = new ResourceMapper<T>(root, graphqlDataService, scheduler, properties);
         queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlDataService, properties);
     }

@@ -28,6 +28,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.commons.scheduler.ScheduleOptions;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.ResolveContext;
@@ -61,17 +62,17 @@ class ResourceMapper<T> {
     private Integer rootCategoryId;
     private String storeView;
 
-    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, InheritanceValueMap properties) {
+    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, ValueMap properties) {
         this.root = root;
         this.scheduler = scheduler;
         this.graphqlDataService = graphqlDataService;
         config = graphqlDataService.getConfiguration();
 
         // Get Magento store view property
-        storeView = properties.getInherited(Constants.MAGENTO_STORE_PROPERTY, String.class);
+        storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY, String.class);
 
         // Get root category id
-        rootCategoryId = Integer.valueOf(properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
+        rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
 
         if (config.catalogCachingEnabled() && config.catalogCachingSchedulerEnabled()) {
             scheduleCacheRefresh();

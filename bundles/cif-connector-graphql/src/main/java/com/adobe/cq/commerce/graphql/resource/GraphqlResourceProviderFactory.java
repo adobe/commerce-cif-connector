@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.service.component.annotations.Component;
@@ -56,6 +58,9 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
 
     protected Map<String, GraphqlDataService> clients = new ConcurrentHashMap<>();
 
+    @Reference
+    ConfigurationResourceResolver configurationResourceResolver;
+
     @Reference(
         service = GraphqlDataService.class,
         bind = "bindGraphqlDataService",
@@ -80,22 +85,18 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
     @Override
     public ResourceProvider<T> createResourceProvider(Resource root) {
         // Get cq:catalogIdentifier property from ancestor pages
-        InheritanceValueMap properties;
         Page page = root.getResourceResolver().adaptTo(PageManager.class).getContainingPage(root);
-        if (page != null) {
-            properties = new HierarchyNodeInheritanceValueMap(page.getContentResource());
-        } else {
-            properties = new ComponentInheritanceValueMap(root);
-        }
 
-        String catalogIdentifier = properties.getInherited(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, String.class);
-        if (StringUtils.isBlank(catalogIdentifier)) {
+        Resource config = configurationResourceResolver.getResource(page.adaptTo(Resource.class), "settings","commerce/default");
+        ValueMap properties = config.getValueMap();
+        String catalogIdentifier = properties.get(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, "");
+        if (StringUtils.isEmpty(catalogIdentifier)) {
             LOGGER.warn("Could not find cq:catalogIdentifier property for given resource at " + root.getPath());
             return null;
         }
 
         // Check Magento root category id
-        String rootCategoryId = properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class);
+        String rootCategoryId = properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, "");
         try {
             Integer.valueOf(rootCategoryId);
         } catch (NumberFormatException x) {
