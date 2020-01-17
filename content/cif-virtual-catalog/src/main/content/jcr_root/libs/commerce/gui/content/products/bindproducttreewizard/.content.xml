@@ -106,14 +106,15 @@
                                                             sling:resourceType="granite/ui/components/coral/foundation/form/select"
                                                             disabled="{Boolean}true"
                                                             emptyText="Select project"
-                                                            fieldLabel="Project"
-                                                            name="./cq:catalogIdentifier"/>
+                                                            fieldLabel="Catalog identifier"
+                                                            name="./cq:catalogIdentifier"
+                                                            required="{Boolean}true"/>
                                                         <catalogidentifierdata
                                                             granite:id="cq-commerce-products-bindproducttree-catalog-select-data"
                                                             jcr:primaryType="nt:unstructured"
                                                             sling:resourceType="granite/ui/components/coral/foundation/form/select"
                                                             disabled="{Boolean}true"
-                                                            required="{Boolean}false">
+                                                            required="{Boolean}true">
                                                             <datasource
                                                                 jcr:primaryType="nt:unstructured"
                                                                 sling:resourceType="commerce/gui/components/admin/products/bindproducttreewizard/catalogidentifierdatasource"/>
