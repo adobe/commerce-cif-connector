@@ -35,9 +35,6 @@ import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceConfiguration;
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderFactory;
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogIdentifier;
-import com.day.cq.commons.inherit.ComponentInheritanceValueMap;
-import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
-import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
@@ -84,10 +81,11 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
 
     @Override
     public ResourceProvider<T> createResourceProvider(Resource root) {
+        LOGGER.debug("Creating resource provider for resource at path {}", root.getPath());
         // Get cq:catalogIdentifier property from ancestor pages
         Page page = root.getResourceResolver().adaptTo(PageManager.class).getContainingPage(root);
 
-        Resource config = configurationResourceResolver.getResource(page.adaptTo(Resource.class), "settings","commerce/default");
+        Resource config = configurationResourceResolver.getResource(page.adaptTo(Resource.class), "settings", "commerce/default");
         ValueMap properties = config.getValueMap();
         String catalogIdentifier = properties.get(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, "");
         if (StringUtils.isEmpty(catalogIdentifier)) {

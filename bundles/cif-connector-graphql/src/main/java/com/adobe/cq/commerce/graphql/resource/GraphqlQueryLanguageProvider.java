@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.magento.graphql.CategoryInterface;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
-import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

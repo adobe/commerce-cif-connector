@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
-import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;

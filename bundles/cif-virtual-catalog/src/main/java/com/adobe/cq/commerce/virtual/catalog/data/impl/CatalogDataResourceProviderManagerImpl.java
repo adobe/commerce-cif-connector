@@ -70,18 +70,23 @@ import static org.apache.sling.spi.resource.provider.ResourceProvider.PROPERTY_R
 @Component(
     service = CatalogDataResourceProviderManager.class,
     immediate = true,
-    property = {
-        Constants.SERVICE_DESCRIPTION + "=Manages the resource registrations for the Virtual Catalog Resource Provider Manager."
-    })
+    property = { Constants.SERVICE_DESCRIPTION + "=Manages the resource registrations for the Virtual Catalog Resource Provider Manager." })
 public class CatalogDataResourceProviderManagerImpl implements CatalogDataResourceProviderManager, EventListener {
 
     private static final String VIRTUAL_PRODUCTS_SERVICE = "virtual-products-service";
+
     private static final String OBSERVATION_PATHS_DEFAULT = "/var/commerce/products";
+
     private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
-        + OBSERVATION_PATHS_DEFAULT + "') AND [sling:Folder].'" + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID + "' IS NOT NULL";
+        + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'" + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
+        + "' IS NOT NULL" + " OR [sling:Folder].'cq:conf' IS NOT NULL)";
+
     private String[] findAllQueries = { FINDALLQUERIES_DEFAULT };
+
     private String[] obervationPaths = { OBSERVATION_PATHS_DEFAULT };
+
     private EventListener[] observationEventListeners;
+
     private volatile List<Resource> dataRoots;
 
     /**
@@ -90,6 +95,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
      */
     private final Map<ResourceProvider, ServiceRegistration<?>> providerRegistrations = Collections.synchronizedMap(
         new IdentityHashMap<>());
+
     /**
      * Map for holding the virtual catalog data resource provider mappings, with the catalog root path as key and the providers as values.
      */
@@ -120,7 +126,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     /**
      * Find all existing virtual catalog data roots using all query defined in service configuration.
-     * 
+     *
      * @param resolver Resource resolver
      * @return all virtual catalog roots
      */
@@ -174,8 +180,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         }
 
         final long time = System.currentTimeMillis() - start;
-        log.info("Registered {} virtual catalog data resource providers(s) in {} ms, skipping {} invalid one(s).",
-            countSuccess, time, countFailed);
+        log.info("Registered {} virtual catalog data resource providers(s) in {} ms, skipping {} invalid one(s).", countSuccess, time,
+            countFailed);
     }
 
     /**
@@ -186,32 +192,39 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
      * @return true if registration was done, false if skipped (already registered)
      */
     private boolean registerDataRoot(Resource root) {
+        log.debug("Registering data root at {}", root.getPath());
+        log.debug("This catalog manager has {} factories registered...", providerFactories.size());
         String rootPath = root.getPath();
         String providerId = getJcrStringProperty(rootPath, CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID);
+        String cqConf = getJcrStringProperty(rootPath, "cq:conf");
         boolean valid = true;
         CatalogDataResourceProviderFactory factory = null;
-        if (StringUtils.isBlank(rootPath)) {
-            log.error("Root path is empty. Registering this data root will fail");
-            valid = false;
-        }
-        if (StringUtils.isBlank(providerId)) {
-            log.error("No providerId property found on node {}. Registering this data root will fail", rootPath);
-            valid = false;
-        }
 
-        if (StringUtils.isNotEmpty("cq:conf")) {
-            Resource configurationResource = configurationResourceResolver.getResource(root, "settings","commerce/default");
-            log.debug("Found configurations resource... {}", configurationResource != null);
+        if (StringUtils.isNotEmpty(cqConf)) {
+            log.debug("Found cq:conf property pointing at {}", cqConf);
+            Resource configurationResource = configurationResourceResolver.getResource(root, "settings", "commerce/default");
             if (configurationResource != null) {
                 ValueMap properties = configurationResource.getValueMap();
+                providerId = properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, String.class);
+                factory = providerFactories.get(providerId);
+            }
+        } else {
+
+            if (StringUtils.isBlank(rootPath)) {
+                log.error("Root path is empty. Registering this data root will fail");
+                valid = false;
+            }
+            if (StringUtils.isBlank(providerId)) {
+                log.error("No providerId property found on node {}. Registering this data root will fail", rootPath);
+                valid = false;
+            }
+
+            if ((factory = providerFactories.get(providerId)) == null) {
+                log.error("No factory found for provider id {}. Registering this data root will fail", providerId);
+                valid = false;
             }
         }
-
-        if ((factory = providerFactories.get(providerId)) == null) {
-            log.error("No factory found for provider id {}. Registering this data root will fail", providerId);
-            valid = false;
-        }
-
+        log.debug("Factory retrieved... {}", factory != null);
         // register valid
         if (valid) {
             final ResourceProvider provider = factory.createResourceProvider(root);
@@ -252,7 +265,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             if (!session.itemExists(absolutePropertyPath)) {
                 return null;
             }
-            return session.getProperty(absolutePropertyPath).getString();
+            return session.getProperty(absolutePropertyPath)
+                .getString();
         } catch (RepositoryException ex) {
             return null;
         }
@@ -280,14 +294,19 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                             CatalogDataResourceProviderManagerImpl.this.onEvent(events);
                         }
                     };
-                    session.getWorkspace().getObservationManager().addEventListener(
-                        this.observationEventListeners[i],
-                        Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
-                        this.obervationPaths[i], // absolute path
-                        true, // isDeep
-                        null, // uuids
-                        null, // node types
-                        true); // noLocal
+                    session.getWorkspace()
+                        .getObservationManager()
+                        .addEventListener(this.observationEventListeners[i],
+                            Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
+                            this.obervationPaths[i],
+                            // absolute path
+                            true,
+                            // isDeep
+                            null,
+                            // uuids
+                            null,
+                            // node types
+                            true); // noLocal
                 }
             }
 
@@ -305,7 +324,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 final Session session = resolver.adaptTo(Session.class);
                 if (session != null && this.observationEventListeners != null) {
                     for (EventListener eventListener : this.observationEventListeners) {
-                        session.getWorkspace().getObservationManager().removeEventListener(eventListener);
+                        session.getWorkspace()
+                            .getObservationManager()
+                            .removeEventListener(eventListener);
                     }
                 }
             }
@@ -348,8 +369,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                     nodeAdded = true;
                     Session session = resolver.adaptTo(Session.class);
                     final Node node = session.getNode(path);
-                    if (node != null && node.isNodeType("sling:Folder") &&
-                        node.hasProperty(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID)) {
+                    if (node != null && node.isNodeType("sling:Folder") && node.hasProperty(
+                        CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID)) {
                         actions.put(path, true);
                     }
                 } else if (eventType == Event.NODE_REMOVED && providers.containsKey(path)) {
@@ -388,7 +409,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     }
 
     private boolean isRelevantPath(String path) {
-        return findDataRoots(resolver).stream().map(Resource::getPath).anyMatch(path::startsWith);
+        return findDataRoots(resolver).stream()
+            .map(Resource::getPath)
+            .anyMatch(path::startsWith);
     }
 
     @Reference(

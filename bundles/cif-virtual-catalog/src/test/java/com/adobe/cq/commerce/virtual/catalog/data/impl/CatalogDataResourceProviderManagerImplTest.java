@@ -24,6 +24,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.commons.testing.jcr.RepositoryUtil;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.After;
@@ -36,10 +38,16 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 
+import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderFactory;
 import com.adobe.granite.test.tooling.RepositoryBaseTest;
 import com.day.cq.commons.jcr.JcrUtil;
+import com.google.common.collect.ImmutableMap;
 import junitx.util.PrivateAccessor;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTest {
     private static final String TEST_PROVIDER_FACTORY_ID = "TestProviderFactory";
@@ -58,8 +66,16 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         session.getWorkspace().getNamespaceRegistry().registerNamespace("cq", "http://www.day.com/jcr/cq/1.0");
         RepositoryUtil.registerSlingNodeTypes(session);
 
+        ConfigurationResourceResolver configurationResourceResolver = mock(ConfigurationResourceResolver.class);
+        Resource mockConfigurationResource = mock(Resource.class);
+        when(mockConfigurationResource.getValueMap()).thenReturn(new ValueMapDecorator(ImmutableMap.<String, Object>of("cq:graphqlClient",
+            "my-catalog")));
+        when(configurationResourceResolver.getResource(any(Resource.class), any(String.class), any(String.class))).thenReturn(
+            mockConfigurationResource);
+
         manager = new CatalogDataResourceProviderManagerImpl();
         PrivateAccessor.setField(manager, "resolverFactory", getResourceResolverFactory());
+        PrivateAccessor.setField(manager, "configurationResourceResolver", configurationResourceResolver);
         BundleContext bundleContext = Mockito.mock(BundleContext.class);
         Mockito.when(bundleContext.registerService((Class) Mockito.any(), (ResourceProvider) Mockito.any(), Mockito.any())).thenAnswer(
             (Answer<ServiceRegistration>) invocation -> Mockito.mock(ServiceRegistration.class));

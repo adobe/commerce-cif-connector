@@ -42,7 +42,6 @@ import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableVariant;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
 import com.adobe.cq.commerce.magento.graphql.SimpleProduct;
-import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.google.common.collect.Lists;
 
 class ResourceMapper<T> {
