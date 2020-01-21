@@ -422,6 +422,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         policy = ReferencePolicy.DYNAMIC)
     @SuppressWarnings("unused")
     void bindFactory(CatalogDataResourceProviderFactory factory, Map<String, String> properties) {
+        log.debug("Binding provider factory {}", factory.getClass().getName());
         providerFactories.put(properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_SERVICE_ID), factory);
         // the resolver is null before activation and after deactivation
         if (resolver != null) {
@@ -431,6 +432,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     @SuppressWarnings("unused")
     void unbindFactory(CatalogDataResourceProviderFactory factory, Map<String, String> properties) {
+        log.debug("Unbinding provider factory {}", factory.getClass().getName());
         providerFactories.remove(properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_SERVICE_ID));
         // the resolver is null before activation and after deactivation
         if (resolver != null) {

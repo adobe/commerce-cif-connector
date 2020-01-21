@@ -85,7 +85,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
         // Get cq:catalogIdentifier property from ancestor pages
         Page page = root.getResourceResolver().adaptTo(PageManager.class).getContainingPage(root);
 
-        Resource config = configurationResourceResolver.getResource(page.adaptTo(Resource.class), "settings", "commerce/default");
+        Resource config = configurationResourceResolver.getResource(root, "settings", "commerce/default");
         ValueMap properties = config.getValueMap();
         String catalogIdentifier = properties.get(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, "");
         if (StringUtils.isEmpty(catalogIdentifier)) {
