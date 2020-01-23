@@ -13,7 +13,7 @@
 -->
 <coral-columnview-item data-sly-use.configuration="${'com.adobe.cq.commerce.gui.components.configuration.ConfigurationColumnViewItem'}"
                        class="foundation-collection-item"
-                       data-sly-attribute.variant="${'drilldown'}" data-foundation-collection-item-id="${resource.path}">
+                       data-sly-attribute.variant="${configuration.hasChildren ? 'drilldown':''}" data-foundation-collection-item-id="${resource.path}">
     <coral-columnview-item-thumbnail>
         <coral-icon data-sly-test.isPage="${resource['jcr:primaryType'] == 'cq:Page'}" class="foundation-collection-page-thumbnail" icon="page"></coral-icon>
         <coral-icon data-sly-test="${!isPage}" class="foundation-collection-item-thumbnail" icon="folder"></coral-icon>
@@ -23,4 +23,6 @@
             ${configuration.title}
         </div>
     </coral-columnview-item-content>
+    <meta class="foundation-collection-quickactions" data-foundation-collection-quickactions-rel="${configuration.quickactionsRel.isEmpty ? 'none' : configuration.quickactionsRel @join=' '}">
+   
 </coral-columnview-item>

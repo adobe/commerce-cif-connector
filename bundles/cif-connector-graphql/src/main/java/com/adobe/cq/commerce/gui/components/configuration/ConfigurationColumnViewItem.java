@@ -14,6 +14,9 @@
 
 package com.adobe.cq.commerce.gui.components.configuration;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -25,10 +28,14 @@ import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.adobe.cq.commerce.gui.Constants;
+
 /**
  * Sling Model for the column-view item of the configuration console
  */
-@Model(adaptables = SlingHttpServletRequest.class, adapters = ConfigurationColumnViewItem.class)
+@Model(
+    adaptables = SlingHttpServletRequest.class,
+    adapters = ConfigurationColumnViewItem.class)
 public class ConfigurationColumnViewItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationColumnViewItem.class);
@@ -45,8 +52,24 @@ public class ConfigurationColumnViewItem {
     }
 
     public String getTitle() {
+        LOG.debug("Inspecting {}", resource.getPath());
         ValueMap properties = resource.getValueMap();
         return properties.get("jcr:title", resource.getName());
     }
 
+    public boolean hasChildren() {
+        boolean isContainer = isConfigurationContainer(resource);
+        boolean hasCommerceSetting = resource.getChild("settings/cloudconfigs/commerce") != null;
+        return isContainer && hasCommerceSetting;
+    }
+
+    public List<String> getQuickActionsRel() {
+        return Collections.emptyList();
+    }
+
+    private boolean isConfigurationContainer(Resource res) {
+        return (res.getPath()
+            .startsWith(Constants.CONF_ROOT) && (resource.isResourceType("sling:Folder") || resource.isResourceType("sling:OrderedFolder")) && resource
+                .getChild(Constants.CONF_CONTAINER_BUCKET_NAME) != null);
+    }
 }

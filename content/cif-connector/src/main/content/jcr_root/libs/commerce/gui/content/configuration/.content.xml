@@ -33,6 +33,8 @@
                     size="${empty requestPathInfo.selectors[1] ? 40 : requestPathInfo.selectors[1]}"
                     sling:resourceType="granite/ui/components/coral/foundation/columnview"
                     src="/mnt/overlay/commerce/gui/content/configuration/jcr:content/views/column{.offset.limit}.html{+id}">
+                <granite:data jcr:primaryType="nt:unstructured"
+                              allowedResourceTypes="[commerce/gui/components/configuration/page]"/>
                 <datasource jcr:primaryType="nt:unstructured"
                             itemResourceType="commerce/gui/components/configuration/columnviewitem"
                             limit="${empty requestPathInfo.selectors[1] ? 41 : requestPathInfo.selectors[1] + 1}"
