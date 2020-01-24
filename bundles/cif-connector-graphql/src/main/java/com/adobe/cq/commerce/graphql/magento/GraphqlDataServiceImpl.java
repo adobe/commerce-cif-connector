@@ -64,6 +64,7 @@ import com.google.common.cache.CacheBuilder;
 public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlDataServiceImpl.class);
+    private static final String MAGENTO_DEFAULT_STORE = "default";
 
     // We cannot extend GraphqlClientImpl because it's not OSGi-exported so we use "object composition"
     protected GraphqlClient baseClient;
@@ -159,13 +160,14 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         }
 
         try {
-            return productCache.get(sku, () -> getProductBySkuImpl(sku, storeView)).orElse(null);
+            String key = sku + StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE);
+            return productCache.get(key, () -> getProductBySkuImpl(sku, storeView)).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Optional<ProductInterface> getProductBySkuImpl(String sku, String storeView) {
+    Optional<ProductInterface> getProductBySkuImpl(String sku, String storeView) {
 
         LOGGER.debug("Trying to fetch product " + sku);
 
@@ -239,7 +241,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Populate the products cache
         for (ProductInterface product : products) {
-            productCache.put(product.getSku(), Optional.of(product));
+            String key = product.getSku() + StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE);
+            productCache.put(key, Optional.of(product));
         }
 
         return products;
@@ -250,7 +253,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return getCategoriesImpl(categoryId, storeView);
     }
 
-    private CategoryTree getCategoriesImpl(Integer categoryId, String storeView) {
+    CategoryTree getCategoriesImpl(Integer categoryId, String storeView) {
 
         LOGGER.debug("Trying to fetch category " + categoryId);
 
@@ -281,23 +284,22 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return category;
     }
 
-    private String toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize) {
-        return StringUtils.joinWith("-", categoryId, currentPage, pageSize);
+    private String toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
+        return StringUtils.joinWith("-", categoryId, currentPage, pageSize, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
     }
 
     @Override
     public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
         try {
-            String cacheKey = toCategoryCacheKey(categoryId, currentPage, pageSize);
-            Callable<? extends Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, currentPage, pageSize,
-                storeView);
+            String cacheKey = toCategoryCacheKey(categoryId, currentPage, pageSize, storeView);
+            Callable<Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, currentPage, pageSize, storeView);
             return categoryCache.get(cacheKey, loader).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Optional<CategoryProducts> getCategoryProductsImpl(Integer categoryId, Integer currentPage, Integer pageSize,
+    Optional<CategoryProducts> getCategoryProductsImpl(Integer categoryId, Integer currentPage, Integer pageSize,
         String storeView) {
 
         LOGGER.debug("Trying to fetch products for category " + categoryId);
@@ -321,7 +323,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Populate the products cache
         for (ProductInterface product : products) {
-            productCache.put(product.getSku(), Optional.of(product));
+            String key = product.getSku() + StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE);
+            productCache.put(key, Optional.of(product));
         }
 
         return Optional.ofNullable(category.getProducts());

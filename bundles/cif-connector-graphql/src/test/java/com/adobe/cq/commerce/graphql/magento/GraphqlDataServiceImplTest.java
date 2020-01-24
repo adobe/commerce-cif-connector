@@ -51,6 +51,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 
 public class GraphqlDataServiceImplTest {
 
@@ -148,8 +149,37 @@ public class GraphqlDataServiceImplTest {
         Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_OK);
         assertNull(dataService.getProductBySku(SKU, null));
 
-        // This would fail if the product was not propely cached because the mocked HTTP response was already consumed
+        // This would fail if the product was not properly cached because the mocked HTTP response was already consumed
         assertNull(dataService.getProductBySku(SKU, null));
+    }
+
+    @Test
+    public void testCachingConsidersStoreView() throws Exception {
+        dataService = Mockito.spy(dataService);
+
+        // The caching is done on a store basis, so we expect one call to getProductBySkuImpl() by store view
+
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getProductBySku(SKU, "store1"));
+
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getProductBySku(SKU, "store2"));
+        assertNotNull(dataService.getProductBySku(SKU, "store2")); // Data comes from cache
+
+        Mockito.verify(dataService).getProductBySkuImpl(eq(SKU), eq("store1"));
+        Mockito.verify(dataService).getProductBySkuImpl(eq(SKU), eq("store2"));
+
+        // The caching is done on a store basis, so we expect one call to getCategoryProductsImpl() by store view
+
+        Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store1"));
+
+        Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store2"));
+        assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store2")); // Data comes from cache
+
+        Mockito.verify(dataService).getCategoryProductsImpl(eq(MEN_COATS_CATEGORY_ID), eq(1), eq(10), eq("store1"));
+        Mockito.verify(dataService).getCategoryProductsImpl(eq(MEN_COATS_CATEGORY_ID), eq(1), eq(10), eq("store2"));
     }
 
     @Test
