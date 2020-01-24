@@ -88,7 +88,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.info("Registering GraphqlClient '{}'", identifier);
         clients.put(identifier, graphqlClient);
 
-        if (configuration.identifier().equals(identifier)) {
+        if (identifier.equals(configuration.identifier())) {
             LOGGER.info("GraphqlClient with identifier '{}' has been registered, the service is ready to handle requests.", identifier);
             baseClient = graphqlClient;
         }
@@ -99,7 +99,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.info("De-registering GraphqlClient '{}'", identifier);
         clients.remove(identifier);
 
-        if (configuration.identifier().equals(identifier)) {
+        if (identifier.equals(configuration.identifier())) {
             LOGGER.info("GraphqlClient '{}' unregistered: requests cannot be handled until that dependency is satisfied", identifier);
             baseClient = null;
         }
@@ -121,20 +121,17 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         configuration = conf;
 
-        if (configuration.productCachingEnabled()) {
+        // Used when a single product is being fetched
+        productCache = CacheBuilder.newBuilder()
+            .maximumSize(configuration.productCachingEnabled() ? configuration.productCachingSize() : 0)
+            .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
+            .build();
 
-            // Used when a single product is being fetched
-            productCache = CacheBuilder.newBuilder()
-                .maximumSize(configuration.productCachingSize())
-                .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
-                .build();
-
-            // Used when the products of a given category are being fetched
-            categoryCache = CacheBuilder.newBuilder()
-                .maximumSize(configuration.categoryCachingSize())
-                .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
-                .build();
-        }
+        // Used when the products of a given category are being fetched
+        categoryCache = CacheBuilder.newBuilder()
+            .maximumSize(configuration.productCachingEnabled() ? configuration.categoryCachingSize() : 0)
+            .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
+            .build();
 
         requestOptions = new RequestOptions().withGson(QueryDeserializer.getGson());
     }

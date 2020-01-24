@@ -20,6 +20,8 @@ public class MockGraphqlDataServiceConfiguration implements Annotation, GraphqlD
 
     public static final int ROOT_CATEGORY_ID = 4;
 
+    private Boolean productCachingEnabled;
+
     @Override
     public String identifier() {
         return GraphqlDataServiceConfiguration.CONNECTOR_ID_DEFAULT;
@@ -27,7 +29,7 @@ public class MockGraphqlDataServiceConfiguration implements Annotation, GraphqlD
 
     @Override
     public boolean productCachingEnabled() {
-        return GraphqlDataServiceConfiguration.PRODUCT_CACHING_ENABLED_DEFAULT;
+        return productCachingEnabled != null ? productCachingEnabled : GraphqlDataServiceConfiguration.PRODUCT_CACHING_ENABLED_DEFAULT;
     }
 
     @Override
@@ -63,5 +65,9 @@ public class MockGraphqlDataServiceConfiguration implements Annotation, GraphqlD
     @Override
     public Class<? extends Annotation> annotationType() {
         return GraphqlDataServiceConfiguration.class;
+    }
+
+    public void setProductCachingEnabled(boolean productCachingEnabled) {
+        this.productCachingEnabled = productCachingEnabled;
     }
 }
