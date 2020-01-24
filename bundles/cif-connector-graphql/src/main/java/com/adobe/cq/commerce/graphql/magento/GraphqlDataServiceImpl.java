@@ -157,7 +157,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         }
 
         try {
-            String key = sku + StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE);
+            String key = toProductCacheKey(sku, storeView);
             return productCache.get(key, () -> getProductBySkuImpl(sku, storeView)).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
@@ -238,7 +238,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Populate the products cache
         for (ProductInterface product : products) {
-            String key = product.getSku() + StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE);
+            String key = toProductCacheKey(product.getSku(), storeView);
             productCache.put(key, Optional.of(product));
         }
 
@@ -281,16 +281,24 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return category;
     }
 
+    private String toProductCacheKey(String sku, String storeView) {
+        return toCacheKey(sku, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+    }
+
     private String toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
-        return StringUtils.joinWith("-", categoryId, currentPage, pageSize, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+        return toCacheKey(categoryId, currentPage, pageSize, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+    }
+
+    private String toCacheKey(Object... parts) {
+        return StringUtils.joinWith("|", parts);
     }
 
     @Override
     public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
         try {
-            String cacheKey = toCategoryCacheKey(categoryId, currentPage, pageSize, storeView);
+            String key = toCategoryCacheKey(categoryId, currentPage, pageSize, storeView);
             Callable<Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, currentPage, pageSize, storeView);
-            return categoryCache.get(cacheKey, loader).orElse(null);
+            return categoryCache.get(key, loader).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
@@ -320,7 +328,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Populate the products cache
         for (ProductInterface product : products) {
-            String key = product.getSku() + StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE);
+            String key = toProductCacheKey(product.getSku(), storeView);
             productCache.put(key, Optional.of(product));
         }
 
