@@ -268,6 +268,7 @@ public class GraphqlResourceProviderTest {
     public void testCategoryProductChildren() throws IOException {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category(id:4)");
         Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK, "{category(id:19)");
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{products(filter:{sku:{eq:\"meskwielt\"}");
 
         Resource coats = provider.getResource(resolveContext, CATALOG_ROOT_PATH + "/men/coats", null, null);
         Iterator<Resource> it = provider.listChildren(resolveContext, coats);
@@ -275,9 +276,11 @@ public class GraphqlResourceProviderTest {
         while (it.hasNext()) {
             final Resource child = it.next();
             assertTrue(child instanceof ProductResource);
-            // deep read child/sku
-            // String childSku = child.getValueMap().get("sku", String.class);
-            // assertEquals(childSku, coats.getValueMap().get(child.getName() + "/sku", String.class));
+            // test deep reading child/sku for a sample child product resource
+            if ("meskwielt".equals(child.getName())) {
+                String childSku = child.getValueMap().get("sku", String.class);
+                assertEquals(childSku, coats.getValueMap().get(child.getName() + "/sku", String.class));
+            }
         }
     }
 
