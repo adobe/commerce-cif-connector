@@ -14,6 +14,7 @@
 
 package com.adobe.cq.commerce.graphql.magento;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     private GraphqlDataServiceConfiguration configuration;
 
     // We maintain some caches to speed up all lookups
-    private Cache<String, Optional<ProductInterface>> productCache;
-    private Cache<String, Optional<CategoryProducts>> categoryCache;
+    private Cache<ArrayKey, Optional<ProductInterface>> productCache;
+    private Cache<ArrayKey, Optional<CategoryProducts>> categoryCache;
 
     private Map<String, GraphqlClient> clients = new ConcurrentHashMap<>();
 
@@ -157,7 +158,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         }
 
         try {
-            String key = toProductCacheKey(sku, storeView);
+            ArrayKey key = toProductCacheKey(sku, storeView);
             return productCache.get(key, () -> getProductBySkuImpl(sku, storeView)).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
@@ -238,7 +239,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Populate the products cache
         for (ProductInterface product : products) {
-            String key = toProductCacheKey(product.getSku(), storeView);
+            ArrayKey key = toProductCacheKey(product.getSku(), storeView);
             productCache.put(key, Optional.of(product));
         }
 
@@ -281,22 +282,10 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return category;
     }
 
-    private String toProductCacheKey(String sku, String storeView) {
-        return toCacheKey(sku, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
-    }
-
-    private String toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
-        return toCacheKey(categoryId, currentPage, pageSize, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
-    }
-
-    private String toCacheKey(Object... parts) {
-        return StringUtils.joinWith("|", parts);
-    }
-
     @Override
     public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
         try {
-            String key = toCategoryCacheKey(categoryId, currentPage, pageSize, storeView);
+            ArrayKey key = toCategoryCacheKey(categoryId, currentPage, pageSize, storeView);
             Callable<Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, currentPage, pageSize, storeView);
             return categoryCache.get(key, loader).orElse(null);
         } catch (ExecutionException e) {
@@ -328,7 +317,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Populate the products cache
         for (ProductInterface product : products) {
-            String key = toProductCacheKey(product.getSku(), storeView);
+            ArrayKey key = toProductCacheKey(product.getSku(), storeView);
             productCache.put(key, Optional.of(product));
         }
 
@@ -342,5 +331,48 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     @Override
     public String getIdentifier() {
         return configuration.identifier();
+    }
+
+    /**
+     * A class that makes it possible to use an <code>Object[]</code> array as map keys.
+     * It uses {@link java.util.Arrays#equals(Object[], Object[])} and {@link java.util.Arrays#hashCode(Object[])}
+     * to implement <code>equals()</code> and <code>hashCode()</code>.
+     */
+    static class ArrayKey {
+
+        Object[] parts;
+
+        public ArrayKey(Object... parts) {
+            this.parts = parts;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            ArrayKey that = (ArrayKey) o;
+            return Arrays.equals(parts, that.parts);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(parts);
+        }
+    }
+
+    private ArrayKey toProductCacheKey(String sku, String storeView) {
+        return toCacheKey(sku, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+    }
+
+    private ArrayKey toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
+        return toCacheKey(categoryId, currentPage, pageSize, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+    }
+
+    private ArrayKey toCacheKey(Object... parts) {
+        return new ArrayKey(parts);
     }
 }

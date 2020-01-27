@@ -34,6 +34,7 @@ import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
+import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl.ArrayKey;
 import com.adobe.cq.commerce.graphql.resource.Constants;
 import com.adobe.cq.commerce.graphql.testing.Utils;
 import com.adobe.cq.commerce.graphql.testing.Utils.GetQueryMatcher;
@@ -48,6 +49,7 @@ import com.adobe.cq.commerce.magento.graphql.gson.Error.Location;
 import com.google.gson.Gson;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -212,6 +214,32 @@ public class GraphqlDataServiceImplTest {
         assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store1"));
 
         Mockito.verify(dataService, times(2)).getCategoryProductsImpl(MEN_COATS_CATEGORY_ID, 1, 10, "store1");
+    }
+
+    @SuppressWarnings("unlikely-arg-type")
+    @Test
+    public void testCacheKeys() {
+        ArrayKey key1 = new ArrayKey("test", new Integer(1), null);
+        ArrayKey key2 = new ArrayKey(new String("test"), Integer.valueOf("1"), null);
+        ArrayKey key3 = new ArrayKey("test", new Integer(1));
+        ArrayKey key4 = new ArrayKey("test", "1", null);
+
+        assertTrue(key1.equals(key1));
+        assertTrue(key1.hashCode() == key1.hashCode());
+
+        assertTrue(key1.equals(key2));
+        assertTrue(key1.hashCode() == key2.hashCode());
+
+        assertFalse(key1.equals(key3));
+        assertFalse(key1.hashCode() == key3.hashCode());
+
+        assertFalse(key1.equals(key4));
+        assertFalse(key1.hashCode() == key4.hashCode());
+
+        assertFalse(key1.equals(null));
+
+        assertFalse(key1.equals("test1null"));
+        assertFalse(key1.hashCode() == "test1null".hashCode());
     }
 
     @Test
