@@ -1,1 +1,1 @@
-{category(id:19){products(currentPage:1,pageSize:10){total_count,items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}}
+{category(id:19){products(currentPage:1,pageSize:10){total_count,items{__typename,id,sku,name,updated_at,thumbnail{url}}}}}
