@@ -304,7 +304,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         // Main query
         CategoryTreeQueryDefinition queryDef = q -> q.products(
             o -> o.currentPage(currentPage).pageSize(pageSize),
-            p -> p.totalCount().items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY));
+            p -> p.totalCount().items(GraphqlQueries.CHILD_PRODUCT_QUERY));
 
         String queryString = Operations.query(query -> query.category(argsDef, queryDef)).toString();
         GraphqlResponse<Query, Error> response = execute(queryString, storeView);
@@ -314,12 +314,6 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         List<ProductInterface> products = category.getProducts().getItems();
 
         LOGGER.debug("Fetched " + products.size() + " products for category " + categoryId);
-
-        // Populate the products cache
-        for (ProductInterface product : products) {
-            ArrayKey key = toProductCacheKey(product.getSku(), storeView);
-            productCache.put(key, Optional.of(product));
-        }
 
         return Optional.ofNullable(category.getProducts());
     }

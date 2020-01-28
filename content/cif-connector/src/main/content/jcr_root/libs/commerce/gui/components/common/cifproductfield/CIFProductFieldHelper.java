@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 public class CIFProductFieldHelper extends WCMUsePojo {
 
     private String selectionId;
+    private String filter;
 
     @Override
     public void activate() throws Exception {
@@ -31,6 +32,11 @@ public class CIFProductFieldHelper extends WCMUsePojo {
             selectionId = st;
         } else {
             selectionId = "id";
+        }
+
+        filter = getRequest().getParameter("filter");
+        if (filter == null) {
+            filter = "folderOrProduct";
         }
     }
 
@@ -84,6 +90,18 @@ public class CIFProductFieldHelper extends WCMUsePojo {
     }
 
     public boolean isDrillDown() {
+        // fast cases
+        if ("folderOrProduct".equals(filter) && "product".equals(getResource().getValueMap().get("cq:commerceType", String.class))) {
+            //in this case the variants are not shown, so the product has no chdilren
+            return false;
+        }
+
+        //check the hasChildren property
+        Boolean hasChildren = getResource().getValueMap().get("hasChildren", Boolean.class);
+        if (hasChildren != null)
+            return hasChildren;
+
+        //fall back to slow case
         return getResource().hasChildren();
     }
 }

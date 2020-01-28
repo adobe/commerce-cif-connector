@@ -30,8 +30,10 @@ import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.api.Product;
 import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.adobe.cq.commerce.graphql.core.MagentoProduct;
+import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
 import com.adobe.cq.commerce.magento.graphql.Money;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
+import com.adobe.cq.commerce.magento.graphql.SimpleProduct;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import static com.adobe.cq.commerce.graphql.resource.Constants.PRODUCT;
@@ -99,6 +101,12 @@ class ProductResource extends SyntheticResource {
         }
 
         map.put(CommerceConstants.PN_COMMERCE_TYPE, activeVariantSku != null ? VARIANT : PRODUCT);
+
+        if (activeVariantSku != null || product instanceof SimpleProduct) {
+            map.put("hasChildren", false);
+        } else if (product instanceof ConfigurableProduct) {
+            map.put("hasChildren", true);
+        }
 
         values = new DeepReadValueMapDecorator(this, new ValueMapDecorator(map));
     }
