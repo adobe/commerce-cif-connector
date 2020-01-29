@@ -14,6 +14,7 @@
 
 package com.adobe.cq.commerce.graphql.magento;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,7 @@ import com.google.common.cache.CacheBuilder;
 public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlDataServiceImpl.class);
+    private static final String MAGENTO_DEFAULT_STORE = "default";
 
     // We cannot extend GraphqlClientImpl because it's not OSGi-exported so we use "object composition"
     protected GraphqlClient baseClient;
@@ -71,8 +73,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     private GraphqlDataServiceConfiguration configuration;
 
     // We maintain some caches to speed up all lookups
-    private Cache<String, Optional<ProductInterface>> productCache;
-    private Cache<String, Optional<CategoryProducts>> categoryCache;
+    private Cache<ArrayKey, Optional<ProductInterface>> productCache;
+    private Cache<ArrayKey, Optional<CategoryProducts>> categoryCache;
 
     private Map<String, GraphqlClient> clients = new ConcurrentHashMap<>();
 
@@ -87,7 +89,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.info("Registering GraphqlClient '{}'", identifier);
         clients.put(identifier, graphqlClient);
 
-        if (configuration.identifier().equals(identifier)) {
+        if (identifier.equals(configuration.identifier())) {
             LOGGER.info("GraphqlClient with identifier '{}' has been registered, the service is ready to handle requests.", identifier);
             baseClient = graphqlClient;
         }
@@ -98,7 +100,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.info("De-registering GraphqlClient '{}'", identifier);
         clients.remove(identifier);
 
-        if (configuration.identifier().equals(identifier)) {
+        if (identifier.equals(configuration.identifier())) {
             LOGGER.info("GraphqlClient '{}' unregistered: requests cannot be handled until that dependency is satisfied", identifier);
             baseClient = null;
         }
@@ -120,20 +122,17 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         configuration = conf;
 
-        if (configuration.productCachingEnabled()) {
+        // Used when a single product is being fetched
+        productCache = CacheBuilder.newBuilder()
+            .maximumSize(configuration.productCachingEnabled() ? configuration.productCachingSize() : 0)
+            .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
+            .build();
 
-            // Used when a single product is being fetched
-            productCache = CacheBuilder.newBuilder()
-                .maximumSize(configuration.productCachingSize())
-                .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
-                .build();
-
-            // Used when the products of a given category are being fetched
-            categoryCache = CacheBuilder.newBuilder()
-                .maximumSize(configuration.categoryCachingSize())
-                .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
-                .build();
-        }
+        // Used when the products of a given category are being fetched
+        categoryCache = CacheBuilder.newBuilder()
+            .maximumSize(configuration.productCachingEnabled() ? configuration.categoryCachingSize() : 0)
+            .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
+            .build();
 
         requestOptions = new RequestOptions().withGson(QueryDeserializer.getGson());
     }
@@ -159,13 +158,14 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         }
 
         try {
-            return productCache.get(sku, () -> getProductBySkuImpl(sku, storeView)).orElse(null);
+            ArrayKey key = toProductCacheKey(sku, storeView);
+            return productCache.get(key, () -> getProductBySkuImpl(sku, storeView)).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Optional<ProductInterface> getProductBySkuImpl(String sku, String storeView) {
+    Optional<ProductInterface> getProductBySkuImpl(String sku, String storeView) {
 
         LOGGER.debug("Trying to fetch product " + sku);
 
@@ -239,7 +239,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Populate the products cache
         for (ProductInterface product : products) {
-            productCache.put(product.getSku(), Optional.of(product));
+            ArrayKey key = toProductCacheKey(product.getSku(), storeView);
+            productCache.put(key, Optional.of(product));
         }
 
         return products;
@@ -250,7 +251,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return getCategoriesImpl(categoryId, storeView);
     }
 
-    private CategoryTree getCategoriesImpl(Integer categoryId, String storeView) {
+    CategoryTree getCategoriesImpl(Integer categoryId, String storeView) {
 
         LOGGER.debug("Trying to fetch category " + categoryId);
 
@@ -281,23 +282,18 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return category;
     }
 
-    private String toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize) {
-        return StringUtils.joinWith("-", categoryId, currentPage, pageSize);
-    }
-
     @Override
     public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
         try {
-            String cacheKey = toCategoryCacheKey(categoryId, currentPage, pageSize);
-            Callable<? extends Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, currentPage, pageSize,
-                storeView);
-            return categoryCache.get(cacheKey, loader).orElse(null);
+            ArrayKey key = toCategoryCacheKey(categoryId, currentPage, pageSize, storeView);
+            Callable<Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, currentPage, pageSize, storeView);
+            return categoryCache.get(key, loader).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Optional<CategoryProducts> getCategoryProductsImpl(Integer categoryId, Integer currentPage, Integer pageSize,
+    Optional<CategoryProducts> getCategoryProductsImpl(Integer categoryId, Integer currentPage, Integer pageSize,
         String storeView) {
 
         LOGGER.debug("Trying to fetch products for category " + categoryId);
@@ -329,5 +325,48 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     @Override
     public String getIdentifier() {
         return configuration.identifier();
+    }
+
+    /**
+     * A class that makes it possible to use an <code>Object[]</code> array as map keys.
+     * It uses {@link java.util.Arrays#equals(Object[], Object[])} and {@link java.util.Arrays#hashCode(Object[])}
+     * to implement <code>equals()</code> and <code>hashCode()</code>.
+     */
+    static class ArrayKey {
+
+        Object[] parts;
+
+        public ArrayKey(Object... parts) {
+            this.parts = parts;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            ArrayKey that = (ArrayKey) o;
+            return Arrays.equals(parts, that.parts);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(parts);
+        }
+    }
+
+    private ArrayKey toProductCacheKey(String sku, String storeView) {
+        return toCacheKey(sku, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+    }
+
+    private ArrayKey toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
+        return toCacheKey(categoryId, currentPage, pageSize, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+    }
+
+    private ArrayKey toCacheKey(Object... parts) {
+        return new ArrayKey(parts);
     }
 }
