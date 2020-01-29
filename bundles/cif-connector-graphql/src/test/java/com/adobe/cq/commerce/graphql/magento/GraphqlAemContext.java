@@ -14,10 +14,19 @@
 
 package com.adobe.cq.commerce.graphql.magento;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.Map;
+
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
+import io.wcm.testing.mock.aem.junit.AemContextBuilder;
 import io.wcm.testing.mock.aem.junit.AemContextCallback;
+
+import static org.apache.sling.testing.mock.caconfig.ContextPlugins.CACONFIG;
 
 public final class GraphqlAemContext {
 
@@ -25,13 +34,38 @@ public final class GraphqlAemContext {
 
     private GraphqlAemContext() {}
 
-    public static AemContext createContext(String contentPath, String destPath) {
-        return new AemContext(
-            (AemContextCallback) context -> {
-                // Load page structure
-                context.load().json(contentPath, destPath);
-            },
-            ResourceResolverType.JCR_MOCK);
+    public static AemContext createContext(Map<String, String> contentPaths) {
+
+        AemContext context = new AemContextBuilder(ResourceResolverType.JCR_MOCK).plugin(CACONFIG)
+                 .beforeSetUp(ctx -> {
+                     ConfigurationAdmin configurationAdmin = ctx.getService(ConfigurationAdmin.class);
+                     Configuration serviceConfiguration = configurationAdmin.getConfiguration(
+                             "org.apache.sling.caconfig.resource.impl.def.DefaultContextPathStrategy");
+
+                     Dictionary<String, Object> props = new Hashtable<>();
+                     props.put("configRefResourceNames", new String[] { ".", "jcr:content" });
+                     props.put("configRefPropertyNames", "cq:conf");
+                     serviceConfiguration.update(props);
+
+                     serviceConfiguration = configurationAdmin.getConfiguration(
+                             "org.apache.sling.caconfig.resource.impl.def.DefaultConfigurationResourceResolvingStrategy");
+                     props = new Hashtable<>();
+                     props.put("configPath", "/conf");
+                     serviceConfiguration.update(props);
+
+                     serviceConfiguration = configurationAdmin.getConfiguration(
+                             "org.apache.sling.caconfig.impl.ConfigurationResolverImpl");
+                     props = new Hashtable<>();
+                     props.put("configBucketNames", new String[] { "settings" });
+                     serviceConfiguration.update(props);
+                 })
+                 .build();
+        // Load page structure
+        contentPaths.entrySet().iterator().forEachRemaining(entry -> {
+            context.load().json(entry.getValue(), entry.getKey());
+        });
+       return context;
+
     }
 
 }

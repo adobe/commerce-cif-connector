@@ -43,7 +43,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
+import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -105,9 +105,6 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     @Reference
     private ResourceResolverFactory resolverFactory = null;
-
-    @Reference
-    private ConfigurationResourceResolver configurationResourceResolver;
 
     /**
      * Service resource resolver (read only usage)
@@ -202,12 +199,10 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
         if (StringUtils.isNotEmpty(cqConf)) {
             log.debug("Found cq:conf property pointing at {}", cqConf);
-            Resource configurationResource = configurationResourceResolver.getResource(root, "settings", "commerce/default");
-            if (configurationResource != null) {
-                ValueMap properties = configurationResource.getValueMap();
-                providerId = properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, String.class);
-                factory = providerFactories.get(providerId);
-            }
+            ConfigurationBuilder cfgBuilder = root.adaptTo(ConfigurationBuilder.class);
+            ValueMap properties = cfgBuilder.name("commerce/default").asValueMap();
+            providerId = properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, String.class);
+            factory = providerFactories.get(providerId);
         } else {
 
             if (StringUtils.isBlank(rootPath)) {

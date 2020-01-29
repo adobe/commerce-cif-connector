@@ -56,13 +56,13 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
     private ObjectMapper jsonMapper;
     private String storeView;
 
-    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlDataService, ValueMap properties) {
+    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlDataService, Map<String, String> properties) {
         this.resourceMapper = resourceMapper;
         this.graphqlDataService = graphqlDataService;
         jsonMapper = new ObjectMapper();
 
         if (properties != null) {
-            storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY, String.class);
+            storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY);
         }
     }
 

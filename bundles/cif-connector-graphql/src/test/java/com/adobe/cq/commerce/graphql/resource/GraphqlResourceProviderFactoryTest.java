@@ -32,6 +32,7 @@ import com.adobe.cq.commerce.graphql.magento.GraphqlAemContext;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl;
 import com.adobe.cq.commerce.graphql.magento.MockGraphqlDataServiceConfiguration;
+import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
 
 import static org.mockito.Matchers.any;
@@ -42,26 +43,15 @@ import static org.mockito.Mockito.when;
 public class GraphqlResourceProviderFactoryTest {
 
     @Rule
-    public final AemContext context = GraphqlAemContext.createContext("/context/graphql-client-adapter-factory-context.json", "/content");
+    public final AemContext context = GraphqlAemContext.createContext(ImmutableMap.<String, String>of(
+            "/content","/context/graphql-client-adapter-factory-context.json",
+            "/conf/test-config","/context/jcr-conf.json"));
 
     private GraphqlResourceProviderFactory<?> factory;
     private GraphqlDataServiceImpl client;
 
     @Before
     public void setUp() throws Exception {
-
-        ConfigurationResourceResolver configurationResourceResolver = mock(ConfigurationResourceResolver.class);
-        Resource mockConfigurationResource = mock(Resource.class);
-
-        Map<String, Object> configuration = new HashMap<>();
-        configuration.put("cq:graphqlClient", "my-catalog");
-        configuration.put("cq:catalogIdentifier", "my-catalog");
-        configuration.put("magentoRootCategoryId", "4");
-
-        when(mockConfigurationResource.getValueMap()).thenReturn(new ValueMapDecorator(configuration));
-        when(configurationResourceResolver.getResource(any(Resource.class), eq("settings"), eq("commerce/default"))).thenReturn(
-            mockConfigurationResource);
-        context.registerService(ConfigurationResourceResolver.class, configurationResourceResolver);
 
         factory = new GraphqlResourceProviderFactory<>();
 
@@ -71,10 +61,14 @@ public class GraphqlResourceProviderFactoryTest {
         Mockito.when(client.getConfiguration()).thenReturn(config);
         Mockito.when(client.getIdentifier()).thenReturn("my-catalog");
 
-        context.registerService(GraphqlDataService.class, client);
+        factory.bindGraphqlDataService(client, null);
+    }
 
-        context.registerService(Scheduler.class, Mockito.mock(Scheduler.class));
-        context.registerInjectActivateService(factory);
+    public void testGetClientForPageWithContextConfiguration() {
+        Resource root = context.resourceResolver().getResource("/content/pageF");
+        ResourceProvider<?> provider = factory.createResourceProvider(root);
+
+        Assert.assertNotNull(provider);
     }
 
     @Test
@@ -86,7 +80,7 @@ public class GraphqlResourceProviderFactoryTest {
         Assert.assertNotNull(provider);
     }
 
-    // @Test
+    @Test
     public void testGetClientForPageWithInheritedIdentifier() {
         // Get page whose parent has the catalog identifier in its jcr:content node
         Resource root = context.resourceResolver().getResource("/content/pageB/pageC");
@@ -95,7 +89,7 @@ public class GraphqlResourceProviderFactoryTest {
         Assert.assertNotNull(provider);
     }
 
-    // @Test
+    @Test
     public void testReturnNullForPageWithoutIdentifier() {
         // Get page without catalog identifier
         Resource root = context.resourceResolver().getResource("/content/pageD");
@@ -104,7 +98,7 @@ public class GraphqlResourceProviderFactoryTest {
         Assert.assertNull(provider);
     }
 
-    // @Test
+    @Test
     public void testReturnNullForPageWithInvalidRootCategoryIdentifier() {
         // Get page without catalog identifier
         Resource root = context.resourceResolver().getResource("/content/pageE");

@@ -17,7 +17,9 @@ package com.adobe.cq.commerce.graphql.resource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.jcr.Node;
 
@@ -56,6 +58,7 @@ import com.day.cq.commons.DownloadResource;
 import com.day.cq.commons.inherit.ComponentInheritanceValueMap;
 import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.day.cq.commons.jcr.JcrConstants;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import io.wcm.testing.mock.aem.junit.AemContext;
 
@@ -105,7 +108,7 @@ public class GraphqlResourceProviderTest {
     private Scheduler scheduler;
 
     @Rule
-    public final AemContext context = GraphqlAemContext.createContext("/context/graphql-resource-provider-context.json", "/var");
+    public final AemContext context = GraphqlAemContext.createContext(ImmutableMap.<String, String>of("/var", "/context/graphql-resource-provider-context.json"));
 
     @Before
     public void setUp() throws Exception {
@@ -140,7 +143,9 @@ public class GraphqlResourceProviderTest {
         when(scheduler.NOW(Mockito.anyInt(), Mockito.anyLong())).thenReturn(opts);
 
         rootValueMap = new ComponentInheritanceValueMap(rootResource);
-        provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler, rootValueMap);
+        Map<String, String> properties = new HashMap<>();
+        properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, rootValueMap.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, ""));
+        provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler, properties);
 
         when(resourceResolver.getResource(any())).then(invocationOnMock -> {
             String path = (String) invocationOnMock.getArguments()[0];

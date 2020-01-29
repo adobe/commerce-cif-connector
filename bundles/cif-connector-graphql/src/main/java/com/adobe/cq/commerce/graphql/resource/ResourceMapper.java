@@ -61,17 +61,17 @@ class ResourceMapper<T> {
     private Integer rootCategoryId;
     private String storeView;
 
-    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, ValueMap properties) {
+    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, Map<String,String> properties) {
         this.root = root;
         this.scheduler = scheduler;
         this.graphqlDataService = graphqlDataService;
         config = graphqlDataService.getConfiguration();
 
         // Get Magento store view property
-        storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY, String.class);
+        storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY);
 
         // Get root category id
-        rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
+        rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY));
 
         if (config.catalogCachingEnabled() && config.catalogCachingSchedulerEnabled()) {
             scheduleCacheRefresh();
