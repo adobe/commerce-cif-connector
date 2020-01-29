@@ -28,7 +28,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.commons.scheduler.ScheduleOptions;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.ResolveContext;
@@ -61,7 +60,7 @@ class ResourceMapper<T> {
     private Integer rootCategoryId;
     private String storeView;
 
-    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, Map<String,String> properties) {
+    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, Map<String, String> properties) {
         this.root = root;
         this.scheduler = scheduler;
         this.graphqlDataService = graphqlDataService;

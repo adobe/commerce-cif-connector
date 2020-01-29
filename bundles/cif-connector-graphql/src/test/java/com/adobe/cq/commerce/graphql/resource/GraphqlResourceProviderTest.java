@@ -108,7 +108,8 @@ public class GraphqlResourceProviderTest {
     private Scheduler scheduler;
 
     @Rule
-    public final AemContext context = GraphqlAemContext.createContext(ImmutableMap.<String, String>of("/var", "/context/graphql-resource-provider-context.json"));
+    public final AemContext context = GraphqlAemContext.createContext(ImmutableMap.<String, String>of("/var",
+        "/context/graphql-resource-provider-context.json"));
 
     @Before
     public void setUp() throws Exception {
@@ -144,7 +145,8 @@ public class GraphqlResourceProviderTest {
 
         rootValueMap = new ComponentInheritanceValueMap(rootResource);
         Map<String, String> properties = new HashMap<>();
-        properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, rootValueMap.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, ""));
+        properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, rootValueMap.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY,
+            ""));
         provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler, properties);
 
         when(resourceResolver.getResource(any())).then(invocationOnMock -> {

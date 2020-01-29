@@ -69,7 +69,8 @@ public class ConfigurationColumnViewItem {
 
     private boolean isConfigurationContainer(Resource res) {
         return (res.getPath()
-            .startsWith(Constants.CONF_ROOT) && (resource.isResourceType("sling:Folder") || resource.isResourceType("sling:OrderedFolder")) && resource
+            .startsWith(Constants.CONF_ROOT) && (resource.isResourceType("sling:Folder") || resource.isResourceType("sling:OrderedFolder"))
+            && resource
                 .getChild(Constants.CONF_CONTAINER_BUCKET_NAME) != null);
     }
 }

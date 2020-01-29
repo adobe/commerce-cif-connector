@@ -16,7 +16,6 @@ package com.adobe.cq.commerce.graphql.resource;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -93,7 +92,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
 
         ConfigurationBuilder configurationBuilder = root.adaptTo(ConfigurationBuilder.class);
         ValueMap properties = configurationBuilder.name(CONFIGURATION_NAME)
-                                                  .asValueMap();
+            .asValueMap();
 
         Map<String, String> collectedProperties = new HashMap<>();
         if (properties.size() == 0) {
@@ -142,8 +141,8 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
     private Map<String, String> readFallbackConfiguration(Resource res) {
         InheritanceValueMap ivm;
         Page page = res.getResourceResolver()
-                       .adaptTo(PageManager.class)
-                       .getContainingPage(res);
+            .adaptTo(PageManager.class)
+            .getContainingPage(res);
         if (page != null) {
             ivm = new HierarchyNodeInheritanceValueMap(page.getContentResource());
         } else {
@@ -151,8 +150,10 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
         }
 
         Map<String, String> properties = new HashMap<String, String>();
-        properties.put(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, ivm.getInherited(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, String.class));
-        properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, ivm.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
+        properties.put(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, ivm.getInherited(
+            GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, String.class));
+        properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, ivm.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY,
+            String.class));
 
         return properties;
     }

@@ -14,12 +14,7 @@
 
 package com.adobe.cq.commerce.graphql.resource;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
-import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,16 +22,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.adobe.cq.commerce.graphql.magento.GraphqlAemContext;
-import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl;
 import com.adobe.cq.commerce.graphql.magento.MockGraphqlDataServiceConfiguration;
 import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,8 +35,8 @@ public class GraphqlResourceProviderFactoryTest {
 
     @Rule
     public final AemContext context = GraphqlAemContext.createContext(ImmutableMap.<String, String>of(
-            "/content","/context/graphql-client-adapter-factory-context.json",
-            "/conf/test-config","/context/jcr-conf.json"));
+        "/content", "/context/graphql-client-adapter-factory-context.json",
+        "/conf/test-config", "/context/jcr-conf.json"));
 
     private GraphqlResourceProviderFactory<?> factory;
     private GraphqlDataServiceImpl client;
