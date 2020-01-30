@@ -43,5 +43,32 @@
                             sling:resourceType="commerce/gui/components/configuration/datasource"/>
             </column>
         </views>
+        <actions jcr:primaryType="nt:unstructured">
+            <primary jcr:primaryType="nt:unstructured"/>
+            <secondary jcr:primaryType="nt:unstructured">
+                <create jcr:primaryType="nt:unstructured"
+                        granite:class="cq-confadmin-actions-createconfig-activator"
+                        relScope="collection"
+                        sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                        target=".cq-confadmin-admin-childpages"
+                        text="Create"
+                        variant="primary"/>
+            </secondary>
+            <selection jcr:primaryType="nt:unstructured">
+                <viewproperties jcr:primaryType="nt:unstructured"
+                                action="foundation.link"
+                                activeSelectionCount="single"
+                                granite:class="cq-confadmin-actions-properties-activator"
+                                icon="infoCircle"
+                                sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                                target=".cq-confadmin-admin-childpages"
+                                text="Properties"
+                                variant="actionBar">
+                    <data jcr:primaryType="nt:unstructured"
+                          href.uritemplate="/mnt/overlay/wcm/core/content/sites/properties.html{?item*}"/>
+                </viewproperties>
+            </selection>
+
+        </actions>
     </jcr:content>
 </jcr:root>

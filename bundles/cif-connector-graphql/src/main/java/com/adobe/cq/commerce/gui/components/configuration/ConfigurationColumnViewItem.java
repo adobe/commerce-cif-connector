@@ -14,7 +14,6 @@
 
 package com.adobe.cq.commerce.gui.components.configuration;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.gui.Constants;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Sling Model for the column-view item of the configuration console
@@ -64,7 +64,7 @@ public class ConfigurationColumnViewItem {
     }
 
     public List<String> getQuickActionsRel() {
-        return Collections.emptyList();
+        return ImmutableList.of("cq-confadmin-actions-properties-activator");
     }
 
     private boolean isConfigurationContainer(Resource res) {
