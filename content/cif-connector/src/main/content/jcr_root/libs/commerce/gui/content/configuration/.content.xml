@@ -40,7 +40,7 @@
                             limit="${empty requestPathInfo.selectors[1] ? 41 : requestPathInfo.selectors[1] + 1}"
                             offset="${requestPathInfo.selectors[0]}"
                             path="${requestPathInfo.suffix}"
-                            sling:resourceType="cq/cloudconfig/components/admin/datasources/configurations"/>
+                            sling:resourceType="commerce/gui/components/configuration/datasource"/>
             </column>
         </views>
     </jcr:content>

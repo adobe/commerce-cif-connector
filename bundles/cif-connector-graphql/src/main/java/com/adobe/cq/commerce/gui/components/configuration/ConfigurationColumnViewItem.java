@@ -59,7 +59,7 @@ public class ConfigurationColumnViewItem {
 
     public boolean hasChildren() {
         boolean isContainer = isConfigurationContainer(resource);
-        boolean hasCommerceSetting = resource.getChild("settings/cloudconfigs/commerce") != null;
+        boolean hasCommerceSetting = resource.getChild("settings/commerce") != null;
         return isContainer && hasCommerceSetting;
     }
 

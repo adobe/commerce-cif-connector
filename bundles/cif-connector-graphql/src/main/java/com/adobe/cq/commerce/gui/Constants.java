@@ -21,11 +21,15 @@ public abstract class Constants {
 
     public static String CONF_ROOT = "/conf";
 
+    public static String APPS_ROOT = "/apps";
+
+    public static String LIBS_ROOT = "/libs";
+
     public static String CONF_CONTAINER_BUCKET_NAME = "settings";
 
-    public static String CLOUDCONFIG_BUCKET_NAME = "cloudconfigs";
+    public static String COMMERCE_BUCKET_NAME = "commerce";
 
-    public static String CLOUDCONFIG_BUCKET_PATH = CONF_CONTAINER_BUCKET_NAME + "/" + CLOUDCONFIG_BUCKET_NAME;
+    public static String COMMERCE_BUCKET_PATH = CONF_CONTAINER_BUCKET_NAME + "/" + COMMERCE_BUCKET_NAME;
 
     private Constants() {
 
