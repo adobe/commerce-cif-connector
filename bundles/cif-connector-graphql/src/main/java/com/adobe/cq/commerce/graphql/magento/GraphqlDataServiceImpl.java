@@ -208,8 +208,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Search parameters
         ProductsArgumentsDefinition searchArgs;
+        ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setName(SortEnum.ASC);
         if (StringUtils.isNotEmpty(text)) {
-            ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setName(SortEnum.ASC);
             if (categoryId == null) {
                 searchArgs = s -> s.search(text).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
             } else {
@@ -224,7 +224,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
             if (categoryId != null) {
                 filter.setCategoryId(new FilterEqualTypeInput().setEq(String.valueOf(categoryId)));
             }
-            searchArgs = s -> s.filter(filter).currentPage(currentPage).pageSize(pageSize);
+            searchArgs = s -> s.filter(filter).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
         }
 
         // Main query
@@ -303,8 +303,9 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         CategoryArgumentsDefinition argsDef = q -> q.id(categoryId);
 
         // Main query
+        ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setName(SortEnum.ASC);
         CategoryTreeQueryDefinition queryDef = q -> q.products(
-            o -> o.currentPage(currentPage).pageSize(pageSize),
+            o -> o.sort(sortInput).currentPage(currentPage).pageSize(pageSize),
             p -> p.totalCount().items(GraphqlQueries.CHILD_PRODUCT_QUERY));
 
         String queryString = Operations.query(query -> query.category(argsDef, queryDef)).toString();
