@@ -64,7 +64,7 @@ public class ConfigurationColumnViewItem {
     }
 
     public List<String> getQuickActionsRel() {
-        return ImmutableList.of("cq-confadmin-actions-properties-activator");
+        return ImmutableList.of("cq-confadmin-actions-properties-activator", "cq-confadmin-actions-delete-activator");
     }
 
     private boolean isConfigurationContainer(Resource res) {

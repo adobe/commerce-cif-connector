@@ -72,6 +72,15 @@
                     <data jcr:primaryType="nt:unstructured"
                           href.uritemplate="/mnt/overlay/wcm/core/content/sites/properties.html{?item*}"/>
                 </viewproperties>
+                <delete jcr:primaryType="nt:unstructured"
+                        activeSelectionCount="multiple"
+                        granite:rel="cq-confadmin-actions-delete-activator"
+                        icon="delete"
+                        sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                        target=".cq-confadmin-admin-childpages"
+                        text="Delete"
+                        variant="actionBar"
+                        action="cq.wcm.delete"/>
             </selection>
 
         </actions>
