@@ -16,7 +16,7 @@
                  targetCollection=".cq-confadmin-admin-childpages">
         <head jcr:primaryType="nt:unstructured">
             <clientlibs jcr:primaryType="nt:unstructured"
-                        categories="cq.common.wcm"
+                        categories="[cq.common.wcm, cq.sites.collectionpage]"
                         sling:resourceType="granite/ui/components/foundation/includeclientlibs"/>
         </head>
         <views jcr:primaryType="nt:unstructured">
@@ -50,9 +50,14 @@
                         granite:class="cq-confadmin-actions-createconfig-activator"
                         relScope="collection"
                         sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                        action="foundation.link"
                         target=".cq-confadmin-admin-childpages"
-                        text="Create"
-                        variant="primary"/>
+                        text="Create configuration"
+                        variant="primary">
+                    <data jcr:primaryType="nt:unstructured"
+                          href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}"/>
+                </create>
+
             </secondary>
             <selection jcr:primaryType="nt:unstructured">
                 <viewproperties jcr:primaryType="nt:unstructured"

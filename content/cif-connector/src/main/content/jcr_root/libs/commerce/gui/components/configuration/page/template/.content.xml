@@ -2,5 +2,7 @@
           xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
-          jcr:primaryType="cq:Component">
+          jcr:primaryType="cq:Template" jcr:title="CIF Configuration">
+    <jcr:content jcr:primaryType="cq:PageContent"
+                 sling:resourceType="commerce/gui/components/configuration/page"/>
 </jcr:root>
