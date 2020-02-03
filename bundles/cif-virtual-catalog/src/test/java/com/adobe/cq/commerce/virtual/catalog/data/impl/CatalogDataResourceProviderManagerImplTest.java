@@ -66,16 +66,8 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         session.getWorkspace().getNamespaceRegistry().registerNamespace("cq", "http://www.day.com/jcr/cq/1.0");
         RepositoryUtil.registerSlingNodeTypes(session);
 
-        ConfigurationResourceResolver configurationResourceResolver = mock(ConfigurationResourceResolver.class);
-        Resource mockConfigurationResource = mock(Resource.class);
-        when(mockConfigurationResource.getValueMap()).thenReturn(new ValueMapDecorator(ImmutableMap.<String, Object>of("cq:graphqlClient",
-            "my-catalog")));
-        when(configurationResourceResolver.getResource(any(Resource.class), any(String.class), any(String.class))).thenReturn(
-            mockConfigurationResource);
-
         manager = new CatalogDataResourceProviderManagerImpl();
         PrivateAccessor.setField(manager, "resolverFactory", getResourceResolverFactory());
-        PrivateAccessor.setField(manager, "configurationResourceResolver", configurationResourceResolver);
         BundleContext bundleContext = Mockito.mock(BundleContext.class);
         Mockito.when(bundleContext.registerService((Class) Mockito.any(), (ResourceProvider) Mockito.any(), Mockito.any())).thenAnswer(
             (Answer<ServiceRegistration>) invocation -> Mockito.mock(ServiceRegistration.class));
