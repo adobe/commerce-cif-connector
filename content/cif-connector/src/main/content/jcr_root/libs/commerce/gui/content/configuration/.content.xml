@@ -55,7 +55,7 @@
                         text="Create configuration"
                         variant="primary">
                     <data jcr:primaryType="nt:unstructured"
-                          href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}"/>
+                          href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}/settings/commerce"/>
                 </create>
 
             </secondary>

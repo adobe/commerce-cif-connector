@@ -16,6 +16,8 @@
                     <title jcr:primaryType="nt:unstructured"
                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                            name="./jcr:title"
+                           showOnCreate="{Boolean}false"
+                           renderReadOnly="{Boolean}true"
                            fieldLabel="Title"/>
                     <commerceprovider granite:class="cq-dialog-dropdown-showhide"
                                       granite:id="cq-commerce-products-bindproducttree-provider-select"
@@ -25,7 +27,7 @@
                                       fieldDescription="The commerce provider. If this list is empty check the configurations of the CIF Connector Configuration Service "
                                       fieldLabel="Commerce provider"
                                       name="./cq:catalogDataResourceProviderFactory"
-                                      required="{Boolean}false">
+                                      required="{Boolean}true">
                         <datasource jcr:primaryType="nt:unstructured"
                             sling:resourceType="commerce/gui/components/admin/products/bindproducttreewizard/commerceproviderdatasource"/>
                         <granite:data jcr:primaryType="nt:unstructured"
@@ -33,18 +35,19 @@
                     </commerceprovider>
                     <magentoRootCategoryId jcr:primaryType="nt:unstructured"
                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                           name="magentoRootCategoryId"
+                                           name="./magentoRootCategoryId"
                                            fieldLabel="Root category id"
                                            required="{Boolean}true"/>
                     <cqMagentoStore jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                     fieldLabel="Magento Store View"
                                     name="./magentoStore"
-                                    renderReadOnly="{Boolean}false"/>
+                                    required="{Boolean}true"/>
                     <catalogIdentifier jcr:primaryType="nt:unstructured"
                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                        fieldLabel="Catalog identifier"
-                                       name="./cq:catalogIdentifier"/>
+                                       name="./cq:catalogIdentifier"
+                                    required="{Boolean}true"/>
                     <graphqlclient emptyOption="{Boolean}false"
                                    granite:id="cq-commerce-graphql-client"
                                    jcr:primaryType="nt:unstructured"
@@ -52,7 +55,7 @@
                                    fieldDescription="The GraphQL client instance. If this list is empty check the configurations of the CIF GraphQL Client Configuration service. "
                                    fieldLabel="GraphQL Client"
                                    name="./cq:graphqlClient"
-                                   required="{Boolean}false"
+                                   required="{Boolean}true"
                                    cq:showOnCreate="{Boolean}true">
                         <datasource jcr:primaryType="nt:unstructured"
                                     sling:resourceType="core/cif/components/page/v1/datasource/graphqlclients"/>
