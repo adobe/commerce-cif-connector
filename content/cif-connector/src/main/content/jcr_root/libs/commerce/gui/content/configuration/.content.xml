@@ -16,7 +16,7 @@
                  targetCollection=".cq-confadmin-admin-childpages">
         <head jcr:primaryType="nt:unstructured">
             <clientlibs jcr:primaryType="nt:unstructured"
-                        categories="[cq.common.wcm, cq.sites.collectionpage]"
+                        categories="[cq.common.wcm, cq.sites.collectionpage,granite.conf.ui.browser]"
                         sling:resourceType="granite/ui/components/foundation/includeclientlibs"/>
         </head>
         <views jcr:primaryType="nt:unstructured">
@@ -47,15 +47,30 @@
             <primary jcr:primaryType="nt:unstructured"/>
             <secondary jcr:primaryType="nt:unstructured">
                 <create jcr:primaryType="nt:unstructured"
-                        granite:class="cq-confadmin-actions-createconfig-activator"
-                        relScope="collection"
-                        sling:resourceType="granite/ui/components/coral/foundation/collection/action"
-                        action="foundation.link"
-                        target=".cq-confadmin-admin-childpages"
-                        text="Create configuration"
+                        sling:resourceType="granite/ui/components/coral/foundation/pulldown"
+                        text="Create"
                         variant="primary">
-                    <data jcr:primaryType="nt:unstructured"
-                          href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}/settings/commerce"/>
+                    <items jcr:primaryType="nt:unstructured">
+                        <configuration jcr:primaryType="nt:unstructured"
+                                granite:class="cq-confadmin-actions-createconfig-activator"
+                                relScope="collection"
+                                sling:resourceType="granite/ui/components/coral/foundation/collection/actionlink"
+                                action="foundation.link"
+                                target=".cq-confadmin-admin-childpages"
+                                text="Configuration"
+                                variant="primary">
+                            <data jcr:primaryType="nt:unstructured"
+                                  href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}/settings/commerce"/>
+                        </configuration>
+                        <folder jcr:primaryType="nt:unstructured"
+                                granite:class="cq-confadmin-actions-createconfig-activator"
+                                relScope="collection"
+                                sling:resourceType="granite/ui/components/coral/foundation/collection/actionlink"
+                                action="create.conf.action"
+                                target=".cq-confadmin-admin-childpages"
+                                text="Folder"
+                                variant="primary"/>
+                    </items>
                 </create>
 
             </secondary>
@@ -84,5 +99,23 @@
             </selection>
 
         </actions>
+<!--        <footer jcr:primaryType="nt:unstructured"-->
+<!--            sling:resourceType="granite/ui/components/coral/foundation/container">-->
+<!--            <items jcr:primaryType="nt:unstructured">-->
+<!--                <configParent jcr:primaryType="nt:unstructured"-->
+<!--                              granite:id="view-configs-suffix"-->
+<!--                              sling:resourceType="granite/ui/components/coral/foundation/form/hidden"-->
+<!--                              value="${requestPathInfo.suffix}"/>-->
+<!--                <createConfigurationDialog jcr:primaryType="nt:unstructured"-->
+<!--                                           granite:id="create-config-dialog"-->
+<!--                                           jcr:title="Create Configuration"-->
+<!--                                           -->
+<!--            </items>-->
+<!--        </footer>-->
+        <footer jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/include"
+                path="/libs/granite/configurations/content/view/footer">
+
+        </footer>
     </jcr:content>
 </jcr:root>
