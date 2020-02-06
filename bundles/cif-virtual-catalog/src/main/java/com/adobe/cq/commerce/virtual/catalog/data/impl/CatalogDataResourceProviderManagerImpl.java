@@ -77,6 +77,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     private static final String OBSERVATION_PATHS_DEFAULT = "/var/commerce/products";
 
+    private static final String CONFIGURATION_NAME = "cloudconfigs/commerce";
+
     private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
         + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'" + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
         + "' IS NOT NULL" + " OR [sling:Folder].'cq:conf' IS NOT NULL)";
@@ -200,7 +202,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         if (StringUtils.isNotEmpty(cqConf)) {
             log.debug("Found cq:conf property pointing at {}", cqConf);
             ConfigurationBuilder cfgBuilder = root.adaptTo(ConfigurationBuilder.class);
-            ValueMap properties = cfgBuilder.name("commerce/default").asValueMap();
+            ValueMap properties = cfgBuilder.name(CONFIGURATION_NAME).asValueMap();
             providerId = properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, String.class);
             factory = providerFactories.get(providerId);
         } else {
