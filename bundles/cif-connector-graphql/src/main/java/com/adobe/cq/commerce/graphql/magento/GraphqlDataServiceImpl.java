@@ -44,11 +44,12 @@ import com.adobe.cq.commerce.graphql.resource.Constants;
 import com.adobe.cq.commerce.magento.graphql.CategoryProducts;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.CategoryTreeQueryDefinition;
-import com.adobe.cq.commerce.magento.graphql.FilterTypeInput;
+import com.adobe.cq.commerce.magento.graphql.FilterEqualTypeInput;
+import com.adobe.cq.commerce.magento.graphql.FilterRangeTypeInput;
 import com.adobe.cq.commerce.magento.graphql.Operations;
-import com.adobe.cq.commerce.magento.graphql.ProductFilterInput;
+import com.adobe.cq.commerce.magento.graphql.ProductAttributeFilterInput;
+import com.adobe.cq.commerce.magento.graphql.ProductAttributeSortInput;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
-import com.adobe.cq.commerce.magento.graphql.ProductSortInput;
 import com.adobe.cq.commerce.magento.graphql.Products;
 import com.adobe.cq.commerce.magento.graphql.ProductsQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.Query;
@@ -170,8 +171,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.debug("Trying to fetch product " + sku);
 
         // Search parameters
-        FilterTypeInput input = new FilterTypeInput().setEq(sku);
-        ProductFilterInput filter = new ProductFilterInput().setSku(input);
+        FilterEqualTypeInput input = new FilterEqualTypeInput().setEq(sku);
+        ProductAttributeFilterInput filter = new ProductAttributeFilterInput().setSku(input);
         ProductsArgumentsDefinition searchArgs = s -> s.filter(filter);
 
         // Main query
@@ -207,23 +208,23 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Search parameters
         ProductsArgumentsDefinition searchArgs;
+        ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setName(SortEnum.ASC);
         if (StringUtils.isNotEmpty(text)) {
-            ProductSortInput sortInput = new ProductSortInput().setSku(SortEnum.ASC);
             if (categoryId == null) {
                 searchArgs = s -> s.search(text).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
             } else {
-                ProductFilterInput filter = new ProductFilterInput();
-                filter.setCategoryId(new FilterTypeInput().setEq(String.valueOf(categoryId)));
+                ProductAttributeFilterInput filter = new ProductAttributeFilterInput();
+                filter.setCategoryId(new FilterEqualTypeInput().setEq(String.valueOf(categoryId)));
                 searchArgs = s -> s.search(text).filter(filter).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
             }
         } else {
-            // If the search is empty, we perform a "dummy" search (sku != null) that matches all products
-            FilterTypeInput input = new FilterTypeInput().setNotnull("");
-            ProductFilterInput filter = new ProductFilterInput().setSku(input);
+            // If the search is empty, we perform a "dummy" search that matches all products
+            FilterRangeTypeInput input = new FilterRangeTypeInput().setFrom("");
+            ProductAttributeFilterInput filter = new ProductAttributeFilterInput().setPrice(input);
             if (categoryId != null) {
-                filter.setCategoryId(new FilterTypeInput().setEq(String.valueOf(categoryId)));
+                filter.setCategoryId(new FilterEqualTypeInput().setEq(String.valueOf(categoryId)));
             }
-            searchArgs = s -> s.filter(filter).currentPage(currentPage).pageSize(pageSize);
+            searchArgs = s -> s.filter(filter).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
         }
 
         // Main query
@@ -302,8 +303,9 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         CategoryArgumentsDefinition argsDef = q -> q.id(categoryId);
 
         // Main query
+        ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setName(SortEnum.ASC);
         CategoryTreeQueryDefinition queryDef = q -> q.products(
-            o -> o.currentPage(currentPage).pageSize(pageSize),
+            o -> o.sort(sortInput).currentPage(currentPage).pageSize(pageSize),
             p -> p.totalCount().items(GraphqlQueries.CHILD_PRODUCT_QUERY));
 
         String queryString = Operations.query(query -> query.category(argsDef, queryDef)).toString();

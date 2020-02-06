@@ -1,1 +1,1 @@
-{category(id:19){products(currentPage:1,pageSize:10){total_count,items{__typename,id,sku,name,updated_at,thumbnail{url}}}}}
+{category(id:19){products(sort:{name:ASC},currentPage:1,pageSize:10){total_count,items{__typename,id,sku,name,updated_at,thumbnail{url}}}}}
