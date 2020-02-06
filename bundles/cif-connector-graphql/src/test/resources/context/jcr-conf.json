@@ -1,18 +1,14 @@
 {
-    "settings": {
+    "cloudconfigs": {
         "jcr:primaryType": "sling:Folder",
         "commerce": {
             "jcr:primaryType": "cq:Page",
-            "jcr:mixinTypes": [
-                "rep:AccessControllable"
-            ],
-            "jcr:createdBy": "admin",
-            "jcr:created": "Thu Jan 16 2020 12:20:34 GMT+0200",
-            "default": {
-                "jcr:primaryType": "nt:unstructured",
-                "cq:graphqlClient": "my-catalog",
-                "magentoStore": "my-store"
-            }
+            "magentoRootCategoryId": "4",
+            "cq:graphqlClient": "default",
+            "cq:catalogIdentifier": "my-catalog",
+            "magentoStore": "4",
+            "jcr:created": "Thu Feb 06 2020 14:21:13 GMT+0200",
+            "cq:catalogDataResourceProviderFactory": "magento-graphql"
         }
     }
 }

@@ -36,7 +36,7 @@ public class GraphqlResourceProviderFactoryTest {
     @Rule
     public final AemContext context = GraphqlAemContext.createContext(ImmutableMap.<String, String>of(
         "/content", "/context/graphql-client-adapter-factory-context.json",
-        "/conf/test-config", "/context/jcr-conf.json"));
+        "/conf/test-config/settings", "/context/jcr-conf.json"));
 
     private GraphqlResourceProviderFactory<?> factory;
     private GraphqlDataServiceImpl client;
@@ -55,7 +55,16 @@ public class GraphqlResourceProviderFactoryTest {
         factory.bindGraphqlDataService(client, null);
     }
 
+    @Test
     public void testGetClientForPageWithContextConfiguration() {
+        /*
+           The content for this test looks slightly different than it does in AEM:
+           In AEM there the tree structure is /conf/<config>/settings/cloudconfigs/commerce/jcr:content
+           In our test content it's /conf/<config>/settings/cloudconfigs/commerce
+           The reason is that AEM has a specific CaConfig API implementation that reads the configuration
+           data from the jcr:content node of the configuration page, something which we cannot reproduce in
+            a unit test scenario.
+         */
         Resource root = context.resourceResolver().getResource("/content/pageF");
         ResourceProvider<?> provider = factory.createResourceProvider(root);
 

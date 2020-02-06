@@ -58,7 +58,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlResourceProviderFactory.class);
 
-    private static final String CONFIGURATION_NAME = "commerce/default";
+    private static final String CONFIGURATION_NAME = "cloudconfigs/commerce";
 
     protected Map<String, GraphqlDataService> clients = new ConcurrentHashMap<>();
 
