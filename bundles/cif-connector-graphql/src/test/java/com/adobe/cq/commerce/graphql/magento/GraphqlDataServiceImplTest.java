@@ -34,6 +34,7 @@ import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
+import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl.ArrayKey;
 import com.adobe.cq.commerce.graphql.resource.Constants;
 import com.adobe.cq.commerce.graphql.testing.Utils;
 import com.adobe.cq.commerce.graphql.testing.Utils.GetQueryMatcher;
@@ -48,9 +49,11 @@ import com.adobe.cq.commerce.magento.graphql.gson.Error.Location;
 import com.google.gson.Gson;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
 
 public class GraphqlDataServiceImplTest {
 
@@ -148,8 +151,95 @@ public class GraphqlDataServiceImplTest {
         Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_OK);
         assertNull(dataService.getProductBySku(SKU, null));
 
-        // This would fail if the product was not propely cached because the mocked HTTP response was already consumed
+        // This would fail if the product was not properly cached because the mocked HTTP response was already consumed
         assertNull(dataService.getProductBySku(SKU, null));
+    }
+
+    @Test
+    public void testCachingConsidersStoreView() throws Exception {
+        dataService = Mockito.spy(dataService);
+
+        // The caching is done on a store basis, so we expect one call to getProductBySkuImpl() by store view
+
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getProductBySku(SKU, "store1"));
+
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getProductBySku(SKU, "store2"));
+        assertNotNull(dataService.getProductBySku(SKU, "store2")); // Data comes from cache
+
+        Mockito.verify(dataService).getProductBySkuImpl(SKU, "store1");
+        Mockito.verify(dataService).getProductBySkuImpl(SKU, "store2");
+
+        // The caching is done on a store basis, so we expect one call to getCategoryProductsImpl() by store view
+
+        Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store1"));
+
+        Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store2"));
+        assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store2")); // Data comes from cache
+
+        Mockito.verify(dataService).getCategoryProductsImpl(MEN_COATS_CATEGORY_ID, 1, 10, "store1");
+        Mockito.verify(dataService).getCategoryProductsImpl(MEN_COATS_CATEGORY_ID, 1, 10, "store2");
+    }
+
+    @Test
+    public void testDisabledCaches() throws Exception {
+        MockGraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
+        config.setProductCachingEnabled(false);
+
+        dataService = new GraphqlDataServiceImpl();
+        dataService.activate(config);
+        dataService.bindGraphqlClient(graphqlClient, null);
+
+        dataService = Mockito.spy(dataService);
+
+        // The caching is disabled so we expect 2 calls to getProductBySkuImpl()
+
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getProductBySku(SKU, "store1"));
+
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getProductBySku(SKU, "store1"));
+
+        Mockito.verify(dataService, times(2)).getProductBySkuImpl(SKU, "store1");
+
+        // The caching is disabled so we expect 2 calls to getCategoryProductsImpl()
+
+        Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store1"));
+
+        Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK);
+        assertNotNull(dataService.getCategoryProducts(MEN_COATS_CATEGORY_ID, 1, 10, "store1"));
+
+        Mockito.verify(dataService, times(2)).getCategoryProductsImpl(MEN_COATS_CATEGORY_ID, 1, 10, "store1");
+    }
+
+    @SuppressWarnings("unlikely-arg-type")
+    @Test
+    public void testCacheKeys() {
+        ArrayKey key1 = new ArrayKey("test", new Integer(1), null);
+        ArrayKey key2 = new ArrayKey(new String("test"), Integer.valueOf("1"), null);
+        ArrayKey key3 = new ArrayKey("test", new Integer(1));
+        ArrayKey key4 = new ArrayKey("test", "1", null);
+
+        assertTrue(key1.equals(key1));
+        assertTrue(key1.hashCode() == key1.hashCode());
+
+        assertTrue(key1.equals(key2));
+        assertTrue(key1.hashCode() == key2.hashCode());
+
+        assertFalse(key1.equals(key3));
+        assertFalse(key1.hashCode() == key3.hashCode());
+
+        assertFalse(key1.equals(key4));
+        assertFalse(key1.hashCode() == key4.hashCode());
+
+        assertFalse(key1.equals(null));
+
+        assertFalse(key1.equals("test1null"));
+        assertFalse(key1.hashCode() == "test1null".hashCode());
     }
 
     @Test
@@ -220,7 +310,7 @@ public class GraphqlDataServiceImplTest {
         assertEquals(ROOT_CATEGORY_ID, categoryTree.getId());
         assertEquals(ROOT_CATEGORY_NAME, categoryTree.getName());
 
-        assertEquals(4, categoryTree.getChildren().size());
+        assertEquals(5, categoryTree.getChildren().size());
         assertEquals("21", categoryTree.getChildrenCount());
     }
 

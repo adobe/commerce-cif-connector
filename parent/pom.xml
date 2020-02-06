@@ -18,7 +18,7 @@
     <groupId>com.adobe.commerce.cif</groupId>
     <artifactId>cif-connector-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.8.1-SNAPSHOT</version>
 
     <name>CIF Connector - Parent project</name>
     <description>Parent project for the CIF connector</description>
@@ -47,6 +47,8 @@
         <aem.contextPath />
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jacoco.data.file>${project.build.directory}/jacoco.exec</jacoco.data.file>
+        <graphql.client.version>1.2.0</graphql.client.version>
+        <magento.graphql.version>5.0.0-magento234</magento.graphql.version>
     </properties>
 
     <build>
@@ -290,7 +292,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.18.1</version>
+                    <version>3.0.0-M4</version>
                     <configuration>
                         <useSystemClassLoader>false</useSystemClassLoader> <!-- Required for CircleCI -->
                         <systemPropertyVariables>

@@ -16,6 +16,14 @@
           "children": []
         },
         {
+          "id": 42,
+          "name": "Empty",
+          "url_path": "empty",
+          "product_count": 0,
+          "children_count": "0",
+          "children": []
+        },
+        {
           "id": 5,
           "name": "Equipment",
           "url_path": "equipment",

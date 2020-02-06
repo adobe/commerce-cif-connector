@@ -55,7 +55,7 @@
                                             sling:resourceType="granite/ui/components/foundation/form/textfield"
                                             cq-msm-lockable="cq:catalogIdentifier"
                                             disabled="{Boolean}true"
-                                            fieldLabel="Project"
+                                            fieldLabel="Catalog identifier"
                                             name="./cq:catalogIdentifier"
                                             renderReadOnly="{Boolean}true"
                                             required="{Boolean}false"/>

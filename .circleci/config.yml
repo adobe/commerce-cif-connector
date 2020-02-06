@@ -96,7 +96,7 @@ jobs:
 
   integration-test-652:
     docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk11
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
         <<: *docker_auth
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.2
         <<: *docker_auth
@@ -107,7 +107,7 @@ jobs:
 
   integration-test-646:
     docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.3-jdk8
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk8
         <<: *docker_auth
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.4.6
         <<: *docker_auth
@@ -130,7 +130,7 @@ jobs:
           # The "skip-it" property ensures that we do not release the integration tests sub-modules
           command: |
             echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            mvn -B -s /home/circleci/project/.circleci/settings.xml clean deploy -Prelease-sign-artifacts -Dskip-it
+            mvn -B -s .circleci/settings.xml clean deploy -Prelease-sign-artifacts -Dskip-it
             rm -rf /home/circleci/.gnupg
 
 

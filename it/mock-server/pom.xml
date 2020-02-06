@@ -17,14 +17,14 @@
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
-        <version>0.7.2-SNAPSHOT</version>
+        <version>0.8.1-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.adobe.commerce.cif.testing</groupId>
     <artifactId>mock-server</artifactId>
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.8.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>CIF Testing - OSGi Testing Mock Server</name>

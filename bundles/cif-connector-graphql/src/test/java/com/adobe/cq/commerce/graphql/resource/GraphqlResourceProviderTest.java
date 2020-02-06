@@ -275,6 +275,7 @@ public class GraphqlResourceProviderTest {
     public void testCategoryProductChildren() throws IOException {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category(id:4)");
         Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK, "{category(id:19)");
+        Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{products(filter:{sku:{eq:\"meskwielt\"}");
 
         Resource coats = provider.getResource(resolveContext, CATALOG_ROOT_PATH + "/men/coats", null, null);
         Iterator<Resource> it = provider.listChildren(resolveContext, coats);
@@ -282,9 +283,11 @@ public class GraphqlResourceProviderTest {
         while (it.hasNext()) {
             final Resource child = it.next();
             assertTrue(child instanceof ProductResource);
-            // deep read child/sku
-            String childSku = child.getValueMap().get("sku", String.class);
-            assertEquals(childSku, coats.getValueMap().get(child.getName() + "/sku", String.class));
+            // test deep reading child/sku for a sample child product resource
+            if ("meskwielt".equals(child.getName())) {
+                String childSku = child.getValueMap().get("sku", String.class);
+                assertEquals(childSku, coats.getValueMap().get(child.getName() + "/sku", String.class));
+            }
         }
     }
 
@@ -315,6 +318,7 @@ public class GraphqlResourceProviderTest {
         assertTrue(resource instanceof ProductResource);
         assertTrue(MagentoProduct.isAProductOrVariant(resource));
         assertEquals(SKU, resource.getValueMap().get("sku", String.class));
+        assertTrue(resource.getValueMap().get("hasChildren", Boolean.class));
         Date lastModified = resource.getValueMap().get(JcrConstants.JCR_LASTMODIFIED, Date.class);
         assertTrue(lastModified != null);
 
@@ -381,6 +385,7 @@ public class GraphqlResourceProviderTest {
         assertEquals(product, product.getBaseProduct());
         assertEquals(product, product.getPIMProduct());
         assertEquals("24-MB01", product.getSKU());
+        assertFalse(resource.getValueMap().get("hasChildren", Boolean.class));
         assertEquals("Joust Duffle Bag", product.getTitle());
         assertEquals("The sporty Joust Duffle Bag can't be beat", product.getDescription());
 
@@ -420,6 +425,21 @@ public class GraphqlResourceProviderTest {
         assertFalse(it.hasNext());
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testOtherProductResource() throws IOException, CommerceException {
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-other-product.json", httpClient, HttpStatus.SC_OK, "{product");
+
+        String productPath = CATALOG_ROOT_PATH + "/men/coats/24-MB01";
+
+        Resource resource = provider.getResource(resolveContext, productPath, null, null);
+        assertTrue(resource instanceof ProductResource);
+        assertTrue(MagentoProduct.isAProductOrVariant(resource));
+        assertEquals("24-MB01", resource.getValueMap().get("sku", String.class));
+        assertNull(resource.getValueMap().get("hasChildren", Boolean.class));
+    }
+
     @Test
     public void testMasterVariantResource() throws IOException, CommerceException {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
@@ -427,6 +447,7 @@ public class GraphqlResourceProviderTest {
 
         Resource resource = provider.getResource(resolveContext, MASTER_VARIANT_PATH, null, null);
         assertTrue(resource instanceof ProductResource);
+        assertFalse(resource.getValueMap().get("hasChildren", Boolean.class));
         assertEquals(MASTER_VARIANT_SKU, resource.getValueMap().get("sku", String.class));
 
         Product product = resource.adaptTo(Product.class);
