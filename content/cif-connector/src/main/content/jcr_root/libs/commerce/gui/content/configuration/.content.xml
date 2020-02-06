@@ -40,9 +40,13 @@
                             limit="${empty requestPathInfo.selectors[1] ? 41 : requestPathInfo.selectors[1] + 1}"
                             offset="${requestPathInfo.selectors[0]}"
                             path="${requestPathInfo.suffix}"
-                            sling:resourceType="commerce/gui/components/configuration/datasource"/>
+                            sling:resourceType="cq/cloudconfig/components/admin/datasources/configurations"/>
             </column>
         </views>
+        <breadcrumbs jcr:primaryType="nt:unstructured"
+                     rootPath="/conf"
+                     rootTitle="CIF Configurations"
+                     sling:resourceType="cq/cloudconfig/components/admin/datasources/breadcrumbs"/>
         <actions jcr:primaryType="nt:unstructured">
             <primary jcr:primaryType="nt:unstructured"/>
             <secondary jcr:primaryType="nt:unstructured">
@@ -60,7 +64,7 @@
                                 text="Configuration"
                                 variant="primary">
                             <data jcr:primaryType="nt:unstructured"
-                                  href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}/settings/commerce"/>
+                                  href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}"/>
                         </configuration>
                         <folder jcr:primaryType="nt:unstructured"
                                 granite:class="cq-confadmin-actions-createconfig-activator"
