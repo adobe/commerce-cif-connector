@@ -24,8 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.commons.testing.jcr.RepositoryUtil;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.After;
@@ -38,11 +36,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 
-import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderFactory;
 import com.adobe.granite.test.tooling.RepositoryBaseTest;
 import com.day.cq.commons.jcr.JcrUtil;
-import com.google.common.collect.ImmutableMap;
 import junitx.util.PrivateAccessor;
 
 import static org.mockito.Matchers.any;
