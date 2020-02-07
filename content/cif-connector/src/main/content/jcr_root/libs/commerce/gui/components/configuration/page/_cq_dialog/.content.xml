@@ -14,11 +14,9 @@
                     sling:resourceType="granite/ui/components/coral/foundation/container">
                 <items jcr:primaryType="nt:unstructured">
                     <title jcr:primaryType="nt:unstructured"
-                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                           sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                            name="./jcr:title"
-                           showOnCreate="{Boolean}false"
-                           renderReadOnly="{Boolean}true"
-                           fieldLabel="Title"/>
+                           value="Commerce"/>
                     <commerceprovider granite:class="cq-dialog-dropdown-showhide"
                                       granite:id="cq-commerce-products-bindproducttree-provider-select"
                                       jcr:primaryType="nt:unstructured"

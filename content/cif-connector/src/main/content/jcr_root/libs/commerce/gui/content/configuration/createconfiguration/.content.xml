@@ -51,12 +51,16 @@
                         <name jcr:primaryType="nt:unstructured"
                               sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                               name="./jcr:title"
-                              value="default"/>
+                              value="Commerce"/>
+                        <configPropertyInherit jcr:primaryType="nt:unstructured"
+                                               sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                               name="./sling:configPropertyInherit"
+                                               value="{Boolean}true"/>
                         <parentpath
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                                 name="parentPath"
-                                value="${empty requestPathInfo.suffix ? &quot;/conf&quot; : requestPathInfo.suffix}"/>
+                                value="${empty requestPathInfo.suffix ? &quot;/conf&quot; : requestPathInfo.suffix}/settings/cloudconfigs"/>
                         <template jcr:primaryType="nt:unstructured"
                                   sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                                   name="template"

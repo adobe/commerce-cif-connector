@@ -19,6 +19,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
@@ -35,7 +36,8 @@ import com.google.common.collect.ImmutableList;
  */
 @Model(
     adaptables = SlingHttpServletRequest.class,
-    adapters = ConfigurationColumnViewItem.class)
+    adapters = ConfigurationColumnViewItem.class,
+    resourceType = "commerce/gui/components/configuration/columnviewitem")
 public class ConfigurationColumnViewItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationColumnViewItem.class);
@@ -47,13 +49,14 @@ public class ConfigurationColumnViewItem {
     private Resource resource;
 
     @PostConstruct
-    private void initModel() {
+    public void initModel() {
         LOG.debug("Initializing column view item for resource {}", resource.getPath());
     }
 
     public String getTitle() {
         LOG.debug("Inspecting {}", resource.getPath());
-        ValueMap properties = resource.getValueMap();
+        Resource jcrContent = resource.getChild(JcrConstants.JCR_CONTENT);
+        ValueMap properties = jcrContent != null ? jcrContent.getValueMap() : resource.getValueMap();
         return properties.get("jcr:title", resource.getName());
     }
 
