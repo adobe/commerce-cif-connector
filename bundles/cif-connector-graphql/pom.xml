@@ -64,7 +64,7 @@
                             com.adobe.cq.commerce.gui.components.configuration
                         </Export-Package>
                         <Import-Package>
-                            !javax.annotation,
+                            javax.annotation;version=0.0.0,
                             *
                         </Import-Package>
                         <!-- Enable processing of OSGI DS component annotations -->
