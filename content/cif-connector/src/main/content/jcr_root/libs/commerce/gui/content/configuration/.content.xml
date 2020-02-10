@@ -29,7 +29,7 @@
                     loadAncestors="{Boolean}true"
                     modeGroup="cq-confadmin-admin-childpages"
                     path="${requestPathInfo.suffix}"
-                    previewSrc="/mnt/overlay/wcm/core/content/sites/pagecolumnpreview.html{+id}"
+                    previewSrc="/mnt/overlay/commerce/gui/content/configuration/columnpreview.html{+id}"
                     rootPath="/conf"
                     size="${empty requestPathInfo.selectors[1] ? 40 : requestPathInfo.selectors[1]}"
                     sling:resourceType="granite/ui/components/coral/foundation/columnview"
