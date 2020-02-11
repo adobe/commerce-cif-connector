@@ -25,19 +25,11 @@ The main parts of the project are:
 
 You can easily install all the modules of the connector and also its required dependencies with the [all](all) content package. If you want to use the latest **released** version, just download it with the Maven Central link located at the top of this README and install it in your running AEM instance. You can also install the latest `all` content package with `mvn clean install -PautoInstallAll`.
 
-If you want to build all the modules yourself and get all the latest (yet) **unreleased** changes, just build and install all the modules with the following command at the root of the repository (see "Building and installing from source" below for more details):
-
-```
-mvn clean install -PautoInstall
-```
-This installs everything by default to `localhost:4502` without any context path. You can also configure the install location with the following maven properties:
-* `aem.host`: the name of the AEM instance
-* `aem.port`: the port number of the AEM instance
-* `aem.contextPath`: the context path of your AEM instance (if not `/`)
+If you want to build all the modules yourself and get all the latest (yet) **unreleased** changes, check the [building and installing from source](#building-and-installing-from-source) section below.
 
 ### Inclusion as a Maven dependency
 
-While the Connector can be installed via source as mentioned above, you may want to just include it as a dependency in your own Maven project.  If doing so, and using the Filevault Package Maven Plugin, make sure to add a configuration to allow for indices as this project makes use of them:
+While the Connector can be installed via source as mentioned above, you may want to just include it as a dependency in your own Maven project. If doing so, and using the Filevault Package Maven Plugin, make sure to add a configuration to allow for indices as this project makes use of them:
 
 allowIndexDefinitions=true
 
