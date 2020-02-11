@@ -74,18 +74,23 @@ import static org.apache.sling.spi.resource.provider.ResourceProvider.PROPERTY_R
 public class CatalogDataResourceProviderManagerImpl implements CatalogDataResourceProviderManager, EventListener {
 
     private static final String VIRTUAL_PRODUCTS_SERVICE = "virtual-products-service";
+    // private static final String VIRTUAL_PRODUCTS_SERVICE = "cofiguration-reader-service";
 
     private static final String OBSERVATION_PATHS_DEFAULT = "/var/commerce/products";
+    // private static final String OBSERVATION_PATHS_DEFAULT = "/conf";
 
     private static final String CONFIGURATION_NAME = "cloudconfigs/commerce";
 
     private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
-        + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'" + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
-        + "' IS NOT NULL" + " OR [sling:Folder].'cq:conf' IS NOT NULL)";
+        + OBSERVATION_PATHS_DEFAULT + "') AND [sling:Folder].'cq:conf'] IS NOT NULL";
+
+    // private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
+    // + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'" + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
+    // + "' IS NOT NULL" + " OR [sling:Folder].'cq:conf' IS NOT NULL)";
 
     private String[] findAllQueries = { FINDALLQUERIES_DEFAULT };
 
-    private String[] obervationPaths = { OBSERVATION_PATHS_DEFAULT };
+    private String[] obervationPaths = { OBSERVATION_PATHS_DEFAULT, "/conf" };
 
     private EventListener[] observationEventListeners;
 
@@ -193,6 +198,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     private boolean registerDataRoot(Resource root) {
         log.debug("Registering data root at {}", root.getPath());
         log.debug("This catalog manager has {} factories registered...", providerFactories.size());
+
         String rootPath = root.getPath();
         String providerId = getJcrStringProperty(rootPath, CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID);
         String cqConf = getJcrStringProperty(rootPath, "cq:conf");
@@ -355,6 +361,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     public void onEvent(EventIterator events) {
         try {
             // collect all actions to be performed for this event
+
             final Map<String, Boolean> actions = new HashMap<>();
             boolean nodeAdded = false;
             boolean nodeRemoved = false;
@@ -363,11 +370,12 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 final String path = event.getPath();
                 final int eventType = event.getType();
                 if (eventType == Event.NODE_ADDED) {
+                    log.debug("Caught NODE_ADDED event in {}", path);
                     nodeAdded = true;
                     Session session = resolver.adaptTo(Session.class);
                     final Node node = session.getNode(path);
                     if (node != null && node.isNodeType("sling:Folder") && node.hasProperty(
-                        CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID)) {
+                        CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID) || node.hasProperty("cq:conf")) {
                         actions.put(path, true);
                     }
                 } else if (eventType == Event.NODE_REMOVED && providers.containsKey(path)) {
@@ -375,6 +383,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                     actions.put(path, false);
                 } else if ((eventType == Event.PROPERTY_CHANGED || eventType == Event.PROPERTY_ADDED || eventType == Event.PROPERTY_REMOVED)
                     && isRelevantPath(path)) {
+                    // narrow down the properties to be watched.
+
                     // force re-registering
                     nodeAdded = true;
                     nodeRemoved = true;
@@ -406,9 +416,14 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     }
 
     private boolean isRelevantPath(String path) {
+        if (path.startsWith("/conf")) {
+            return true;
+        }
+
         return findDataRoots(resolver).stream()
             .map(Resource::getPath)
             .anyMatch(path::startsWith);
+
     }
 
     @Reference(
