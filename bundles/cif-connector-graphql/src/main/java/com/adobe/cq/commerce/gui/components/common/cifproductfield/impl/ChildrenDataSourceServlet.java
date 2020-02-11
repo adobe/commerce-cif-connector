@@ -16,26 +16,23 @@ package com.adobe.cq.commerce.gui.components.common.cifproductfield.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.FalsePredicate;
 import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.collections.iterators.FilterIterator;
+import org.apache.commons.collections.iterators.ObjectGraphIterator;
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.AbstractResourceVisitor;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceWrapper;
 import org.apache.sling.api.resource.ValueMap;
@@ -156,32 +153,25 @@ public class ChildrenDataSourceServlet extends SlingSafeMethodsServlet {
             final Predicate predicate = PredicateUtils.allPredicate(predicates);
             final Transformer transformer = createTransformer(itemRT, predicate);
 
-            final List<Resource> list;
-            if (Filter.product.name().equals(filter)) {
-                class ProductFinder extends AbstractResourceVisitor {
-                    private List<Resource> products = new ArrayList<>();
-
-                    @Override
-                    protected void visit(Resource res) {
-                        if (Filter.product.evaluate(res)) {
-                            products.add(res);
-                        }
-                    }
-                }
-                ProductFinder productFinder = new ProductFinder();
-                productFinder.accept(parent);
-                list = IteratorUtils.toList(new FilterIterator(productFinder.products.iterator(), predicate));
-            } else {
-                list = IteratorUtils.toList(new FilterIterator(parent.listChildren(), predicate));
-            }
-
             @SuppressWarnings("unchecked")
             DataSource datasource = new AbstractDataSource() {
-
                 public Iterator<Resource> iterator() {
-                    list.sort(Comparator.comparing(Resource::getName));
-
-                    return new TransformIterator(new PagingIterator<>(list.iterator(), offset, limit), transformer);
+                    final Iterator<Resource> iterator;
+                    if (Filter.product.name().equals(filter)) {
+                        Transformer transformer = resource -> {
+                            if (Filter.product.evaluate(resource)) {
+                                return resource;
+                            } else {
+                                return ((Resource) resource).listChildren();
+                            }
+                        };
+                        iterator = new ObjectGraphIterator(parent, transformer);
+                    } else {
+                        iterator = parent.listChildren();
+                    }
+                    FilterIterator filterIterator = new FilterIterator(iterator, predicate);
+                    PagingIterator<Resource> pagingIterator = new PagingIterator<>(filterIterator, offset, limit);
+                    return new TransformIterator(pagingIterator, transformer);
                 }
             };
 
