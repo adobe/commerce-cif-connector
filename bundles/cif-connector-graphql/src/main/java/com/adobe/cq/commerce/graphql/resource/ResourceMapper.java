@@ -131,9 +131,9 @@ class ResourceMapper<T> {
                 initDone = true;
             }
         } catch (Exception x) {
-            LOGGER.warn("Failed to refresh category cache for root category {} and store view {} : {}", rootCategoryId, storeView,
-                x.getLocalizedMessage());
-            LOGGER.warn("", x);
+            String message = String.format("Failed to refresh category cache for root category %1$s and store view %2$s : %3$s",
+                rootCategoryId, storeView, x.getLocalizedMessage());
+            throw new RuntimeException(message, x);
         } finally {
             if (initLock.isHeldByCurrentThread()) {
                 initLock.unlock();
