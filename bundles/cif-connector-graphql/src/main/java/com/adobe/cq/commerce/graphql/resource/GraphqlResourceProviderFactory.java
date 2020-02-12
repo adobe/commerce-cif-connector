@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.ConfigurationBuilder;
-import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.service.component.annotations.Component;
@@ -61,9 +60,6 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
     private static final String CONFIGURATION_NAME = "cloudconfigs/commerce";
 
     protected Map<String, GraphqlDataService> clients = new ConcurrentHashMap<>();
-
-    @Reference
-    ConfigurationResourceResolver configurationResourceResolver;
 
     @Reference(
         service = GraphqlDataService.class,
