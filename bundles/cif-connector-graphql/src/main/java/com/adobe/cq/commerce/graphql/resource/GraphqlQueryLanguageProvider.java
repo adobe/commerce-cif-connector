@@ -120,18 +120,19 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
         LOGGER.debug("Returning {} products", products.size());
 
         List<Resource> resources = new ArrayList<>();
+        String root = resourceMapper.getRoot() + "/";
         for (ProductInterface product : products) {
             List<CategoryInterface> categories = product.getCategories();
+            String path = root + product.getSku(); // Default is no category is found
             if (categories != null && !categories.isEmpty()) {
-                CategoryInterface category = categories.stream().filter(c -> c.getUrlPath() != null).findFirst().orElse(null);
+                CategoryInterface category = categories.stream()
+                    .filter(c -> c.getUrlPath() != null && resourceMapper.resolveCategory(ctx, root + c.getUrlPath()) != null)
+                    .findFirst().orElse(null);
                 if (category != null) {
-                    String path = resourceMapper.getRoot() + "/" + category.getUrlPath() + "/" + product.getSku();
-                    resources.add(new ProductResource(ctx.getResourceResolver(), path, product));
+                    path = root + category.getUrlPath() + "/" + product.getSku();
                 }
-            } else {
-                String path = resourceMapper.getRoot() + "/" + product.getSku();
-                resources.add(new ProductResource(ctx.getResourceResolver(), path, product));
             }
+            resources.add(new ProductResource(ctx.getResourceResolver(), path, product));
         }
 
         return resources.iterator();
