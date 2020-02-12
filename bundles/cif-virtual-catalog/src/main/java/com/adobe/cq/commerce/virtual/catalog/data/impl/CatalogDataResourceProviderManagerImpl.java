@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderFactory;
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderManager;
+import com.google.common.collect.ImmutableList;
 
 import static org.apache.sling.spi.resource.provider.ResourceProvider.PROPERTY_ROOT;
 
@@ -74,7 +75,6 @@ import static org.apache.sling.spi.resource.provider.ResourceProvider.PROPERTY_R
 public class CatalogDataResourceProviderManagerImpl implements CatalogDataResourceProviderManager, EventListener {
 
     private static final String VIRTUAL_PRODUCTS_SERVICE = "virtual-products-service";
-    // private static final String VIRTUAL_PRODUCTS_SERVICE = "cofiguration-reader-service";
 
     private static final String OBSERVATION_PATHS_DEFAULT = "/var/commerce/products";
     // private static final String OBSERVATION_PATHS_DEFAULT = "/conf";
@@ -82,7 +82,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     private static final String CONFIGURATION_NAME = "cloudconfigs/commerce";
 
     private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
-        + OBSERVATION_PATHS_DEFAULT + "') AND [sling:Folder].'cq:conf'] IS NOT NULL";
+        + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'cq:conf'] IS NOT NULL OR [sling:Folder].'"
+        + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
+        + "' IS NOT NULL)";
 
     // private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
     // + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'" + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
@@ -91,6 +93,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     private String[] findAllQueries = { FINDALLQUERIES_DEFAULT };
 
     private String[] obervationPaths = { OBSERVATION_PATHS_DEFAULT, "/conf" };
+
+    private static final List<String> WATCHED_PROPERTIES = ImmutableList.of("magentoRootCategoryId",
+        "cq:catalogDataResourceProviderFactory", "cq:catalogIdentifier", "cq:graphqlClient", "magentoStore");
 
     private EventListener[] observationEventListeners;
 
@@ -210,6 +215,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             ConfigurationBuilder cfgBuilder = root.adaptTo(ConfigurationBuilder.class);
             ValueMap properties = cfgBuilder.name(CONFIGURATION_NAME).asValueMap();
             providerId = properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, String.class);
+            log.debug("Configured provider id is {}", providerId);
             factory = providerFactories.get(providerId);
         } else {
 
@@ -370,7 +376,6 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 final String path = event.getPath();
                 final int eventType = event.getType();
                 if (eventType == Event.NODE_ADDED) {
-                    log.debug("Caught NODE_ADDED event in {}", path);
                     nodeAdded = true;
                     Session session = resolver.adaptTo(Session.class);
                     final Node node = session.getNode(path);
@@ -384,7 +389,6 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 } else if ((eventType == Event.PROPERTY_CHANGED || eventType == Event.PROPERTY_ADDED || eventType == Event.PROPERTY_REMOVED)
                     && isRelevantPath(path)) {
                     // narrow down the properties to be watched.
-
                     // force re-registering
                     nodeAdded = true;
                     nodeRemoved = true;
@@ -416,11 +420,10 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     }
 
     private boolean isRelevantPath(String path) {
-        if (path.startsWith("/conf")) {
-            return true;
-        }
+        boolean isRelevant = path.startsWith("/conf") && WATCHED_PROPERTIES.stream().anyMatch(path::endsWith);
+        ;
 
-        return findDataRoots(resolver).stream()
+        return isRelevant || findDataRoots(resolver).stream()
             .map(Resource::getPath)
             .anyMatch(path::startsWith);
 
