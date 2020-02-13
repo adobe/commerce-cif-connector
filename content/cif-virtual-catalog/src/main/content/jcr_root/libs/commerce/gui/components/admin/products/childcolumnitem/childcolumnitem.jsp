@@ -37,13 +37,13 @@
     attrs.add("data-item-title", title);
     attrs.add("data-href", "#" + UUID.randomUUID());
 
-    boolean hasError = false;
+    boolean hasError = resource.getValueMap().get("isError", false);
     try {
         if (hasChildren(resource, product != null)) {
             attrs.add("variant", "drilldown");
         }
     } catch (Exception x) {
-        log.error(x.getMessage(), x);
+        log.error("Unexpected error", x);
         hasError = true;
     }
 %><coral-columnview-item <%= attrs.build() %>>
@@ -55,14 +55,12 @@
         String icon = isVirtual(resource) || isCloudBoundFolder(resource) ? "cloud": "folder";
     %><coral-icon class="foundation-collection-item-thumbnail" icon="<%= icon %>"></coral-icon><%
         } %>
-    </coral-columnview-item-thumbnail>
-
-    <% if (hasError) { %>
-    <coral-alert variant="error" size="S" title="<%= xssAPI.filterHTML(i18n.getVar("Check the logs for error details")) %>">
+    </coral-columnview-item-thumbnail><%
+        if (hasError) { %>
+    <coral-alert variant="error" size="S" title="<%= xssAPI.filterHTML(i18n.getVar("Check the server logs for details.")) %>">
         <coral-alert-content><%= xssAPI.encodeForHTML(title) %></coral-alert-content>
-    </coral-alert>
-    <% } %>
-    
+    </coral-alert><%
+        } %>
     <coral-columnview-item-content class="foundation-collection-item-title" itemprop="title" title="<%= xssAPI.encodeForHTMLAttr(title) %>"><%= xssAPI.encodeForHTML(title) %></coral-columnview-item-content>
 
     <meta class="foundation-collection-quickactions" data-foundation-collection-quickactions-rel="<%= xssAPI.encodeForHTMLAttr(StringUtils.join(applicableRelationships, " ")) %>"/>
@@ -75,7 +73,7 @@
             return hasChildren;
         }
 
-        for (Iterator<Resource> it = resource.listChildren(); it.hasNext(); ) {
+        for (Iterator<Resource> it = resource.listChildren(); it.hasNext();) {
             Resource r = it.next();
             if (isProduct) {
                 if (ResourceUtil.getValueMap(r).get("cq:commerceType", "").equals("variant")) {

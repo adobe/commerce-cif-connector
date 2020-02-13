@@ -62,8 +62,10 @@
 
     Tag tag = cmp.consumeTag();
     AttrBuilder attrs = tag.getAttrs();
-
-    attrs.addClass("foundation-collection-navigator");
+    boolean isError = resource.getValueMap().get("isError", false);
+    if (!isError) {
+        attrs.addClass("foundation-collection-navigator");
+    }
     //attrs passed to component may contain this tag, avoid setting it twice, tag already set is not our usecase.
     if (!attrs.build().contains("data-foundation-collection-navigator-href=")) {
         attrs.add("data-foundation-collection-navigator-href",
@@ -83,8 +85,14 @@
     %><coral-icon class="foundation-collection-item-thumbnail" icon="<%= icon %>"></coral-icon><%
         }
     %></td>
-    <td class="foundation-collection-item-title" is="coral-table-cell" value="<%= xssAPI.encodeForHTMLAttr(title) %>">
-        <%= xssAPI.encodeForHTML(title) %>
+    <td class="foundation-collection-item-title" is="coral-table-cell" value="<%= xssAPI.encodeForHTMLAttr(title) %>"><%
+        if (isError) { %>
+        <coral-alert variant="error" size="S" title="<%= xssAPI.filterHTML(i18n.getVar("Check the server logs for details.")) %>">
+            <coral-alert-content><%= xssAPI.encodeForHTML(title) %></coral-alert-content>
+        </coral-alert><%
+        } else { %>
+        <%= xssAPI.encodeForHTML(title) %><%
+        }%>
     </td>
 
     <td is="coral-table-cell" value="<%= (modifiedDateRaw != null) ? xssAPI.encodeForHTMLAttr(Long.toString(modifiedDateRaw.getTimeInMillis())) : "0" %>"><%
