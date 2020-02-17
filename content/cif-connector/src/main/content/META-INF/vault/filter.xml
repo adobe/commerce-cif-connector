@@ -43,6 +43,7 @@
     </filter>
 
     <filter root="/libs/commerce/gui/components/authoring/editor/pagepreview"/>
+    <filter root="/libs/commerce/gui/content/products/jcr:content/views/column"/>
 
     <filter root="/libs/wcm/core/content/editor/jcr:content/content/items/content/header/items/headerbar/items/pageinfopopover/items/list/items" mode="merge"/>
 
