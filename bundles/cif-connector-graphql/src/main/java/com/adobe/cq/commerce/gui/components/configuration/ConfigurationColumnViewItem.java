@@ -19,16 +19,17 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.gui.Constants;
+import com.adobe.cq.commerce.virtual.catalog.data.Constants;
+import com.day.cq.commons.jcr.JcrConstants;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -54,15 +55,14 @@ public class ConfigurationColumnViewItem {
     }
 
     public String getTitle() {
-        LOG.debug("Inspecting {}", resource.getPath());
         Resource jcrContent = resource.getChild(JcrConstants.JCR_CONTENT);
         ValueMap properties = jcrContent != null ? jcrContent.getValueMap() : resource.getValueMap();
-        return properties.get("jcr:title", resource.getName());
+        return properties.get(JcrConstants.JCR_TITLE, resource.getName());
     }
 
     public boolean hasChildren() {
         boolean isContainer = isConfigurationContainer(resource);
-        boolean hasCommerceSetting = resource.getChild("settings/cloudconfigs/commerce") != null;
+        boolean hasCommerceSetting = resource.getChild(Constants.COMMERCE_BUCKET_PATH) != null;
         return isContainer && hasCommerceSetting;
     }
 
@@ -72,7 +72,8 @@ public class ConfigurationColumnViewItem {
 
     private boolean isConfigurationContainer(Resource res) {
         return (res.getPath()
-            .startsWith(Constants.CONF_ROOT) && (resource.isResourceType("sling:Folder") || resource.isResourceType("sling:OrderedFolder"))
+            .startsWith(Constants.CONF_ROOT) && (resource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER) || resource.isResourceType(
+                JcrResourceConstants.NT_SLING_ORDERED_FOLDER))
             && resource
                 .getChild(Constants.CONF_CONTAINER_BUCKET_NAME) != null);
     }

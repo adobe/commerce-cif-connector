@@ -44,6 +44,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.ConfigurationBuilder;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -62,6 +63,14 @@ import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderFac
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderManager;
 import com.google.common.collect.ImmutableList;
 
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CONFIGURATION_NAME;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CONF_ROOT;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_CATALOG_IDENTIFIER;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_CATALOG_PROVIDER_FACTORY;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_CONF;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_GRAPHQL_CLIENT;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_MAGENTO_ROOT_CATEGORY_ID;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_MAGENTO_STORE;
 import static org.apache.sling.spi.resource.provider.ResourceProvider.PROPERTY_ROOT;
 
 /**
@@ -77,25 +86,18 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     private static final String VIRTUAL_PRODUCTS_SERVICE = "virtual-products-service";
 
     private static final String OBSERVATION_PATHS_DEFAULT = "/var/commerce/products";
-    // private static final String OBSERVATION_PATHS_DEFAULT = "/conf";
-
-    private static final String CONFIGURATION_NAME = "cloudconfigs/commerce";
 
     private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
-        + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'cq:conf'] IS NOT NULL OR [sling:Folder].'"
+        + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'" + PN_CONF + "'] IS NOT NULL OR [sling:Folder].'"
         + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
         + "' IS NOT NULL)";
 
-    // private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
-    // + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'" + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
-    // + "' IS NOT NULL" + " OR [sling:Folder].'cq:conf' IS NOT NULL)";
-
     private String[] findAllQueries = { FINDALLQUERIES_DEFAULT };
 
-    private String[] obervationPaths = { OBSERVATION_PATHS_DEFAULT, "/conf" };
+    private String[] observationPaths = { OBSERVATION_PATHS_DEFAULT, CONF_ROOT };
 
-    private static final List<String> WATCHED_PROPERTIES = ImmutableList.of("magentoRootCategoryId",
-        "cq:catalogDataResourceProviderFactory", "cq:catalogIdentifier", "cq:graphqlClient", "magentoStore");
+    private static final List<String> WATCHED_PROPERTIES = ImmutableList.of(PN_MAGENTO_STORE, PN_MAGENTO_ROOT_CATEGORY_ID,
+        PN_CATALOG_IDENTIFIER, PN_CATALOG_PROVIDER_FACTORY, PN_GRAPHQL_CLIENT);
 
     private EventListener[] observationEventListeners;
 
@@ -178,8 +180,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         long countSuccess = 0;
         long countFailed = 0;
 
-        final List<Resource> existingVIrtualCatalogs = findDataRoots(resolver);
-        for (Resource virtualCatalogRootResource : existingVIrtualCatalogs) {
+        final List<Resource> existingVirtualCatalogs = findDataRoots(resolver);
+        for (Resource virtualCatalogRootResource : existingVirtualCatalogs) {
             boolean success = registerDataRoot(virtualCatalogRootResource);
             if (success) {
                 countSuccess++;
@@ -296,8 +298,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             // For each observed path create an event listener object which redirects the event to the main class
             final Session session = resolver.adaptTo(Session.class);
             if (session != null) {
-                this.observationEventListeners = new EventListener[this.obervationPaths.length];
-                for (int i = 0; i < this.obervationPaths.length; i++) {
+                this.observationEventListeners = new EventListener[this.observationPaths.length];
+                for (int i = 0; i < this.observationPaths.length; i++) {
                     this.observationEventListeners[i] = new EventListener() {
                         public void onEvent(EventIterator events) {
                             CatalogDataResourceProviderManagerImpl.this.onEvent(events);
@@ -307,7 +309,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                         .getObservationManager()
                         .addEventListener(this.observationEventListeners[i],
                             Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
-                            this.obervationPaths[i],
+                            this.observationPaths[i],
                             // absolute path
                             true,
                             // isDeep
@@ -379,8 +381,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                     nodeAdded = true;
                     Session session = resolver.adaptTo(Session.class);
                     final Node node = session.getNode(path);
-                    if (node != null && node.isNodeType("sling:Folder") && node.hasProperty(
-                        CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID) || node.hasProperty("cq:conf")) {
+                    if (node != null && node.isNodeType(JcrResourceConstants.NT_SLING_FOLDER) && node.hasProperty(
+                        CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID) || node.hasProperty(CONF_ROOT)) {
                         actions.put(path, true);
                     }
                 } else if (eventType == Event.NODE_REMOVED && providers.containsKey(path)) {
@@ -420,7 +422,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     }
 
     private boolean isRelevantPath(String path) {
-        boolean isRelevant = path.startsWith("/conf") && WATCHED_PROPERTIES.stream().anyMatch(path::endsWith);
+        boolean isRelevant = path.startsWith(CONF_ROOT) && WATCHED_PROPERTIES.stream().anyMatch(path::endsWith);
         ;
 
         return isRelevant || findDataRoots(resolver).stream()

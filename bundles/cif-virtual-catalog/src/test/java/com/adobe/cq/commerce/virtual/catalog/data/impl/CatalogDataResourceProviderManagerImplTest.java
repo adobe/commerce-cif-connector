@@ -41,10 +41,6 @@ import com.adobe.granite.test.tooling.RepositoryBaseTest;
 import com.day.cq.commons.jcr.JcrUtil;
 import junitx.util.PrivateAccessor;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTest {
     private static final String TEST_PROVIDER_FACTORY_ID = "TestProviderFactory";
     private static final int WAIT_FOR_EVENTS = 200;
