@@ -37,14 +37,14 @@
     attrs.add("data-item-title", title);
     attrs.add("data-href", "#" + UUID.randomUUID());
 
-    boolean hasError = resource.getValueMap().get("isError", false);
-    try {
-        if (hasChildren(resource, product != null)) {
-            attrs.add("variant", "drilldown");
-        }
-    } catch (Exception x) {
-        log.error("Unexpected error", x);
-        hasError = true;
+    boolean isError = resource.getValueMap().get("isError", false);
+    if (isError) {
+        response.sendError(500, "Server error");
+        return;
+    }
+
+    if (hasChildren(resource, product != null)) {
+        attrs.add("variant", "drilldown");
     }
 %><coral-columnview-item <%= attrs.build() %>>
     <coral-columnview-item-thumbnail><%
@@ -55,12 +55,7 @@
         String icon = isVirtual(resource) || isCloudBoundFolder(resource) ? "cloud": "folder";
     %><coral-icon class="foundation-collection-item-thumbnail" icon="<%= icon %>"></coral-icon><%
         } %>
-    </coral-columnview-item-thumbnail><%
-        if (hasError) { %>
-    <coral-alert variant="error" size="S" title="<%= xssAPI.filterHTML(i18n.getVar("Check the server logs for details.")) %>">
-        <coral-alert-content><%= xssAPI.encodeForHTML(title) %></coral-alert-content>
-    </coral-alert><%
-        } %>
+    </coral-columnview-item-thumbnail>
     <coral-columnview-item-content class="foundation-collection-item-title" itemprop="title" title="<%= xssAPI.encodeForHTMLAttr(title) %>"><%= xssAPI.encodeForHTML(title) %></coral-columnview-item-content>
 
     <meta class="foundation-collection-quickactions" data-foundation-collection-quickactions-rel="<%= xssAPI.encodeForHTMLAttr(StringUtils.join(applicableRelationships, " ")) %>"/>

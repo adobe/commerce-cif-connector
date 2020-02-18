@@ -28,6 +28,17 @@
                   java.util.Iterator,
                   org.apache.sling.api.resource.ResourceUtil"%><%
 
+    boolean isError = resource.getValueMap().get("isError", false);
+    if (isError) { %>
+        <script>
+            var title = Granite.I18n.get("Error");
+            var message = Granite.I18n.get("Failed to load data.");
+            var ui = $(window).adaptTo("foundation-ui");
+            ui.alert(title, message, "error");
+        </script>
+        <%
+        return;
+    }
 
     Calendar modifiedDateRaw = properties.get(JcrConstants.JCR_LASTMODIFIED, Calendar.class);
     Calendar publishedDateRaw = properties.get("cq:lastReplicated", Calendar.class);
@@ -63,11 +74,7 @@
     attrs.add("data-gridlayout-sortkey", isNew ? 10 : 0);
     attrs.add("data-path", resource.getPath()); // for compatibility
 
-    boolean isError = resource.getValueMap().get("isError", false);
-    if (!isError) {
-        attrs.addClass("foundation-collection-navigator");
-    }
-
+    attrs.addClass("foundation-collection-navigator");
     //attrs passed to component may contain this tag, avoid setting it twice, tag already set is not our usecase.
     if (!attrs.build().contains("data-foundation-collection-navigator-href=")) {
         attrs.add("data-foundation-collection-navigator-href",
@@ -88,7 +95,6 @@
             showQuickActions = (Boolean) quickActionsAttr;
         }
     }
-    showQuickActions &= !isError;
 
     if (isFolder) {
         attrs.add("variant", "inverted");
@@ -105,18 +111,10 @@
         } %>
     <coral-card-content><%
         String context = isVirtual(resource) || isCloudBoundFolder(resource) ? i18n.get("Cloud products") : isFolder ? i18n.get("Folder") : null;
-        if (!isError && context != null) {
+        if (context != null) {
     %><coral-card-context><%= xssAPI.encodeForHTML(context) %></coral-card-context><%
         }
-    %><coral-card-title class="foundation-collection-item-title"><%
-        if (isError) { %>
-        <coral-alert variant="error" size="L" title="<%= xssAPI.filterHTML(i18n.getVar("Check the server logs for details.")) %>">
-            <coral-alert-content><%= xssAPI.encodeForHTML(title) %></coral-alert-content>
-        </coral-alert><%
-        } else { %>
-        <%= xssAPI.encodeForHTML(title) %><%
-        }%>
-    </coral-card-title>
+    %><coral-card-title class="foundation-collection-item-title"><%= xssAPI.encodeForHTML(title) %></coral-card-title>
         <%
             if (product != null) { %>
         <coral-card-propertylist>

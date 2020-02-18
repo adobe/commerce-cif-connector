@@ -38,6 +38,18 @@
                   com.adobe.cq.commerce.common.CommerceHelper,
                   com.day.cq.i18n.I18n" %><%
 
+    boolean isError = resource.getValueMap().get("isError", false);
+    if (isError) { %>
+        <script>
+            var title = Granite.I18n.get("Error");
+            var message = Granite.I18n.get("Failed to load data.");
+            var ui = $(window).adaptTo("foundation-ui");
+            ui.alert(title, message, "error");
+        </script>
+        <%
+        return;
+    }
+
     WorkflowStatus workflowStatus = resource.adaptTo(WorkflowStatus.class);
     ReplicationStatus replicationStatus = resource.adaptTo(ReplicationStatus.class);
 
@@ -62,10 +74,8 @@
 
     Tag tag = cmp.consumeTag();
     AttrBuilder attrs = tag.getAttrs();
-    boolean isError = resource.getValueMap().get("isError", false);
-    if (!isError) {
-        attrs.addClass("foundation-collection-navigator");
-    }
+
+    attrs.addClass("foundation-collection-navigator");
     //attrs passed to component may contain this tag, avoid setting it twice, tag already set is not our usecase.
     if (!attrs.build().contains("data-foundation-collection-navigator-href=")) {
         attrs.add("data-foundation-collection-navigator-href",
@@ -85,14 +95,8 @@
     %><coral-icon class="foundation-collection-item-thumbnail" icon="<%= icon %>"></coral-icon><%
         }
     %></td>
-    <td class="foundation-collection-item-title" is="coral-table-cell" value="<%= xssAPI.encodeForHTMLAttr(title) %>"><%
-        if (isError) { %>
-        <coral-alert variant="error" size="S" title="<%= xssAPI.filterHTML(i18n.getVar("Check the server logs for details.")) %>">
-            <coral-alert-content><%= xssAPI.encodeForHTML(title) %></coral-alert-content>
-        </coral-alert><%
-        } else { %>
-        <%= xssAPI.encodeForHTML(title) %><%
-        }%>
+    <td class="foundation-collection-item-title" is="coral-table-cell" value="<%= xssAPI.encodeForHTMLAttr(title) %>">
+        <%= xssAPI.encodeForHTML(title) %>
     </td>
 
     <td is="coral-table-cell" value="<%= (modifiedDateRaw != null) ? xssAPI.encodeForHTMLAttr(Long.toString(modifiedDateRaw.getTimeInMillis())) : "0" %>"><%
