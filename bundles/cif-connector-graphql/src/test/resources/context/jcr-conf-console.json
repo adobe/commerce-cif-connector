@@ -1,0 +1,21 @@
+{
+  "jcr:primaryType": "sling:Folder",
+  "settings": {
+    "jcr:primaryType": "sling:Folder",
+    "cloudconfigs": {
+      "jcr:primaryType": "sling:Folder",
+      "commerce": {
+        "jcr:primaryType": "cq:Page",
+        "jcr:content": {
+          "jcr:title": "Mock configuration",
+          "magentoRootCategoryId": "4",
+          "cq:graphqlClient": "default",
+          "cq:catalogIdentifier": "my-catalog",
+          "magentoStore": "4",
+          "jcr:created": "Thu Feb 06 2020 14:21:13 GMT+0200",
+          "cq:catalogDataResourceProviderFactory": "magento-graphql"
+        }
+      }
+    }
+  }
+}
