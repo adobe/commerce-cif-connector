@@ -61,7 +61,7 @@ public class ConfigurationColumnViewItem {
     }
 
     public boolean hasChildren() {
-        boolean isContainer = isConfigurationContainer(resource);
+        boolean isContainer = isConfigurationContainer();
         boolean hasCommerceSetting = resource.getChild(Constants.COMMERCE_BUCKET_PATH) != null;
         return isContainer && hasCommerceSetting;
     }
@@ -70,8 +70,8 @@ public class ConfigurationColumnViewItem {
         return ImmutableList.of("cq-confadmin-actions-properties-activator", "cq-confadmin-actions-delete-activator");
     }
 
-    private boolean isConfigurationContainer(Resource res) {
-        return (res.getPath()
+    private boolean isConfigurationContainer() {
+        return (resource.getPath()
             .startsWith(Constants.CONF_ROOT) && (resource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER) || resource.isResourceType(
                 JcrResourceConstants.NT_SLING_ORDERED_FOLDER))
             && resource
