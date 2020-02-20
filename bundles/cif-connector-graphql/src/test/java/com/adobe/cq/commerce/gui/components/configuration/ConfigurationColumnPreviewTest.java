@@ -30,7 +30,6 @@ import org.mockito.Mockito;
 
 import com.adobe.granite.ui.components.ExpressionResolver;
 import com.google.common.collect.ImmutableMap;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 
 public class ConfigurationColumnPreviewTest {
@@ -39,16 +38,15 @@ public class ConfigurationColumnPreviewTest {
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.JCR_MOCK);
 
-
     Resource columnPreviewDef;
 
     @Before
     public void setUp() {
-        context.load().json("/context/jcr-conf-console.json","/conf/testing");
+        context.load().json("/context/jcr-conf-console.json", "/conf/testing");
 
         ExpressionResolver expressionResolver = Mockito.mock(ExpressionResolver.class);
-        Mockito.when(expressionResolver.resolve(Mockito.any(String.class), Mockito.any(Locale.class),Mockito.any(Class.class), Mockito.any(
-            SlingHttpServletRequest.class) )).thenReturn(CONFIGURATION_PATH);
+        Mockito.when(expressionResolver.resolve(Mockito.any(String.class), Mockito.any(Locale.class), Mockito.any(Class.class), Mockito.any(
+            SlingHttpServletRequest.class))).thenReturn(CONFIGURATION_PATH);
 
         context.registerService(ExpressionResolver.class, expressionResolver);
         context.addModelsForClasses(ConfigurationColumnPreview.class);
@@ -67,8 +65,7 @@ public class ConfigurationColumnPreviewTest {
 
         Assert.assertEquals("Returns the correct title", "Mock configuration", preview.getTitle());
         Assert.assertEquals("Returns whether it's folder or not", false, preview.isFolder());
-        Assert.assertEquals("Returns the correct path",CONFIGURATION_PATH, preview.getItemResourcePath());
+        Assert.assertEquals("Returns the correct path", CONFIGURATION_PATH, preview.getItemResourcePath());
     }
-
 
 }

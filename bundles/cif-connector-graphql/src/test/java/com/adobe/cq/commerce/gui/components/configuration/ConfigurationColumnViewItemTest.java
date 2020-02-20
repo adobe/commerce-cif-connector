@@ -15,22 +15,14 @@
 
 package com.adobe.cq.commerce.gui.components.configuration;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import com.adobe.granite.ui.components.ExpressionResolver;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
 
 public class ConfigurationColumnViewItemTest {
