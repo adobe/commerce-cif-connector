@@ -208,7 +208,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Search parameters
         ProductsArgumentsDefinition searchArgs;
-        ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setName(SortEnum.ASC);
+        ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setRelevance(SortEnum.DESC);
         if (StringUtils.isNotEmpty(text)) {
             if (categoryId == null) {
                 searchArgs = s -> s.search(text).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
@@ -228,7 +228,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         }
 
         // Main query
-        ProductsQueryDefinition queryArgs = q -> q.items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY);
+        ProductsQueryDefinition queryArgs = q -> q.items(GraphqlQueries.CHILD_PRODUCT_QUERY);
 
         String queryString = Operations.query(query -> query.products(searchArgs, queryArgs)).toString();
         GraphqlResponse<Query, Error> response = execute(queryString, storeView);
@@ -237,12 +237,6 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         List<ProductInterface> products = query.getProducts().getItems();
 
         LOGGER.debug("Fetched " + (products != null ? products.size() : null) + " products");
-
-        // Populate the products cache
-        for (ProductInterface product : products) {
-            ArrayKey key = toProductCacheKey(product.getSku(), storeView);
-            productCache.put(key, Optional.of(product));
-        }
 
         return products;
     }
