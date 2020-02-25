@@ -1,0 +1,18 @@
+{
+  "data": {
+    "categoryList": [
+      {
+        "id": 1729,
+        "name": "Category 41.2.3.4.5",
+        "url_path": "category-41/category-41-2/category-41-2-3/category-41-2-3-4/category-41-2-3-4-5",
+        "url_key": "category-41-2-3-4-5"
+      },
+      {
+        "id": 48379,
+        "name": "Category 51.2.3.4.5",
+        "url_path": "category-51/category-51-2/category-51-2-3/category-51-2-3-4/category-51-2-3-4-5",
+        "url_key": "category-51-2-3-4-5"
+      }
+    ]
+  }
+}

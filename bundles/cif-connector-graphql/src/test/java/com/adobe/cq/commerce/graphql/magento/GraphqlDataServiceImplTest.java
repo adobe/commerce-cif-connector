@@ -299,6 +299,17 @@ public class GraphqlDataServiceImplTest {
     }
 
     @Test
+    public void testSearchCategories() throws Exception {
+        // This checks that the generated GraphQL query is what we expect
+        // It ensures that all changes made to the GraphQL queries are backed up by tests
+        String query = getResource("graphql-queries/category-search.txt");
+
+        Utils.setupHttpResponse("magento-graphql-category-search.json", httpClient, HttpStatus.SC_OK, query);
+        List<CategoryTree> categories = dataService.searchCategories("1.2.3.4.5", null, 0, 3, null);
+        assertEquals(2, categories.size());
+    }
+
+    @Test
     public void testGetCategoryTree() throws Exception {
         // This checks that the generated GraphQL query is what we expect
         // It ensures that all changes made to the GraphQL queries are backed up by tests
