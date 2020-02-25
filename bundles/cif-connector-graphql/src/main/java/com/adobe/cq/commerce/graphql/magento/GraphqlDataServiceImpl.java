@@ -207,24 +207,19 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
             LOGGER.debug("Performing category search with '{}' in category {} (page: {}, size: {})", text, categoryId, currentPage,
                 pageSize);
         }
-        try {
 
-            // Search parameters
-            FilterMatchTypeInput name = new FilterMatchTypeInput().setMatch(text);
-            CategoryFilterInput filters = new CategoryFilterInput().setName(name);
-            QueryQuery.CategoryListArgumentsDefinition searchArgs = q -> q.filters(filters);
+        // Search parameters
+        FilterMatchTypeInput name = new FilterMatchTypeInput().setMatch(text);
+        CategoryFilterInput filters = new CategoryFilterInput().setName(name);
+        QueryQuery.CategoryListArgumentsDefinition searchArgs = q -> q.filters(filters);
 
-            CategoryTreeQueryDefinition queryArgs = q -> GraphqlQueries.CATEGORY_SEARCH_QUERY.apply(q);
-            String queryString = Operations.query(query -> query.categoryList(searchArgs, queryArgs)).toString();
-            GraphqlResponse<Query, Error> response = execute(queryString, storeView);
-            Query query = response.getData();
-            List<CategoryTree> categoryList = query.getCategoryList();
+        CategoryTreeQueryDefinition queryArgs = q -> GraphqlQueries.CATEGORY_SEARCH_QUERY.apply(q);
+        String queryString = Operations.query(query -> query.categoryList(searchArgs, queryArgs)).toString();
+        GraphqlResponse<Query, Error> response = execute(queryString, storeView);
+        Query query = response.getData();
+        List<CategoryTree> categoryList = query.getCategoryList();
 
-            return categoryList;
-        } catch (Throwable t) {
-            LOGGER.error("Error", t);
-            throw t;
-        }
+        return categoryList;
     }
 
     private List<ProductInterface> searchProductsImpl(String text, Integer categoryId, Integer currentPage, Integer pageSize,
