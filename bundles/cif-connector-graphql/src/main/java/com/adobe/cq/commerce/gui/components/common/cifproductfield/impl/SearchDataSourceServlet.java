@@ -30,6 +30,8 @@ import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.graphql.search.CatalogSearchSupport;
 import com.adobe.granite.ui.components.Config;
@@ -50,6 +52,7 @@ import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvide
         "sling.servlet.methods=GET"
     })
 public class SearchDataSourceServlet extends SlingSafeMethodsServlet {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchDataSourceServlet.class);
     static final String VIRTUAL_PRODUCT_QUERY_LANGUAGE = "virtualProductOmnisearchQuery";
 
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
@@ -89,6 +92,7 @@ public class SearchDataSourceServlet extends SlingSafeMethodsServlet {
             request.setAttribute(DataSource.class.getName(), ds);
         } catch (Exception x) {
             response.sendError(500, x.getMessage());
+            LOGGER.error("Error finding resources", x);
         }
     }
 }
