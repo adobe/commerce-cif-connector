@@ -300,7 +300,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
 
         Elements elements = doc.select("coral-card[data-asset-group=product]");
         Assert.assertEquals(1, elements.size());
-        Assert.assertEquals(JCR_BASE_PATH + "/men/coats/meskwielt", elements.attr("data-path"));
+        Assert.assertEquals("meskwielt", elements.attr("data-path"));
     }
 
     @Test

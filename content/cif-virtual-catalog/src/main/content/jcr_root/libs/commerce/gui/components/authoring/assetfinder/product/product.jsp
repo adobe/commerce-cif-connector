@@ -10,7 +10,7 @@
     OF ANY KIND, either express or implied. See the License for the specific language
     governing permissions and limitations under the License.
 
---%
+--%>
 <%@ page import="com.adobe.granite.ui.components.AttrBuilder,
                  com.adobe.granite.ui.components.Config,
                  com.day.cq.commons.jcr.JcrConstants,
