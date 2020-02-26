@@ -6,7 +6,8 @@
           xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           jcr:primaryType="nt:unstructured"
           jcr:title="Commerce Configuration"
-          sling:resourceType="cq/gui/components/authoring/dialog">
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          extraClientlibs="[commerce.gui.admin.configuration]">
     <content jcr:primaryType="nt:unstructured"
              sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
         <items jcr:primaryType="nt:unstructured">
@@ -31,21 +32,25 @@
                         <granite:data jcr:primaryType="nt:unstructured"
                                       cq-dialog-dropdown-showhide-target=".bindproducttreewizard-customfields"/>
                     </commerceprovider>
-                    <magentoRootCategoryId jcr:primaryType="nt:unstructured"
-                                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                           name="./magentoRootCategoryId"
-                                           fieldLabel="Root category id"
-                                           required="{Boolean}true"/>
-                    <cqMagentoStore jcr:primaryType="nt:unstructured"
-                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                    fieldLabel="Magento Store View"
-                                    name="./magentoStore"
-                                    required="{Boolean}true"/>
-                    <catalogIdentifier jcr:primaryType="nt:unstructured"
-                                       sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                       fieldLabel="Catalog identifier"
-                                       name="./cq:catalogIdentifier"
-                                    required="{Boolean}true"/>
+                    <catalogidentifier
+                            granite:id="cq-commerce-products-bindproducttree-catalog-select"
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                            disabled="{Boolean}true"
+                            emptyText="Select the catalog identifier"
+                            fieldLabel="Catalog identifier"
+                            name="./cq:catalogIdentifier"
+                            required="{Boolean}true"/>
+                    <catalogidentifierdata
+                            granite:id="cq-commerce-products-bindproducttree-catalog-select-data"
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                            disabled="{Boolean}true"
+                            required="{Boolean}true">
+                        <datasource
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="commerce/gui/components/admin/products/bindproducttreewizard/catalogidentifierdatasource"/>
+                    </catalogidentifierdata>
                     <graphqlclient emptyOption="{Boolean}false"
                                    granite:id="cq-commerce-graphql-client"
                                    jcr:primaryType="nt:unstructured"
@@ -60,6 +65,29 @@
                         <granite:data jcr:primaryType="nt:unstructured"
                                       cq-msm-lockable="cq:graphqlClient"/>
                     </graphqlclient>
+                    <cqMagentoStore jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    fieldLabel="Magento Store View"
+                                    name="./magentoStore"
+                                    required="{Boolean}true"/>
+                    <magentoRootCategoryId jcr:primaryType="nt:unstructured"
+                                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                           name="./magentoRootCategoryId"
+                                           fieldLabel="Root category id"
+                                           required="{Boolean}true"/>
+
+                    <language
+                            granite:class="language"
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                            emptyText="Select"
+                            fieldLabel="Language"
+                            name="./jcr:language"
+                            cq:showOnCreate="{Boolean}true">
+                        <datasource
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="cq/gui/components/common/datasources/languages"/>
+                    </language>
                 </items>
             </column>
         </items>
