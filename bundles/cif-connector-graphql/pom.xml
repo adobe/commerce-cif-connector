@@ -275,11 +275,6 @@
             <version>2.3.18</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.sling</groupId>-->
-<!--            <artifactId>org.apache.sling.testing.jcr-mock</artifactId>-->
-<!--            <version>1.4.4</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.caconfig-mock-plugin</artifactId>
