@@ -1,0 +1,17 @@
+{
+  "selectionId": [
+    "id"
+  ],
+  "root": [
+    "/var/commerce/products"
+  ],
+  "_commerce_limit": "20",
+  "fulltext": [
+    "5.5.5"
+  ],
+  ":cq_csrf_token": [
+    "eyJleHAiOjE1ODI2MTk2NTMsImlhdCI6MTU4MjYxOTA1M30.HILDt1QJBV20ieEPGEIc1xP8yg2_BM9P9MfCntdVUzw"
+  ],
+  "_commerce_commerce_type": "category",
+  "_commerce_offset": "0"
+}
