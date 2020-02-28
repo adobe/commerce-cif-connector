@@ -41,10 +41,12 @@ import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.client.RequestOptions;
 import com.adobe.cq.commerce.graphql.resource.Constants;
+import com.adobe.cq.commerce.magento.graphql.CategoryFilterInput;
 import com.adobe.cq.commerce.magento.graphql.CategoryProducts;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.CategoryTreeQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.FilterEqualTypeInput;
+import com.adobe.cq.commerce.magento.graphql.FilterMatchTypeInput;
 import com.adobe.cq.commerce.magento.graphql.FilterRangeTypeInput;
 import com.adobe.cq.commerce.magento.graphql.Operations;
 import com.adobe.cq.commerce.magento.graphql.ProductAttributeFilterInput;
@@ -53,6 +55,7 @@ import com.adobe.cq.commerce.magento.graphql.ProductInterface;
 import com.adobe.cq.commerce.magento.graphql.Products;
 import com.adobe.cq.commerce.magento.graphql.ProductsQueryDefinition;
 import com.adobe.cq.commerce.magento.graphql.Query;
+import com.adobe.cq.commerce.magento.graphql.QueryQuery;
 import com.adobe.cq.commerce.magento.graphql.QueryQuery.CategoryArgumentsDefinition;
 import com.adobe.cq.commerce.magento.graphql.QueryQuery.ProductsArgumentsDefinition;
 import com.adobe.cq.commerce.magento.graphql.SortEnum;
@@ -196,6 +199,29 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return searchProductsImpl(text, categoryId, currentPage, pageSize, storeView);
     }
 
+    @Override
+    public List<CategoryTree> searchCategories(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
+        if (categoryId == null) {
+            LOGGER.debug("Performing category search with '{}' (page: {}, size: {})", text, currentPage, pageSize);
+        } else {
+            LOGGER.debug("Performing category search with '{}' in category {} (page: {}, size: {})", text, categoryId, currentPage,
+                pageSize);
+        }
+
+        // Search parameters
+        FilterMatchTypeInput name = new FilterMatchTypeInput().setMatch(text);
+        CategoryFilterInput filters = new CategoryFilterInput().setName(name);
+        QueryQuery.CategoryListArgumentsDefinition searchArgs = q -> q.filters(filters);
+
+        CategoryTreeQueryDefinition queryArgs = q -> GraphqlQueries.CATEGORY_SEARCH_QUERY.apply(q);
+        String queryString = Operations.query(query -> query.categoryList(searchArgs, queryArgs)).toString();
+        GraphqlResponse<Query, Error> response = execute(queryString, storeView);
+        Query query = response.getData();
+        List<CategoryTree> categoryList = query.getCategoryList();
+
+        return categoryList;
+    }
+
     private List<ProductInterface> searchProductsImpl(String text, Integer categoryId, Integer currentPage, Integer pageSize,
         String storeView) {
 
@@ -208,7 +234,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
         // Search parameters
         ProductsArgumentsDefinition searchArgs;
-        ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setName(SortEnum.ASC);
+        ProductAttributeSortInput sortInput = new ProductAttributeSortInput().setRelevance(SortEnum.DESC);
         if (StringUtils.isNotEmpty(text)) {
             if (categoryId == null) {
                 searchArgs = s -> s.search(text).sort(sortInput).currentPage(currentPage).pageSize(pageSize);
@@ -228,7 +254,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         }
 
         // Main query
-        ProductsQueryDefinition queryArgs = q -> q.items(GraphqlQueries.CONFIGURABLE_PRODUCT_QUERY);
+        ProductsQueryDefinition queryArgs = q -> q.items(GraphqlQueries.CHILD_PRODUCT_QUERY);
 
         String queryString = Operations.query(query -> query.products(searchArgs, queryArgs)).toString();
         GraphqlResponse<Query, Error> response = execute(queryString, storeView);
@@ -237,12 +263,6 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         List<ProductInterface> products = query.getProducts().getItems();
 
         LOGGER.debug("Fetched " + (products != null ? products.size() : null) + " products");
-
-        // Populate the products cache
-        for (ProductInterface product : products) {
-            ArrayKey key = toProductCacheKey(product.getSku(), storeView);
-            productCache.put(key, Optional.of(product));
-        }
 
         return products;
     }

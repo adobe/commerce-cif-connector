@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.magento.graphql.CategoryInterface;
+import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +51,7 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
     static final String FULLTEXT_PARAMETER = "fulltext";
     static final String OFFSET_PARAMETER = "_commerce_offset";
     static final String LIMIT_PARAMETER = "_commerce_limit";
+    static final String COMMERCE_TYPE_PARAMETER = "_commerce_commerce_type";
 
     private ResourceMapper<T> resourceMapper;
     private GraphqlDataService graphqlDataService;
@@ -84,6 +86,10 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
             : Integer.valueOf(0);
         Integer limit = queryParameters.containsKey(LIMIT_PARAMETER) ? Integer.valueOf(queryParameters.get(LIMIT_PARAMETER).toString())
             : Integer.valueOf(20);
+        String commerceType = extractParameter(COMMERCE_TYPE_PARAMETER, queryParameters);
+        if (StringUtils.isBlank(commerceType)) {
+            commerceType = "product";
+        }
 
         LOGGER.debug("Performing product search with '{}' (offset: {}, limit: {})", fulltext, offset, limit);
 
@@ -107,35 +113,57 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
             }
         }
 
-        List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, categoryId, pagination.getLeft(),
-            pagination.getRight(), storeView);
+        if ("product".equals(commerceType)) {
+            List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, categoryId, pagination.getLeft(),
+                pagination.getRight(), storeView);
 
-        // The Magento page might start before 'offset' and be bigger than 'limit', so we extract exactly what we need
-        int start = offset - ((pagination.getLeft() - 1) * pagination.getRight());
-        int end = start + limit;
-        if (start >= 0 && end <= products.size()) {
-            products = products.subList(start, end);
-        }
-
-        LOGGER.debug("Returning {} products", products.size());
-
-        List<Resource> resources = new ArrayList<>();
-        String root = resourceMapper.getRoot() + "/";
-        for (ProductInterface product : products) {
-            List<CategoryInterface> categories = product.getCategories();
-            String path = root + product.getSku(); // Default is no category is found
-            if (categories != null && !categories.isEmpty()) {
-                CategoryInterface category = categories.stream()
-                    .filter(c -> c.getUrlPath() != null && resourceMapper.resolveCategory(ctx, root + c.getUrlPath()) != null)
-                    .findFirst().orElse(null);
-                if (category != null) {
-                    path = root + category.getUrlPath() + "/" + product.getSku();
-                }
+            // The Magento page might start before 'offset' and be bigger than 'limit', so we extract exactly what we need
+            int start = offset - ((pagination.getLeft() - 1) * pagination.getRight());
+            int end = start + limit;
+            if (start >= 0 && end <= products.size()) {
+                products = products.subList(start, end);
             }
-            resources.add(new ProductResource(ctx.getResourceResolver(), path, product));
-        }
 
-        return resources.iterator();
+            LOGGER.debug("Returning {} products", products.size());
+
+            List<Resource> resources = new ArrayList<>();
+            String root = resourceMapper.getRoot() + "/";
+            for (ProductInterface product : products) {
+                List<CategoryInterface> categories = product.getCategories();
+                String path = root + product.getSku(); // Default is no category is found
+                if (categories != null && !categories.isEmpty()) {
+                    CategoryInterface category = categories.stream()
+                        .filter(c -> c.getUrlPath() != null && resourceMapper.resolveCategory(ctx, root + c.getUrlPath()) != null)
+                        .findFirst().orElse(null);
+                    if (category != null) {
+                        path = root + category.getUrlPath() + "/" + product.getSku();
+                    }
+                }
+                resources.add(new ProductResource(ctx.getResourceResolver(), path, product));
+            }
+
+            return resources.iterator();
+        } else if ("category".equals(commerceType)) {
+            List<Resource> resources = new ArrayList<>();
+            String root = resourceMapper.getRoot() + "/";
+            List<CategoryTree> categories = graphqlDataService.searchCategories(fulltext, categoryId, pagination.getLeft(),
+                pagination.getRight(), storeView);
+
+            int start = offset;
+            int end = Math.min(categories.size(), offset + limit);
+            if (start >= 0 && end <= categories.size()) {
+                categories = categories.subList(start, end);
+            }
+
+            for (CategoryTree category : categories) {
+                String path = root + category.getUrlPath();
+                resources.add(new CategoryResource(ctx.getResourceResolver(), path, category));
+            }
+            return resources.iterator();
+        } else {
+            LOGGER.warn("Unknown commerce type: {}", commerceType);
+            return Collections.emptyIterator();
+        }
     }
 
     /**

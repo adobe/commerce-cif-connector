@@ -52,6 +52,8 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class SearchDataSourceServletTest {
@@ -62,6 +64,7 @@ public class SearchDataSourceServletTest {
     private SlingHttpServletResponse response;
     private ValueMap dataSourceProperties;
     private ValueMap rootResourceProperties;
+    private ResourceResolver resourceResolver;
     private List<Resource> results;
     private Map<String, String[]> requestParameterMap;
     private String queryStringSample;
@@ -70,13 +73,13 @@ public class SearchDataSourceServletTest {
     public void before() {
         servlet = new SearchDataSourceServlet();
         request = mock(SlingHttpServletRequest.class);
-        response = mock(SlingHttpServletResponse.class);
+        response = spy(SlingHttpServletResponse.class);
         SlingBindings slingBindings = mock(SlingBindings.class);
         SlingScriptHelper slingScriptHelper = mock(SlingScriptHelper.class);
         Resource resource = mock(Resource.class);
         Resource dataSourceResource = mock(Resource.class);
         dataSourceProperties = new ModifiableMappedValueMapDecorator(new HashMap<>());
-        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        resourceResolver = mock(ResourceResolver.class);
 
         results = new ArrayList<>();
         when(resourceResolver.findResources(anyString(), anyString())).thenAnswer(invocation -> {
@@ -172,5 +175,14 @@ public class SearchDataSourceServletTest {
         assertNotNull(queryStringSample);
         assertTrue(queryStringSample.contains("\"" + CATEGORY_PATH_PARAMETER + "\":\"rootPath\""));
         assertTrue(queryStringSample.contains("\"" + CATEGORY_ID_PARAMETER + "\":\"1\""));
+    }
+
+    @Test
+    public void testError() throws IOException {
+        when(resourceResolver.findResources(anyString(), anyString())).thenThrow(new RuntimeException("MyError"));
+
+        servlet.doGet(request, response);
+
+        verify(response).sendError(500, "MyError");
     }
 }

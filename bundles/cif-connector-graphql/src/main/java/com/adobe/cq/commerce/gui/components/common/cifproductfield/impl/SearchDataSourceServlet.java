@@ -30,6 +30,8 @@ import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.graphql.search.CatalogSearchSupport;
 import com.adobe.granite.ui.components.Config;
@@ -50,21 +52,25 @@ import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvide
         "sling.servlet.methods=GET"
     })
 public class SearchDataSourceServlet extends SlingSafeMethodsServlet {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchDataSourceServlet.class);
     static final String VIRTUAL_PRODUCT_QUERY_LANGUAGE = "virtualProductOmnisearchQuery";
 
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         final String PARAMETER_OFFSET = "_commerce_offset";
         final String PARAMETER_LIMIT = "_commerce_limit";
+        final String PARAMETER_COMMERCE_TYPE = "_commerce_commerce_type";
         final Config cfg = new Config(request.getResource().getChild(Config.DATASOURCE));
         final SlingScriptHelper sling = ((SlingBindings) request.getAttribute(SlingBindings.class.getName())).getSling();
         final ExpressionHelper ex = new ExpressionHelper(sling.getService(ExpressionResolver.class), request);
         final String itemRT = cfg.get("itemResourceType", String.class);
         final long offset = ex.get(cfg.get("offset", "0"), long.class);
         final long limit = ex.get(cfg.get("limit", "20"), long.class);
+        final String commerceType = ex.get(cfg.get("commerceType", "product"), String.class);
 
         Map<String, Object> queryParameters = new HashMap<>(request.getParameterMap());
         queryParameters.put(PARAMETER_OFFSET, String.valueOf(offset));
         queryParameters.put(PARAMETER_LIMIT, String.valueOf(limit));
+        queryParameters.put(PARAMETER_COMMERCE_TYPE, commerceType);
 
         final String rootPath = request.getParameter("root");
 
@@ -74,15 +80,19 @@ public class SearchDataSourceServlet extends SlingSafeMethodsServlet {
             queryParameters.put(CATEGORY_PATH_PARAMETER, rootPath);
         }
         String queryString = new ObjectMapper().writeValueAsString(queryParameters);
-        Iterator<Resource> virtualResults = request.getResourceResolver().findResources(queryString, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
+        try {
+            Iterator<Resource> virtualResults = request.getResourceResolver().findResources(queryString, VIRTUAL_PRODUCT_QUERY_LANGUAGE);
 
-        final DataSource ds = new SimpleDataSource(new TransformIterator<>(virtualResults, r -> new ResourceWrapper(r) {
-            public String getResourceType() {
-                return itemRT;
-            }
-        }));
+            final DataSource ds = new SimpleDataSource(new TransformIterator<>(virtualResults, r -> new ResourceWrapper(r) {
+                public String getResourceType() {
+                    return itemRT;
+                }
+            }));
 
-        request.setAttribute(DataSource.class.getName(), ds);
+            request.setAttribute(DataSource.class.getName(), ds);
+        } catch (Exception x) {
+            response.sendError(500, x.getMessage());
+            LOGGER.error("Error finding resources", x);
+        }
     }
-
 }

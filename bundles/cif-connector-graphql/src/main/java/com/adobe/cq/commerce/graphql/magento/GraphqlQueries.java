@@ -87,4 +87,13 @@ class GraphqlQueries {
         .urlPath()
         .productCount()
         .childrenCount();
+
+    /**
+     * Query for searching categories.
+     */
+    static final Function<CategoryTreeQuery, CategoryTreeQuery> CATEGORY_SEARCH_QUERY = q -> q
+        .id()
+        .name()
+        .urlPath()
+        .urlKey();
 }

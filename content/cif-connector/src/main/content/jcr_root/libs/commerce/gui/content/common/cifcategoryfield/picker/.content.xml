@@ -16,6 +16,46 @@
                     categories="[cq.commerce.gui.common.picker]"/>
         </primary>
     </actions>
+    <search
+            jcr:primaryType="nt:unstructured"
+            name="fulltext"
+            targetCollection="#cq-commerce-cifcategoryfield-picker-search-collection">
+        <form jcr:primaryType="nt:unstructured">
+            <selectionid
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                    name="selectionId"
+                    value="${param.selectionId}"/>
+            <rootpath
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                    name="root"
+                    value="${param.root}"/>
+        </form>
+        <views jcr:primaryType="nt:unstructured">
+            <card
+                    granite:id="cq-commerce-cifcategoryfield-picker-search-collection"
+                    jcr:primaryType="nt:unstructured"
+                    jcr:title="Card View"
+                    sling:resourceType="granite/ui/components/coral/foundation/masonry"
+                    granite:class="cq-commerce-picker-collection"
+                    icon="viewCard"
+                    limit="{Long}19"
+                    selectionCount="${requestPathInfo.selectors[1]}"
+                    selectionMode="{Boolean}true"
+                    renderItemElement="{Boolean}false"
+                    size="${empty requestPathInfo.selectors[3] ? &quot;19&quot; : requestPathInfo.selectors[3]}"
+                    src="/mnt/overlay/commerce/gui/content/common/cifcategoryfield/picker/search/views/card.result.${requestPathInfo.selectors[1]}{.offset,limit}.html?${querystring}">
+                <datasource
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="commerce/gui/components/common/cifproductfield/datasources/search"
+                        itemResourceType="commerce/gui/components/common/cifcategoryfield/carditem"
+                        commerceType="category"
+                        limit="${empty requestPathInfo.selectors[3] ? &quot;20&quot; : requestPathInfo.selectors[3] + 1}"
+                        offset="${requestPathInfo.selectors[2]}"/>
+            </card>
+        </views>
+    </search>
     <views jcr:primaryType="nt:unstructured">
         <column
                 granite:id="cq-commerce-cifcategoryfield-picker-collection"

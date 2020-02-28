@@ -1,0 +1,27 @@
+<!--
+
+    Copyright 2020 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+
+-->
+<sly data-sly-use.helper="libs.commerce.gui.components.common.cifcategoryfield.CIFCategoryFieldHelper"/>
+<coral-masonry-item data-sly-test="${helper.isCategory}" class="foundation-collection-item"
+                    data-foundation-collection-item-id="${resource.path}"
+                    data-foundation-picker-collection-item-value="${helper.selectionId}"
+                    data-granite-collection-item-id="${resource.path}">
+    <coral-card class="foundation-collection-navigator cq-commerce-picker-selectable"
+                data-foundation-collection-item-id="${resource.path}"
+                data-path="${resource.path}">
+        <coral-card-content>
+            <coral-card-context >${"Category" @ i18n}</coral-card-context>
+            <coral-card-title class="foundation-collection-item-title">${resource["jcr:title"]}</coral-card-title>
+        </coral-card-content>
+    </coral-card>
+</coral-masonry-item>
