@@ -31,6 +31,7 @@ import com.adobe.cq.commerce.api.CommerceException;
 import com.adobe.cq.commerce.api.Product;
 import com.adobe.cq.commerce.api.VariantFilter;
 import com.adobe.cq.commerce.graphql.resource.SyntheticImageResource;
+import com.adobe.cq.commerce.magento.graphql.ComplexTextValue;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableVariant;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
@@ -138,8 +139,14 @@ public class MagentoProduct implements Product {
     @Override
     public String getDescription(String selectorString) {
         return getVariantOrBaseProperty(
-            () -> product.getDescription().getHtml(),
-            masterVariant != null ? (() -> masterVariant.getDescription().getHtml()) : null);
+            () -> {
+                ComplexTextValue description = product.getDescription();
+                return description == null ? null : description.getHtml();
+            },
+            masterVariant != null ? (() -> {
+                ComplexTextValue description = masterVariant.getDescription();
+                return description == null ? null : description.getHtml();
+            }) : null);
     }
 
     @Override

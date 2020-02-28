@@ -18,7 +18,7 @@
     <groupId>com.adobe.commerce.cif</groupId>
     <artifactId>cif-connector-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.8.1-SNAPSHOT</version>
+    <version>0.9.1-SNAPSHOT</version>
 
     <name>CIF Connector - Parent project</name>
     <description>Parent project for the CIF connector</description>
