@@ -14,11 +14,16 @@
 
 package com.adobe.cq.commerce.graphql.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.RequestDispatcher;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -30,11 +35,13 @@ import org.mockito.Mockito;
 
 import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
 import com.adobe.granite.omnisearch.spi.core.OmniSearchHandler;
+import com.day.cq.commons.feed.StringResponseWrapper;
 import com.day.cq.search.PredicateGroup;
 import com.day.cq.search.result.SearchResult;
 import com.day.cq.tagging.TagManager;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.core.contentfinder.Hit;
 import com.day.cq.wcm.core.contentfinder.ViewQuery;
 
 import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.CATEGORY_ID_PARAMETER;
@@ -132,5 +139,54 @@ public class GraphqlProductViewHandlerTest {
         Assert.assertEquals(predicateGroup.getByName("3_" + CATEGORY_ID_PARAMETER).get(CATEGORY_ID_PARAMETER), "1");
         Assert.assertNotNull(predicateGroup.getByName("4_" + CATEGORY_PATH_PARAMETER));
         Assert.assertEquals(predicateGroup.getByName("4_" + CATEGORY_PATH_PARAMETER).get(CATEGORY_PATH_PARAMETER), "/catalog/path");
+    }
+
+    @Test
+    public void testGenerateHtmlOutput() throws Exception {
+        SlingHttpServletResponse servletResponse = Mockito.mock(SlingHttpServletResponse.class);
+        Collection<Hit> hits = new ArrayList<>();
+        Hit hit = new Hit();
+        hit.set("path", "/hit/path1");
+
+        Hit hit2 = new Hit();
+        hit2.set("path", "/hit/path2");
+        hit2.set("resource", Mockito.mock(Resource.class));
+
+        RequestDispatcher requestDispatcher = Mockito.mock(RequestDispatcher.class);
+        Mockito.when(servletRequest.getRequestDispatcher(Mockito.any(Resource.class), Mockito.any())).thenReturn(requestDispatcher);
+        Mockito.doAnswer(invocation -> {
+            StringResponseWrapper response = invocation.getArgumentAt(1, StringResponseWrapper.class);
+            response.getWriter().println("Hit");
+            return null;
+        }).when(requestDispatcher).include(Mockito.any(), Mockito.any(StringResponseWrapper.class));
+
+        // no hit, no itemResourceType
+        String output = viewHandler.generateHtmlOutput(Collections.emptyList(), servletRequest, servletResponse);
+        Assert.assertEquals("[]", output);
+
+        // one hit, no itemResourceType
+        hits.add(hit);
+        output = viewHandler.generateHtmlOutput(hits, servletRequest, servletResponse);
+        Assert.assertNotNull(output);
+        Assert.assertTrue(output.startsWith("[com.day.cq.wcm.core.contentfinder.Hit@"));
+
+        // no hit, with itemResourceType
+        Mockito.when(servletRequest.getParameter("itemResourceType")).thenReturn("item/resource/type");
+        output = viewHandler.generateHtmlOutput(Collections.emptyList(), servletRequest, servletResponse);
+        Assert.assertEquals("", output);
+
+        // one hit, with itemResourceType, no resource
+        output = viewHandler.generateHtmlOutput(hits, servletRequest, servletResponse);
+        Assert.assertEquals("", output);
+
+        // one hit with itemResourceType and resource
+        hit.set("resource", Mockito.mock(Resource.class));
+        output = viewHandler.generateHtmlOutput(hits, servletRequest, servletResponse);
+        Assert.assertEquals("Hit\n", output);
+
+        // more hits with itemResourceType and resource
+        hits.add(hit2);
+        output = viewHandler.generateHtmlOutput(hits, servletRequest, servletResponse);
+        Assert.assertEquals("Hit\nHit\n", output);
     }
 }

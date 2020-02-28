@@ -14,6 +14,7 @@
 
 package com.adobe.cq.commerce.graphql.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,11 +26,15 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -44,6 +49,7 @@ import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
 import com.adobe.cq.commerce.graphql.search.CatalogSearchSupport;
 import com.adobe.granite.omnisearch.spi.core.OmniSearchHandler;
 import com.adobe.granite.xss.XSSAPI;
+import com.day.cq.commons.feed.StringResponseWrapper;
 import com.day.cq.search.Predicate;
 import com.day.cq.search.PredicateConverter;
 import com.day.cq.search.PredicateGroup;
@@ -92,9 +98,35 @@ public class GraphqlProductViewHandler extends ViewHandler {
 
     private TagManager tagManager;
 
+    protected String generateHtmlOutput(Collection<Hit> hits, SlingHttpServletRequest request,
+        SlingHttpServletResponse response) throws ServletException, IOException {
+        // if resource type is not set return String representation of search result
+        if (request.getParameter("itemResourceType") == null) {
+            return hits.toString();
+        }
+
+        StringResponseWrapper hitResponse = new StringResponseWrapper(response);
+
+        RequestDispatcherOptions requestDispatcherOptions = new RequestDispatcherOptions(null);
+
+        // Force a resource type, to render the resource in a specific way
+        requestDispatcherOptions.setForceResourceType(request.getParameter("itemResourceType"));
+
+        for (Hit hit : hits) {
+            Resource resource = (Resource) hit.get("resource");
+            if (resource != null) {
+                request.setAttribute(Resource.class.getCanonicalName(), resource);
+                RequestDispatcher dispatcher = request.getRequestDispatcher(resource, requestDispatcherOptions);
+                dispatcher.include(request, hitResponse);
+                request.removeAttribute(Resource.class.getCanonicalName());
+            }
+        }
+        return hitResponse.getString();
+    }
+
     // ----------------------< Internal Methods >-------------------------------
 
-    private static Hit createHit(Product product, XSSAPI xssAPI) {
+    private static Hit createHit(Product product, Resource resource, XSSAPI xssAPI) {
         Hit hit = new Hit();
         String path = product.getPath();
         String name = path.substring(path.lastIndexOf("/") + 1);
@@ -108,6 +140,7 @@ public class GraphqlProductViewHandler extends ViewHandler {
         hit.set("title", xssAPI.encodeForHTML(title));
         hit.set("sku", xssAPI.encodeForHTML(product.getSKU()));
         hit.set("excerpt", xssAPI.filterHTML(""));
+        hit.set("resource", resource);
 
         return hit;
     }
@@ -339,7 +372,7 @@ public class GraphqlProductViewHandler extends ViewHandler {
                 if (resource != null) {
                     Product product = resource.adaptTo(Product.class);
                     if (product != null) {
-                        hits.add(createHit(product, xssAPI));
+                        hits.add(createHit(product, resource, xssAPI));
                     }
                 }
             }

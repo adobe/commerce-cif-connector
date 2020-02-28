@@ -40,17 +40,17 @@
                     sling:resourceType="granite/ui/components/coral/foundation/masonry"
                     granite:class="cq-commerce-picker-collection"
                     icon="viewCard"
-                    limit="{Long}20"
+                    limit="{Long}19"
                     selectionCount="${requestPathInfo.selectors[1]}"
                     selectionMode="{Boolean}true"
                     renderItemElement="{Boolean}false"
-                    size="${empty requestPathInfo.selectors[3] ? &quot;20&quot; : requestPathInfo.selectors[3]}"
+                    size="${empty requestPathInfo.selectors[3] ? &quot;19&quot; : requestPathInfo.selectors[3]}"
                     src="/mnt/overlay/commerce/gui/content/common/cifproductfield/picker/search/views/card.result.${requestPathInfo.selectors[1]}{.offset,limit}.html?${querystring}">
                 <datasource
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="commerce/gui/components/common/cifproductfield/datasources/search"
                         itemResourceType="commerce/gui/components/common/cifproductfield/carditem"
-                        limit="${empty requestPathInfo.selectors[3] ? &quot;21&quot; : requestPathInfo.selectors[3] + 1}"
+                        limit="${empty requestPathInfo.selectors[3] ? &quot;20&quot; : requestPathInfo.selectors[3] + 1}"
                         offset="${requestPathInfo.selectors[2]}"/>
             </card>
         </views>
