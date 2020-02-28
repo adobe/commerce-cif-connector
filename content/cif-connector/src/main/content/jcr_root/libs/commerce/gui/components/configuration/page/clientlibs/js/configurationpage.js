@@ -13,7 +13,7 @@
 
  */
 
-(function (window, document, Granite, $) {
+(function(window, document, Granite, $) {
     'use strict';
 
     /**
@@ -53,7 +53,9 @@
     function init() {
         formElement = $('#cq-commerce-products-bindproducttree-form');
         catalogIdentifierCoralSelectComponent = $('#cq-commerce-products-bindproducttree-catalog-select').get(0);
-        catalogIdentifierDataCoralSelectComponent = $('#cq-commerce-products-bindproducttree-catalog-select-data').get(0);
+        catalogIdentifierDataCoralSelectComponent = $('#cq-commerce-products-bindproducttree-catalog-select-data').get(
+            0
+        );
         commerceProviderCoralSelectComponent = $('#cq-commerce-products-bindproducttree-provider-select').get(0);
         nameCoralTextfieldComponent = $('#cq-commerce-products-bindproducttree-name').get(0);
         redirectLocation = $('#cq-commerce-products-bindproducttree-form')
@@ -78,7 +80,8 @@
      * @returns {string[]} A list of catalog identifiers.
      */
     function getCatalogIdentifiers(commerceProvider) {
-        return catalogIdentifierDataCoralSelectComponent.items.getAll()
+        return catalogIdentifierDataCoralSelectComponent.items
+            .getAll()
             .map(item => item.value)
             .filter(item => item.startsWith(`${commerceProvider}:`))
             .map(item => item.substr(commerceProvider.length + 1));
@@ -93,7 +96,7 @@
     function buildSelectItems(values) {
         return values.map(catalog => {
             return {
-                'value': catalog,
+                value: catalog,
                 content: {
                     textContent: catalog
                 }
@@ -147,12 +150,10 @@
 
         if (commerceProviderCoralSelectComponent) {
             // Register events listeners
-            Coral.commons.ready(commerceProviderCoralSelectComponent, function () {
+            Coral.commons.ready(commerceProviderCoralSelectComponent, function() {
                 commerceProviderCoralSelectComponent.on('change', commerceProviderSelectedHandler);
             });
         }
         formElement.on('submit', formSubmitHandler);
     });
-
-
 })(window, document, Granite, Granite.$);
