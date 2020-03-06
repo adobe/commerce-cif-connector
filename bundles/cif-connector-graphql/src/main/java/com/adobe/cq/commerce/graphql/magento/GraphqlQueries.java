@@ -73,6 +73,7 @@ class GraphqlQueries {
         .id()
         .sku()
         .name()
+        .urlKey()
         .updatedAt()
         .thumbnail(t -> t.url());
 
