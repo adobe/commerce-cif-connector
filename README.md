@@ -42,14 +42,9 @@ For previous versions, we only provide the version requirements of the `all` pac
 | CIF Connector | AEM 6.4 | AEM 6.5 | Magento | Java |
 |---------------|---------|---------|---------|------|
 | 0.9.0         | 6.4.4.0 | 6.5.0   | 2.3.4   | 1.8  |
-| 0.8.0         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
-| 0.7.0         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
-| 0.6.0         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
-| 0.5.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.4.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.3.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.2.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
-| 0.1.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
+| 0.8.1         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
+
+For a list of requirements for previous versions, see [Historical System Requirements](VERSIONS.md).
 
 ## CIF Magento GraphQL Configuration
 
