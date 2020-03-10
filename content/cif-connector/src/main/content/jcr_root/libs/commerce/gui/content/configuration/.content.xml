@@ -17,7 +17,7 @@
                  targetCollection=".cq-confadmin-admin-childpages">
         <head jcr:primaryType="nt:unstructured">
             <clientlibs jcr:primaryType="nt:unstructured"
-                        categories="[cq.common.wcm, cq.sites.collectionpage]"
+                        categories="[cq.common.wcm, cq.sites.collectionpage,commerce.gui.admin.configconsole]"
                         sling:resourceType="granite/ui/components/foundation/includeclientlibs"/>
         </head>
         <views jcr:primaryType="nt:unstructured">
@@ -84,7 +84,7 @@
                         target=".cq-confadmin-admin-childpages"
                         text="Delete"
                         variant="actionBar"
-                        action="cq.wcm.delete"/>
+                        action="cq.wcm.commerce.configuration.delete"/>
             </selection>
 
         </actions>

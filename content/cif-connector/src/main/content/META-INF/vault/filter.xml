@@ -30,6 +30,11 @@
     <filter root="/libs/commerce/gui/content/common/cifcategoryfield"/>
     <filter root="/libs/commerce/gui/content/configuration"/>
 
+    <filter root="/libs/commerce/gui/clientlibs">
+        <exclude pattern="/libs/commerce/gui/clientlibs(/.*)?"/>
+        <include pattern="/libs/commerce/gui/clientlibs/configbrowser"/>
+    </filter>
+
     <!-- overlay for the asset metadata editor -->
     <filter root="/libs/dam/content/schemaeditors/forms/default/items/tabs/items/tab6"/>
 
