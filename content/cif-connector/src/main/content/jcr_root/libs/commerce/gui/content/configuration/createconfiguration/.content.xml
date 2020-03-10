@@ -42,10 +42,8 @@
                         style="vertical">
                     <successresponse
                             jcr:primaryType="nt:unstructured"
-                            jcr:title="Success"
-                            sling:resourceType="granite/ui/components/coral/foundation/form/responses/openprompt"
-                            open="/mnt/overlay/wcm/core/content/sites/properties.html?item={Path}"
-                            redirect="/libs/commerce/gui/content/configuration.html${granite:encodeURIPath(requestPathInfo.suffix)}"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/responses/redirect"
+                            href="/libs/commerce/gui/content/configuration.html${granite:encodeURIPath(requestPathInfo.suffix)}"
                             text="The configuration has been created."/>
                     <items jcr:primaryType="nt:unstructured">
                         <name jcr:primaryType="nt:unstructured"

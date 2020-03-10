@@ -66,6 +66,9 @@ public class ConfigurationColumnPreview {
         LOG.debug("Item in preview is at path {}", itemResourcePath);
 
         itemResource = request.getResourceResolver().getResource(itemResourcePath);
+        if (itemResource == null) {
+            return;
+        }
         isFolder = itemResource.isResourceType(JcrConstants.NT_FOLDER) || itemResource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER)
             || itemResource
                 .isResourceType(JcrResourceConstants.NT_SLING_ORDERED_FOLDER);
@@ -79,7 +82,7 @@ public class ConfigurationColumnPreview {
     }
 
     public String getTitle() {
-        return properties.get(JcrConstants.JCR_TITLE, itemResource.getName());
+        return properties != null ? properties.get(JcrConstants.JCR_TITLE, itemResource.getName()) : "";
     }
 
     public boolean isFolder() {
@@ -87,6 +90,6 @@ public class ConfigurationColumnPreview {
     }
 
     public String getItemResourcePath() {
-        return itemResource.getPath();
+        return itemResource != null ? itemResource.getPath() : "";
     }
 }
