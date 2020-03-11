@@ -74,7 +74,8 @@ public class ConfigurationColumnViewItem {
         if (isConfigurationContainer()) {
             // for /conf/<bucket>/settings folder we add the "Create" activator
             // so we can do a "client-side render condition"
-            actions.add(hasCommerceSetting ? "none" : "cq-confadmin-actions-create-activator");
+            actions.add(hasCommerceSetting || resource.getPath().equals(Constants.CONF_ROOT) ? "none"
+                : "cq-confadmin-actions-create-activator");
         }
 
         if (!isConfigurationContainer()) {

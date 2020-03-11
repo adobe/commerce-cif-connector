@@ -58,12 +58,15 @@
         if (activeItem) {
             contentPath = activeItem.dataset["foundationCollectionId"];
             activeItem.addEventListener("coral-columnview:loaditems", function () {
-                const activeColumnItem = document.querySelector(".cq-confadmin-admin-childpages.foundation-collection .is-active");
-                if (activeColumnItem && activeColumnItem.length > 0)
-                    activeColumnItem.each(function (i, objElement) {
+                const activeColumnItem = document.querySelectorAll(".cq-confadmin-admin-childpages.foundation-collection .is-active");
+                if (activeColumnItem.length > 0) {
+                    activeColumnItem.forEach(function (objElement) {
                         if (contentPath === objElement.dataset['foundationCollectionId'] || contentPath === objElement.dataset['foundationCollectionId'] + "/")
-                            checkCreateConfig($(objElement));
-                    })
+                            checkCreateConfig(objElement);
+                    });}
+                else {
+                    checkCreateConfig(activeItem);
+                }
             });
 
         }
