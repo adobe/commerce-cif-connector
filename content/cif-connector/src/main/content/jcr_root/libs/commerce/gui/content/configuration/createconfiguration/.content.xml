@@ -77,16 +77,14 @@
                                     <parentConfig
                                             jcr:primaryType="nt:unstructured"
                                             validation="{Boolean}true">
-                                        <prev
+                                        <cancel
                                                 granite:class="foundation-wizard-control"
                                                 jcr:primaryType="nt:unstructured"
                                                 sling:resourceType="granite/ui/components/coral/foundation/anchorbutton"
+                                                href="/mnt/overlay/commerce/gui/content/configuration.html${granite:encodeURIPath(requestPathInfo.suffix)}"
                                                 text="Cancel">
-                                            <granite:data
-                                                    jcr:primaryType="nt:unstructured"
-                                                    foundation-wizard-control-action="prev"/>
-                                        </prev>
-                                        <next
+                                        </cancel>
+                                        <create
                                                 granite:class="foundation-wizard-control"
                                                 jcr:primaryType="nt:unstructured"
                                                 sling:resourceType="granite/ui/components/coral/foundation/button"
@@ -94,10 +92,7 @@
                                                 text="Create"
                                                 type="submit"
                                                 variant="primary">
-                                            <granite:data
-                                                    jcr:primaryType="nt:unstructured"
-                                                    foundation-wizard-control-action="next"/>
-                                        </next>
+                                        </create>
                                     </parentConfig>
                                 </properties>
                             </items>
