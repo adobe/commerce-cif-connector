@@ -11,56 +11,58 @@
 
  */
 
-(function ($) {
+(function($) {
+    const COMMAND_URL = Granite.HTTP.externalize('/bin/wcmcommand');
 
-    const COMMAND_URL = Granite.HTTP.externalize("/bin/wcmcommand");
-
-    const deleteConfig = (path) => {
+    const deleteConfig = path => {
         $.ajax({
             url: COMMAND_URL,
-            type: "POST",
+            type: 'POST',
             data: {
-                _charset: "UTF-8",
-                cmd: "deletePage",
+                _charset: 'UTF-8',
+                cmd: 'deletePage',
                 path,
                 force: false,
                 checkChildren: true
             },
             success: () => {
-                location.reload()
+                location.reload();
             }
-        })
+        });
     };
 
     const deleteHandler = (name, el, config, collectionm, selections) => {
-        const itemPath = selections[0].dataset["foundationCollectionItemId"];
+        const itemPath = selections[0].dataset['foundationCollectionItemId'];
 
         if (!itemPath) {
-            console.error("Cannot determine the item path, not doing anything");
+            console.error('Cannot determine the item path, not doing anything');
             return;
         }
 
-        const ui = $(window).adaptTo("foundation-ui");
+        const ui = $(window).adaptTo('foundation-ui');
 
-        const messageEl = document.createElement("div");
-        messageEl.innerHTML = `${Granite.I18n.get("Are you sure you want to delete this configuration: ")}<br> ${itemPath}`;
-        ui.prompt(Granite.I18n.get("Delete"), messageEl.innerHTML, "notice", [
+        const messageEl = document.createElement('div');
+        messageEl.innerHTML = `${Granite.I18n.get(
+            'Are you sure you want to delete this configuration: '
+        )}<br> ${itemPath}`;
+        ui.prompt(Granite.I18n.get('Delete'), messageEl.innerHTML, 'notice', [
             {
-                "text": Granite.I18n.get("OK"),
-                "handler": () => {
+                text: Granite.I18n.get('OK'),
+                handler: () => {
                     deleteConfig(itemPath);
                 },
-                warning: "true"
-            }, {
-                "text": Granite.I18n.get("Cancel"),
+                warning: 'true'
+            },
+            {
+                text: Granite.I18n.get('Cancel')
             }
-        ])
+        ]);
     };
 
-    $(window).adaptTo("foundation-registry").register("foundation.collection.action.action", {
-        name: 'cq.wcm.commerce.configuration.delete',
-        handler: deleteHandler
-    });
-
+    $(window)
+        .adaptTo('foundation-registry')
+        .register('foundation.collection.action.action', {
+            name: 'cq.wcm.commerce.configuration.delete',
+            handler: deleteHandler
+        });
 })(Granite.$);
-

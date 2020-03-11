@@ -10,16 +10,15 @@
     governing permissions and limitations under the License.
  */
 
-(function ($) {
+(function($) {
+    const CREATE_CONFIG_SELECTOR = '.cif-create-config';
+    const REL_CREATE_CONFIG_NONE = 'none';
+    const REL_CREATE_CONFIG = 'cq-confadmin-actions-create-activator';
 
-    const CREATE_CONFIG_SELECTOR = ".cif-create-config";
-    const REL_CREATE_CONFIG_NONE = "none";
-    const REL_CREATE_CONFIG = "cq-confadmin-actions-create-activator";
-
-    $(document).on("foundation-contentloaded", (event) => {
-        initCreateConfig()
+    $(document).on('foundation-contentloaded', event => {
+        initCreateConfig();
     });
-    $(document).on("foundation-selections-change", function (e) {
+    $(document).on('foundation-selections-change', function(e) {
         const createConfigButton = document.querySelector(CREATE_CONFIG_SELECTOR);
         hide(createConfigButton);
         if (e.target.activeItem) {
@@ -29,15 +28,14 @@
     });
 
     function hide(element) {
-        element.style.display = 'none'
+        element.style.display = 'none';
     }
 
     function show(element) {
-        element.style.display = 'block'
+        element.style.display = 'block';
     }
 
     function checkCreateConfig(activeItem) {
-
         const activeItemMeta = activeItem.querySelector('.foundation-collection-quickactions');
         let relAction;
         if (activeItemMeta) {
@@ -45,32 +43,31 @@
         }
         const createConfigButton = document.querySelector(CREATE_CONFIG_SELECTOR);
         hide(createConfigButton);
-        if (relAction && createConfigButton && relAction === REL_CREATE_CONFIG_NONE)
-            hide(createConfigButton);
-        if (relAction && createConfigButton && relAction === REL_CREATE_CONFIG)
-            show(createConfigButton);
+        if (relAction && createConfigButton && relAction === REL_CREATE_CONFIG_NONE) hide(createConfigButton);
+        if (relAction && createConfigButton && relAction === REL_CREATE_CONFIG) show(createConfigButton);
     }
-
 
     function initCreateConfig() {
         //Default content path
-        const activeItem = document.querySelector(".cq-confadmin-admin-childpages.foundation-collection");
+        const activeItem = document.querySelector('.cq-confadmin-admin-childpages.foundation-collection');
         if (activeItem) {
-            contentPath = activeItem.dataset["foundationCollectionId"];
-            activeItem.addEventListener("coral-columnview:loaditems", function () {
-                const activeColumnItem = document.querySelectorAll(".cq-confadmin-admin-childpages.foundation-collection .is-active");
+            contentPath = activeItem.dataset['foundationCollectionId'];
+            activeItem.addEventListener('coral-columnview:loaditems', function() {
+                const activeColumnItem = document.querySelectorAll(
+                    '.cq-confadmin-admin-childpages.foundation-collection .is-active'
+                );
                 if (activeColumnItem.length > 0) {
-                    activeColumnItem.forEach(function (objElement) {
-                        if (contentPath === objElement.dataset['foundationCollectionId'] || contentPath === objElement.dataset['foundationCollectionId'] + "/")
+                    activeColumnItem.forEach(function(objElement) {
+                        if (
+                            contentPath === objElement.dataset['foundationCollectionId'] ||
+                            contentPath === objElement.dataset['foundationCollectionId'] + '/'
+                        )
                             checkCreateConfig(objElement);
-                    });}
-                else {
+                    });
+                } else {
                     checkCreateConfig(activeItem);
                 }
             });
-
         }
-
     }
-
 })(Granite.$);
