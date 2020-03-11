@@ -14,6 +14,7 @@
 
 package com.adobe.cq.commerce.gui.components.configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -30,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.virtual.catalog.data.Constants;
 import com.day.cq.commons.jcr.JcrConstants;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Sling Model for the column-view item of the configuration console
@@ -49,9 +49,12 @@ public class ConfigurationColumnViewItem {
     @Inject
     private Resource resource;
 
+    boolean hasCommerceSetting;
+
     @PostConstruct
     public void initModel() {
         LOG.debug("Initializing column view item for resource {}", resource.getPath());
+        hasCommerceSetting = resource.getChild(Constants.COMMERCE_BUCKET_PATH) != null;
     }
 
     public String getTitle() {
@@ -62,12 +65,25 @@ public class ConfigurationColumnViewItem {
 
     public boolean hasChildren() {
         boolean isContainer = isConfigurationContainer();
-        boolean hasCommerceSetting = resource.getChild(Constants.COMMERCE_BUCKET_PATH) != null;
         return isContainer && hasCommerceSetting;
     }
 
     public List<String> getQuickActionsRel() {
-        return ImmutableList.of("cq-confadmin-actions-properties-activator", "cq-confadmin-actions-delete-activator");
+        List<String> actions = new ArrayList<>();
+
+        if (isConfigurationContainer()) {
+            // for /conf/<bucket>/settings folder we add the "Create" activator
+            // so we can do a "client-side render condition"
+            actions.add(hasCommerceSetting ? "none" : "cq-confadmin-actions-create-activator");
+        }
+
+        if (!isConfigurationContainer()) {
+            // for items which are not configuration containers (folders)
+            actions.add("cq-confadmin-actions-properties-activator");
+            actions.add("cq-confadmin-actions-delete-activator");
+        }
+
+        return actions;
     }
 
     private boolean isConfigurationContainer() {

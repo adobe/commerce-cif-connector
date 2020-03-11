@@ -1,4 +1,4 @@
-<!*/--
+<!--/*
 
 Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,14 @@ governing permissions and limitations under the License.
 */-->
 <coral-columnview-preview data-sly-use.configPreview="com.adobe.cq.commerce.gui.components.configuration.ConfigurationColumnPreview">
     <coral-columnview-preview-content>
-        <coral-columnview-preview-asset data-sly-test.isFolder="${configPreview.isFolder}">
-            <img src="${configPreview.itemResourcePath}.folderthumbnail.jpg"/>
-        </coral-columnview-preview-asset>
-        <coral-columnview-preview-asset data-sly-test="${!isFolder}">
-            <img src="${configPreview.itemResourcePath}.thumb.480.300.png"/>
+        <coral-columnview-preview-asset >
+            <coral-icon  data-sly-test.isFolder="${configPreview.isFolder}" class="foundation-collection-item-thumbnail" icon="folder" size="XL" role="img"></coral-icon>
+            <coral-icon data-sly-test="${!isFolder}" class="foundation-collection-item-thumbnail" icon="page" size="XL" role="img"></coral-icon>
         </coral-columnview-preview-asset>
 
         <coral-columnView-preview-label>${'Title' @ i18n}</coral-columnView-preview-label>
         <coral-columnview-preview-value>${configPreview.title}
         </coral-columnview-preview-value>
-
+        
     </coral-columnview-preview-content>
 </coral-columnview-preview>

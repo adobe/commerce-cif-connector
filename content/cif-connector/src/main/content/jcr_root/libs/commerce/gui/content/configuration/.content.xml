@@ -52,7 +52,7 @@
             <primary jcr:primaryType="nt:unstructured"/>
             <secondary jcr:primaryType="nt:unstructured">
                 <create jcr:primaryType="nt:unstructured"
-                        granite:class="cq-confadmin-actions-createconfig-activator"
+                        granite:class="cq-confadmin-actions-createconfig-activator cif-create-config"
                         relScope="collection"
                         sling:resourceType="granite/ui/components/coral/foundation/collection/action"
                         action="foundation.link"

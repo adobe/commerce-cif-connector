@@ -62,12 +62,23 @@ public class ConfigurationColumnViewItemTest {
     }
 
     @Test
-    public void testGetQuickActions() {
+    public void testGetQuickActionsForFolderWithConfiguration() {
         context.currentResource(context.resourceResolver().getResource("/conf/testing"));
         ConfigurationColumnViewItem columnViewItem = context.request().adaptTo(ConfigurationColumnViewItem.class);
 
-        String[] expectedActions = new String[] { "cq-confadmin-actions-properties-activator",
-            "cq-confadmin-actions-delete-activator" };
+        String[] expectedActions = new String[] { "none" };
+
+        List<String> actualActions = columnViewItem.getQuickActionsRel();
+        Assert.assertArrayEquals("Returns the quick-actions", expectedActions, actualActions.toArray());
+
+    }
+
+    @Test
+    public void testGetQuickActionsForConfigurations() {
+        context.currentResource(context.resourceResolver().getResource(CONFIGURATION_PATH));
+        ConfigurationColumnViewItem columnViewItem = context.request().adaptTo(ConfigurationColumnViewItem.class);
+
+        String[] expectedActions = new String[] { "cq-confadmin-actions-properties-activator", "cq-confadmin-actions-delete-activator" };
 
         List<String> actualActions = columnViewItem.getQuickActionsRel();
         Assert.assertArrayEquals("Returns the quick-actions", expectedActions, actualActions.toArray());

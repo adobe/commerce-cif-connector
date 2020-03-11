@@ -1,2 +1,3 @@
 #base=js
 actions/delete.js
+renderconditions/hascommerceconfig.js
