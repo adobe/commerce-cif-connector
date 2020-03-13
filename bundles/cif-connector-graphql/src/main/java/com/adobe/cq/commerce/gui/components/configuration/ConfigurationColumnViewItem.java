@@ -92,6 +92,6 @@ public class ConfigurationColumnViewItem {
             .startsWith(Constants.CONF_ROOT) && (resource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER) || resource.isResourceType(
                 JcrResourceConstants.NT_SLING_ORDERED_FOLDER))
             && resource
-                .getChild(Constants.CONF_CONTAINER_BUCKET_NAME) != null);
+                .getChild(Constants.CONF_CONTAINER_BUCKET_NAME + "/" + Constants.CLOUDCONFIGS_BUCKET_NAME) != null);
     }
 }

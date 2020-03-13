@@ -84,7 +84,7 @@
                                                 href="/mnt/overlay/commerce/gui/content/configuration.html${granite:encodeURIPath(requestPathInfo.suffix)}"
                                                 text="Cancel">
                                         </cancel>
-                                        <create
+                                        <next
                                                 granite:class="foundation-wizard-control"
                                                 jcr:primaryType="nt:unstructured"
                                                 sling:resourceType="granite/ui/components/coral/foundation/button"
@@ -92,7 +92,7 @@
                                                 text="Create"
                                                 type="submit"
                                                 variant="primary">
-                                        </create>
+                                        </next>
                                     </parentConfig>
                                 </properties>
                             </items>
