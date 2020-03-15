@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
+import org.apache.sling.testing.mock.osgi.MockEventAdmin;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.resourceresolver.MockResourceResolverFactory;
 import org.junit.Assert;
@@ -40,6 +41,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderFactory;
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderManager;
+import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import io.wcm.testing.mock.aem.junit.AemContextBuilder;
 
@@ -102,6 +104,7 @@ public class CatalogDataProviderManagerConfTest {
 
         Resource dataRoot = dataRoots.get(0);
         Assert.assertEquals("The data root points to " + expectedDataRootPath, expectedDataRootPath, dataRoot.getPath());
+
     }
 
     private class FactoryConfig {
