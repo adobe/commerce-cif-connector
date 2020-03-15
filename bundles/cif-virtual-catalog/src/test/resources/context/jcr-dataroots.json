@@ -1,0 +1,7 @@
+{
+    "testing": {
+        "jcr:primaryType":"sling:Folder",
+        "jcr:title":"Test products",
+        "cq:conf":"/conf/testing"
+    }
+}
