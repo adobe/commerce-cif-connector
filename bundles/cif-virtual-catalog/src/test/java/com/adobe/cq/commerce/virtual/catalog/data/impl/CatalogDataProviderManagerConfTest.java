@@ -49,7 +49,7 @@ public class CatalogDataProviderManagerConfTest {
 
     private static final String TEST_PROVIDER_FACTORY_ID = "TestProviderFactory";
 
-    private static final String COMMERCE_ROOT = "/var/commerce/products";
+    private static final String COMMERCE_ROOT = "/var/commerce";
     private static final String NN_DATA_ROOT = "testing";
 
     private CatalogDataResourceProviderManager manager;
@@ -94,11 +94,11 @@ public class CatalogDataProviderManagerConfTest {
     }
 
     @Test
-    public void testDataRoots() throws LoginException, RepositoryException {
-        String expectedDataRootPath = COMMERCE_ROOT + "/" + NN_DATA_ROOT;
+    public void testDataRoots() throws LoginException, RepositoryException, InterruptedException {
+        String expectedDataRootPath = COMMERCE_ROOT + "/products/" + NN_DATA_ROOT;
 
         List<Resource> dataRoots = manager.getDataRoots();
-        Assert.assertEquals("The manager registered one data root", 1, dataRoots.size());
+        Assert.assertEquals("The manager found two data roots", 2, dataRoots.size());
 
         Resource dataRoot = dataRoots.get(0);
         Assert.assertEquals("The data root points to " + expectedDataRootPath, expectedDataRootPath, dataRoot.getPath());
