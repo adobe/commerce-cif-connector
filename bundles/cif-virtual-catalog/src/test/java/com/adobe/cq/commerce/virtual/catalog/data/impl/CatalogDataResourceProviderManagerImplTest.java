@@ -124,6 +124,25 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
     }
 
     @Test
+    public void testBindFactoryCreateInvalidRoot() throws Exception {
+        manager.activate(componentContext);
+        FactoryConfig factoryConfig = bindFactory();
+
+        final String path = "/var/commerce/products/data" + dataRootCounter.getAndIncrement();
+        Node root = JcrUtil.createPath(path, "sling:Folder", session);
+        // invalid, empty property value
+        root.setProperty(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, "");
+        session.save();
+
+        Thread.sleep(WAIT_FOR_EVENTS);
+
+        Assert.assertEquals(0, getProviders().size());
+        Assert.assertEquals(0, getProviderRegistrations().size());
+        Assert.assertEquals(1, manager.getProviderFactories().values().size());
+        Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+    }
+
+    @Test
     public void testBindFactoryCreateRoots() throws Exception {
         testBindFactoryCreateRoots(ROOT_COUNT);
     }
