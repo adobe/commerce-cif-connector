@@ -39,8 +39,12 @@
                             disabled="{Boolean}true"
                             emptyText="Select the catalog identifier"
                             fieldLabel="Catalog identifier"
-                            name="./cq:catalogIdentifier"
                             required="{Boolean}true"/>
+                    <hiddenCatalogIdentifier granite:id="cq-commerce-products-bindproducttree-catalog-hidden"
+                                             jcr:primaryType="nt:unstructured"
+                                             sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                             name="./cq:catalogIdentifier"
+                                             cq:showOnCreate="{Boolean}true"/>
                     <catalogidentifierdata
                             granite:id="cq-commerce-products-bindproducttree-catalog-select-data"
                             jcr:primaryType="nt:unstructured"

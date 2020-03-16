@@ -22,6 +22,11 @@
     let catalogIdentifierCoralSelectComponent;
 
     /**
+     * The field used to store the actual value of the catalog identifier property
+     */
+    let catalogIdentifierHidden;
+
+    /**
      * The hidden Coral Select component used for getting all available catalog identifiers for all commerce providers.
      */
     let catalogIdentifierDataCoralSelectComponent;
@@ -61,6 +66,7 @@
         redirectLocation = $('#cq-commerce-products-bindproducttree-form')
             .find('[data-foundation-wizard-control-action=cancel]')
             .attr('href');
+        catalogIdentifierHidden = $("#cq-commerce-products-bindproducttree-catalog-hidden").get(0);
     }
 
     /**
@@ -82,9 +88,8 @@
     function getCatalogIdentifiers(commerceProvider) {
         return catalogIdentifierDataCoralSelectComponent.items
             .getAll()
-            .map(item => item.value)
-            .filter(item => item.startsWith(`${commerceProvider}:`))
-            .map(item => item.substr(commerceProvider.length + 1));
+            .filter(item => item.value.startsWith(`${commerceProvider}:`))
+            .map(item => item.value.substr(commerceProvider.length + 1));
     }
 
     /**
@@ -130,6 +135,7 @@
      * Populates the commerce identifier select component after the commerce provider is selected.
      */
     function commerceProviderSelectedHandler() {
+        console.log(`Commerce provider field changed`);
         const commerceProvider = getSelectedCommerceProvider();
         if (commerceProvider !== '') {
             const catalogs = getCatalogIdentifiers(commerceProvider);
@@ -145,13 +151,36 @@
         }
     }
 
+    function catalogIdentifierSelectedHandler() {
+        const catalogIdentifier = catalogIdentifierCoralSelectComponent.selectedItem.value;
+        catalogIdentifierHidden.value = catalogIdentifier;
+        console.log(`Setting the hidden field value to ${catalogIdentifier}`);
+    }
+
     $(document).on('foundation-contentloaded', () => {
         init();
 
         if (commerceProviderCoralSelectComponent) {
             // Register events listeners
             Coral.commons.ready(commerceProviderCoralSelectComponent, function() {
+
+                if (!catalogIdentifierCoralSelectComponent.selectedItem) {
+                    let commerceProvider = commerceProviderCoralSelectComponent.selectedItem ? commerceProviderCoralSelectComponent.selectedItem.value : '';
+                    if (commerceProvider && commerceProvider.length > 0) {
+                        const catalogIdentifiers = getCatalogIdentifiers(commerceProvider);
+                        const catalogIdentifier = catalogIdentifiers.find(item => item === catalogIdentifierHidden.value);
+                        catalogIdentifierCoralSelectComponent.items.clear();
+                        catalogIdentifierCoralSelectComponent.items.add({
+                            value: catalogIdentifier,
+                            content: {
+                                textContent: catalogIdentifier
+                            },
+                            selected: true
+                        });
+                    }
+                }
                 commerceProviderCoralSelectComponent.on('change', commerceProviderSelectedHandler);
+                catalogIdentifierCoralSelectComponent.on('change', catalogIdentifierSelectedHandler)
             });
         }
         formElement.on('submit', formSubmitHandler);
