@@ -1,22 +1,22 @@
-{category(id:4){id,name,url_path,product_count,children_count,children{id,name,url_path,product_count,children_count,children{id,name,url_path,product_count,children_count,children{id,name,url_path,product_count,children_count,children{id,name,url_path,product_count,children_count}}}}}}
-
 {products(filter:{sku:{eq:"meskwielt"}}){items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}
-
-{products(search:"gloves",sort:{name:ASC},currentPage:2,pageSize:20){items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}
-
-{products(filter:{sku:{eq:"24-MB01"}}){items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}
-
-{category(id:19){products(sort:{name:ASC},currentPage:1,pageSize:20){total_count,items{__typename,id,sku,name,url_key,updated_at,thumbnail{url}}}}}
 
 {categoryList(filters:{name:{match:"1.2.3.4.5"}}){id,name,url_path,url_key}}
 
 {category(id:19){products(sort:{name:ASC},currentPage:1,pageSize:10){total_count,items{__typename,id,sku,name,url_key,updated_at,thumbnail{url}}}}}
 
-{products(filter:{category_id:{eq:"11"},price:{from:""}},sort:{name:ASC},currentPage:0,pageSize:3){items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}
+{products(filter:{category_id:{eq:"11"},price:{from:""}},sort:{relevance:DESC},currentPage:0,pageSize:3){items{__typename,id,sku,name,url_key,updated_at,thumbnail{url}}}}
 
-{products(search:"coats",sort:{name:ASC},currentPage:0,pageSize:3){items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}
+{products(search:"coats",sort:{relevance:DESC},currentPage:0,pageSize:3){items{__typename,id,sku,name,url_key,updated_at,thumbnail{url}}}}
 
-{products(search:"coats",filter:{category_id:{eq:"11"}},sort:{name:ASC},currentPage:0,pageSize:3){items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}
+{products(search:"coats",filter:{category_id:{eq:"11"}},sort:{relevance:DESC},currentPage:0,pageSize:3){items{__typename,id,sku,name,url_key,updated_at,thumbnail{url}}}}
 
-{products(filter:{price:{from:""}},sort:{name:ASC},currentPage:0,pageSize:3){items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}
+{category(id:4){id,name,url_path,product_count,children_count,children{id,name,url_path,product_count,children_count,children{id,name,url_path,product_count,children_count,children{id,name,url_path,product_count,children_count,children{id,name,url_path,product_count,children_count}}}}}}
+
+{products(filter:{price:{from:""}},sort:{relevance:DESC},currentPage:0,pageSize:3){items{__typename,id,sku,name,url_key,updated_at,thumbnail{url}}}}
+
+{products(search:"gloves",sort:{relevance:DESC},currentPage:2,pageSize:20){items{__typename,id,sku,name,url_key,updated_at,thumbnail{url}}}}
+
+{products(filter:{sku:{eq:"24-MB01"}}){items{__typename,id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}},categories{__typename,url_path},... on ConfigurableProduct{variants{product{id,sku,name,description{html},image{url},thumbnail{url},url_key,updated_at,created_at,price{regularPrice{amount{currency,value}}}}}}}}}
+
+{category(id:19){products(sort:{name:ASC},currentPage:1,pageSize:20){total_count,items{__typename,id,sku,name,url_key,updated_at,thumbnail{url}}}}}
 

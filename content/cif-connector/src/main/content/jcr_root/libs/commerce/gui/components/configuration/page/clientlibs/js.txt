@@ -1,0 +1,2 @@
+#base=js
+configurationpage.js
