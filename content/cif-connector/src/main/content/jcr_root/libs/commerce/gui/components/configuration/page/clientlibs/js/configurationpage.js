@@ -66,7 +66,7 @@
         redirectLocation = $('#cq-commerce-products-bindproducttree-form')
             .find('[data-foundation-wizard-control-action=cancel]')
             .attr('href');
-        catalogIdentifierHidden = $("#cq-commerce-products-bindproducttree-catalog-hidden").get(0);
+        catalogIdentifierHidden = $('#cq-commerce-products-bindproducttree-catalog-hidden').get(0);
     }
 
     /**
@@ -163,12 +163,15 @@
         if (commerceProviderCoralSelectComponent) {
             // Register events listeners
             Coral.commons.ready(commerceProviderCoralSelectComponent, function() {
-
                 if (!catalogIdentifierCoralSelectComponent.selectedItem) {
-                    let commerceProvider = commerceProviderCoralSelectComponent.selectedItem ? commerceProviderCoralSelectComponent.selectedItem.value : '';
+                    let commerceProvider = commerceProviderCoralSelectComponent.selectedItem
+                        ? commerceProviderCoralSelectComponent.selectedItem.value
+                        : '';
                     if (commerceProvider && commerceProvider.length > 0) {
                         const catalogIdentifiers = getCatalogIdentifiers(commerceProvider);
-                        const catalogIdentifier = catalogIdentifiers.find(item => item === catalogIdentifierHidden.value);
+                        const catalogIdentifier = catalogIdentifiers.find(
+                            item => item === catalogIdentifierHidden.value
+                        );
                         catalogIdentifierCoralSelectComponent.items.clear();
                         catalogIdentifierCoralSelectComponent.items.add({
                             value: catalogIdentifier,
@@ -180,7 +183,7 @@
                     }
                 }
                 commerceProviderCoralSelectComponent.on('change', commerceProviderSelectedHandler);
-                catalogIdentifierCoralSelectComponent.on('change', catalogIdentifierSelectedHandler)
+                catalogIdentifierCoralSelectComponent.on('change', catalogIdentifierSelectedHandler);
             });
         }
         formElement.on('submit', formSubmitHandler);
