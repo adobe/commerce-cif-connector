@@ -1,0 +1,9 @@
+{
+  "cloudconfigs": {
+    "jcr:primaryType": "sling:Folder",
+    "commerce": {
+      "jcr:primaryType": "nt:unstructured",
+      "cq:catalogDataResourceProviderFactory": "TestProviderFactory"
+    }
+  }
+}

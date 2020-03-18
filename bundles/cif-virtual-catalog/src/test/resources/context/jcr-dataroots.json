@@ -1,0 +1,15 @@
+{
+  "products": {
+    "jcr:primaryType": "sling:Folder",
+    "testing": {
+      "jcr:primaryType": "sling:Folder",
+      "jcr:title": "Test products",
+      "cq:conf": "/conf/testing"
+    },
+    "testingNoConfig": {
+      "jcr:primaryType": "sling:Folder",
+      "jcr:title": "Test products no configuration",
+      "cq:catalogDataResourceProviderFactory": "non-existent"
+    }
+}
+}

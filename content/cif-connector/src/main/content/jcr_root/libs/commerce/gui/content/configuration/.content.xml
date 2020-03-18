@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          jcr:primaryType="cq:Page">
+    <createconfiguration />
+    <jcr:content jcr:primaryType="cq:PageContent"
+                 consoleId="cq-cif-configurations"
+                 contentPath="${requestInfo.suffix}"
+                 currentView="${state['config-reactor.shell.collectionpage.layoutid'].string}"
+                 jcr:title="AEM | CIF Configurations"
+                 modeGroup="cq-confadmin-admin-childpages"
+                 pageURITemplate="/libs/commerce/gui/content/configuration.html{+id}"
+                 sling:resourceType="granite/ui/components/shell/collectionpage"
+                 targetCollection=".cq-confadmin-admin-childpages">
+        <head jcr:primaryType="nt:unstructured">
+            <clientlibs jcr:primaryType="nt:unstructured"
+                        categories="[cq.common.wcm, cq.sites.collectionpage,commerce.gui.admin.configconsole]"
+                        sling:resourceType="granite/ui/components/foundation/includeclientlibs"/>
+        </head>
+        <views jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured"
+                    granite:rel="cq-confadmin-admin-childpages"
+                    icon="viewColumn"
+                    jcr:title="Column View"
+                    limit="40"
+                    loadAncestors="{Boolean}true"
+                    modeGroup="cq-confadmin-admin-childpages"
+                    path="${requestPathInfo.suffix}"
+                    previewSrc="/mnt/overlay/commerce/gui/content/configuration/columnpreview.html{+id}"
+                    rootPath="/conf"
+                    size="${empty requestPathInfo.selectors[1] ? 40 : requestPathInfo.selectors[1]}"
+                    sling:resourceType="granite/ui/components/coral/foundation/columnview"
+                    src="/mnt/overlay/commerce/gui/content/configuration/jcr:content/views/column{.offset.limit}.html{+id}">
+                <granite:data jcr:primaryType="nt:unstructured"
+                              allowedResourceTypes="[commerce/gui/components/configuration/page]"/>
+                <datasource jcr:primaryType="nt:unstructured"
+                            itemResourceType="commerce/gui/components/configuration/columnviewitem"
+                            limit="${empty requestPathInfo.selectors[1] ? 41 : requestPathInfo.selectors[1] + 1}"
+                            offset="${requestPathInfo.selectors[0]}"
+                            path="${requestPathInfo.suffix}"
+                            sling:resourceType="cq/cloudconfig/components/admin/datasources/configurations"/>
+            </column>
+        </views>
+        <breadcrumbs jcr:primaryType="nt:unstructured"
+                     rootPath="/conf"
+                     rootTitle="CIF Configurations"
+                     sling:resourceType="cq/cloudconfig/components/admin/datasources/breadcrumbs"/>
+        <actions jcr:primaryType="nt:unstructured">
+            <primary jcr:primaryType="nt:unstructured"/>
+            <secondary jcr:primaryType="nt:unstructured">
+                <create jcr:primaryType="nt:unstructured"
+                        granite:class="cq-confadmin-actions-createconfig-activator cif-create-config"
+                        relScope="collection"
+                        sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                        action="foundation.link"
+                        target=".cq-confadmin-admin-childpages"
+                        text="Create configuration"
+                        variant="primary">
+                    <data jcr:primaryType="nt:unstructured"
+                          href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}"/>
+                </create>
+            </secondary>
+            <selection jcr:primaryType="nt:unstructured">
+                <viewproperties jcr:primaryType="nt:unstructured"
+                                action="foundation.link"
+                                activeSelectionCount="single"
+                                granite:class="cq-confadmin-actions-properties-activator"
+                                icon="infoCircle"
+                                sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                                target=".cq-confadmin-admin-childpages"
+                                text="Properties"
+                                variant="actionBar">
+                    <data jcr:primaryType="nt:unstructured"
+                          href.uritemplate="/mnt/overlay/wcm/core/content/sites/properties.html{?item*}"/>
+                </viewproperties>
+                <delete jcr:primaryType="nt:unstructured"
+                        activeSelectionCount="multiple"
+                        granite:rel="cq-confadmin-actions-delete-activator"
+                        icon="delete"
+                        sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                        target=".cq-confadmin-admin-childpages"
+                        text="Delete"
+                        variant="actionBar"
+                        action="cq.wcm.commerce.configuration.delete"/>
+            </selection>
+
+        </actions>
+    </jcr:content>
+    <columnpreview jcr:primaryType="nt:unstructured"
+                   path="${requestPathInfo.suffix}"
+                   sling:resourceType="commerce/gui/components/configuration/columnpreview"/>
+</jcr:root>

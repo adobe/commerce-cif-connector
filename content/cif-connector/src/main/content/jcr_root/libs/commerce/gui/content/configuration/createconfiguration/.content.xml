@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content
+            jcr:primaryType="cq:PageContent"
+            jcr:title="Create CIF Configuration"
+            sling:resourceType="granite/ui/components/coral/foundation/page">
+        <head jcr:primaryType="nt:unstructured">
+            <viewport
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/admin/page/viewport"/>
+            <meta
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/meta"
+                    content="chrome=1"
+                    name="X-UA-Compatible"/>
+            <favicon
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/page/favicon"/>
+            <clientlibs jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
+                        categories="[coralui3, granite.ui.coral.foundation,commerce.gui.admin.configuration]"/>
+        </head>
+        <body
+                granite:id="cq-cif-createconfiguration"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/page/body">
+            <items jcr:primaryType="nt:unstructured">
+                <form
+                        granite:class="form"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form"
+                        action="/libs/wcm/core/content/sites/createpagewizard/jcr:content"
+                        foundationForm="{Boolean}true"
+                        maximized="{Boolean}true"
+                        method="post"
+                        novalidate="{Boolean}true"
+                        style="vertical">
+                    <successresponse
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/responses/redirect"
+                            href="/libs/commerce/gui/content/configuration.html${granite:encodeURIPath(requestPathInfo.suffix)}"
+                            text="The configuration has been created."/>
+                    <items jcr:primaryType="nt:unstructured">
+                        <name jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                              name="./jcr:title"
+                              value="Commerce"/>
+                        <configPropertyInherit jcr:primaryType="nt:unstructured"
+                                               sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                               name="./sling:configPropertyInherit"
+                                               value="{Boolean}true"/>
+                        <parentpath
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                name="parentPath"
+                                value="${empty requestPathInfo.suffix ? &quot;/conf&quot; : requestPathInfo.suffix}/settings/cloudconfigs"/>
+                        <template jcr:primaryType="nt:unstructured"
+                                  sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                  name="template"
+                                  value="/libs/commerce/gui/components/configuration/page/template"/>
+                        <wizard
+                                jcr:primaryType="nt:unstructured"
+                                jcr:title="Create CIF Configuration"
+                                sling:resourceType="granite/ui/components/coral/foundation/wizard"
+                                cancelHref="${empty header.Referer ? granite:concat('/libs/commerce/gui/content/configuration.html', granite:encodeURIPath(requestPathInfo.suffix)) : header.Referer}">
+                            <items jcr:primaryType="nt:unstructured">
+                                <properties
+                                        jcr:primaryType="nt:unstructured"
+                                        jcr:title="Properties"
+                                        sling:resourceType="granite/ui/components/coral/foundation/wizard/lazycontainer"
+                                        src="/mnt/overlay/wcm/core/content/sites/createpagewizard/properties.html/libs/commerce/gui/components/configuration/page/template">
+                                    <parentConfig
+                                            jcr:primaryType="nt:unstructured"
+                                            validation="{Boolean}true">
+                                        <cancel
+                                                granite:class="foundation-wizard-control"
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/anchorbutton"
+                                                href="/mnt/overlay/commerce/gui/content/configuration.html${granite:encodeURIPath(requestPathInfo.suffix)}"
+                                                text="Cancel">
+                                        </cancel>
+                                        <next
+                                                granite:class="foundation-wizard-control"
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/button"
+                                                disabled="{Boolean}false"
+                                                text="Create"
+                                                type="submit"
+                                                variant="primary">
+                                        </next>
+                                    </parentConfig>
+                                </properties>
+                            </items>
+                        </wizard>
+                    </items>
+                </form>
+            </items>
+        </body>
+    </jcr:content>
+</jcr:root>

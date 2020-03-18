@@ -35,7 +35,6 @@ import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
 import com.adobe.cq.commerce.magento.graphql.CategoryInterface;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
-import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -59,13 +58,13 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
     private ObjectMapper jsonMapper;
     private String storeView;
 
-    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlDataService, InheritanceValueMap properties) {
+    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlDataService, Map<String, String> properties) {
         this.resourceMapper = resourceMapper;
         this.graphqlDataService = graphqlDataService;
         jsonMapper = new ObjectMapper();
 
         if (properties != null) {
-            storeView = properties.getInherited(Constants.MAGENTO_STORE_PROPERTY, String.class);
+            storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY);
         }
     }
 
