@@ -58,7 +58,8 @@ import static org.assertj.core.data.MapEntry.entry;
 public class MultiFieldDropTargetPostProcessorTest {
 
     @Rule
-    public final AemContext context = GraphqlAemContext.createContext("/context/drop-target-post-processor.json", "/content");
+    public final AemContext context = GraphqlAemContext.createContext(Collections.singletonMap("/content",
+        "/context/drop-target-post-processor.json"));
 
     @Test
     public void testAppendToExistingMultiValue() throws Exception {
