@@ -37,5 +37,12 @@
       "cq:magentoStore": "default",
       "magentoRootCategoryId": "a"
     }
+  },
+  "pageF": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent",
+      "cq:conf": "/conf/test-config"
+    }
   }
 }

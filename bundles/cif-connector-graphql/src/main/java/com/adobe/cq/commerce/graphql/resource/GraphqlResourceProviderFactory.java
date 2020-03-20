@@ -15,11 +15,14 @@
 package com.adobe.cq.commerce.graphql.resource;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.service.component.annotations.Component;
@@ -54,6 +57,8 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlResourceProviderFactory.class);
 
+    private static final String CONFIGURATION_NAME = "cloudconfigs/commerce";
+
     protected Map<String, GraphqlDataService> clients = new ConcurrentHashMap<>();
 
     @Reference(
@@ -79,23 +84,29 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
 
     @Override
     public ResourceProvider<T> createResourceProvider(Resource root) {
-        // Get cq:catalogIdentifier property from ancestor pages
-        InheritanceValueMap properties;
-        Page page = root.getResourceResolver().adaptTo(PageManager.class).getContainingPage(root);
-        if (page != null) {
-            properties = new HierarchyNodeInheritanceValueMap(page.getContentResource());
+        LOGGER.debug("Creating resource provider for resource at path {}", root.getPath());
+
+        ConfigurationBuilder configurationBuilder = root.adaptTo(ConfigurationBuilder.class);
+        ValueMap properties = configurationBuilder.name(CONFIGURATION_NAME)
+            .asValueMap();
+
+        Map<String, String> collectedProperties = new HashMap<>();
+        if (properties.size() == 0) {
+            collectedProperties = readFallbackConfiguration(root);
         } else {
-            properties = new ComponentInheritanceValueMap(root);
+            for (String key : properties.keySet()) {
+                collectedProperties.put(key, properties.get(key, ""));
+            }
         }
 
-        String catalogIdentifier = properties.getInherited(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, String.class);
-        if (StringUtils.isBlank(catalogIdentifier)) {
+        String catalogIdentifier = collectedProperties.get(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER);
+        if (StringUtils.isEmpty(catalogIdentifier)) {
             LOGGER.warn("Could not find cq:catalogIdentifier property for given resource at " + root.getPath());
             return null;
         }
 
         // Check Magento root category id
-        String rootCategoryId = properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class);
+        String rootCategoryId = collectedProperties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY);
         try {
             Integer.valueOf(rootCategoryId);
         } catch (NumberFormatException x) {
@@ -109,7 +120,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
             return null;
         }
 
-        ResourceProvider<T> resourceProvider = new GraphqlResourceProvider<T>(root.getPath(), client, scheduler, properties);
+        ResourceProvider<T> resourceProvider = new GraphqlResourceProvider<T>(root.getPath(), client, scheduler, collectedProperties);
         return resourceProvider;
     }
 
@@ -121,5 +132,25 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
     @Override
     public String getCommerceProviderName() {
         return MAGENTO_GRAPHQL_PROVIDER;
+    }
+
+    private Map<String, String> readFallbackConfiguration(Resource res) {
+        InheritanceValueMap ivm;
+        Page page = res.getResourceResolver()
+            .adaptTo(PageManager.class)
+            .getContainingPage(res);
+        if (page != null) {
+            ivm = new HierarchyNodeInheritanceValueMap(page.getContentResource());
+        } else {
+            ivm = new ComponentInheritanceValueMap(res);
+        }
+
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put(GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, ivm.getInherited(
+            GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, String.class));
+        properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, ivm.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY,
+            String.class));
+
+        return properties;
     }
 }

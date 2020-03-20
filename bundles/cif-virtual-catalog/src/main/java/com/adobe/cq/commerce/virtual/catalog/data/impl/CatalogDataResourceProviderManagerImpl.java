@@ -42,6 +42,9 @@ import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.caconfig.ConfigurationBuilder;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -58,7 +61,16 @@ import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderFactory;
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderManager;
+import com.google.common.collect.ImmutableList;
 
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CONFIGURATION_NAME;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CONF_ROOT;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_CATALOG_IDENTIFIER;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_CATALOG_PROVIDER_FACTORY;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_CONF;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_GRAPHQL_CLIENT;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_MAGENTO_ROOT_CATEGORY_ID;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_MAGENTO_STORE;
 import static org.apache.sling.spi.resource.provider.ResourceProvider.PROPERTY_ROOT;
 
 /**
@@ -68,18 +80,27 @@ import static org.apache.sling.spi.resource.provider.ResourceProvider.PROPERTY_R
 @Component(
     service = CatalogDataResourceProviderManager.class,
     immediate = true,
-    property = {
-        Constants.SERVICE_DESCRIPTION + "=Manages the resource registrations for the Virtual Catalog Resource Provider Manager."
-    })
+    property = { Constants.SERVICE_DESCRIPTION + "=Manages the resource registrations for the Virtual Catalog Resource Provider Manager." })
 public class CatalogDataResourceProviderManagerImpl implements CatalogDataResourceProviderManager, EventListener {
 
     private static final String VIRTUAL_PRODUCTS_SERVICE = "virtual-products-service";
+
     private static final String OBSERVATION_PATHS_DEFAULT = "/var/commerce/products";
+
     private static final String FINDALLQUERIES_DEFAULT = "JCR-SQL2|SELECT * FROM [sling:Folder] WHERE ISDESCENDANTNODE('"
-        + OBSERVATION_PATHS_DEFAULT + "') AND [sling:Folder].'" + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID + "' IS NOT NULL";
+        + OBSERVATION_PATHS_DEFAULT + "') AND ([sling:Folder].'" + PN_CONF + "'] IS NOT NULL OR [sling:Folder].'"
+        + CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID
+        + "' IS NOT NULL)";
+
     private String[] findAllQueries = { FINDALLQUERIES_DEFAULT };
-    private String[] obervationPaths = { OBSERVATION_PATHS_DEFAULT };
+
+    private String[] observationPaths = { OBSERVATION_PATHS_DEFAULT, CONF_ROOT };
+
+    private static final List<String> WATCHED_PROPERTIES = ImmutableList.of(PN_MAGENTO_STORE, PN_MAGENTO_ROOT_CATEGORY_ID,
+        PN_CATALOG_IDENTIFIER, PN_CATALOG_PROVIDER_FACTORY, PN_GRAPHQL_CLIENT);
+
     private EventListener[] observationEventListeners;
+
     private volatile List<Resource> dataRoots;
 
     /**
@@ -88,6 +109,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
      */
     private final Map<ResourceProvider, ServiceRegistration<?>> providerRegistrations = Collections.synchronizedMap(
         new IdentityHashMap<>());
+
     /**
      * Map for holding the virtual catalog data resource provider mappings, with the catalog root path as key and the providers as values.
      */
@@ -115,7 +137,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     /**
      * Find all existing virtual catalog data roots using all query defined in service configuration.
-     * 
+     *
      * @param resolver Resource resolver
      * @return all virtual catalog roots
      */
@@ -158,8 +180,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         long countSuccess = 0;
         long countFailed = 0;
 
-        final List<Resource> existingVIrtualCatalogs = findDataRoots(resolver);
-        for (Resource virtualCatalogRootResource : existingVIrtualCatalogs) {
+        final List<Resource> existingVirtualCatalogs = findDataRoots(resolver);
+        for (Resource virtualCatalogRootResource : existingVirtualCatalogs) {
             boolean success = registerDataRoot(virtualCatalogRootResource);
             if (success) {
                 countSuccess++;
@@ -169,8 +191,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         }
 
         final long time = System.currentTimeMillis() - start;
-        log.info("Registered {} virtual catalog data resource providers(s) in {} ms, skipping {} invalid one(s).",
-            countSuccess, time, countFailed);
+        log.info("Registered {} virtual catalog data resource providers(s) in {} ms, skipping {} invalid one(s).", countSuccess, time,
+            countFailed);
     }
 
     /**
@@ -181,23 +203,39 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
      * @return true if registration was done, false if skipped (already registered)
      */
     private boolean registerDataRoot(Resource root) {
+        log.debug("Registering data root at {}", root.getPath());
+        log.debug("This catalog manager has {} factories registered...", providerFactories.size());
+
         String rootPath = root.getPath();
         String providerId = getJcrStringProperty(rootPath, CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID);
+        String cqConf = getJcrStringProperty(rootPath, "cq:conf");
         boolean valid = true;
         CatalogDataResourceProviderFactory factory = null;
-        if (StringUtils.isBlank(rootPath)) {
-            log.error("Root path is empty. Registering this data root will fail");
-            valid = false;
-        }
-        if (StringUtils.isBlank(providerId)) {
-            log.error("No providerId property found on node {}. Registering this data root will fail", rootPath);
-            valid = false;
-        }
-        if ((factory = providerFactories.get(providerId)) == null) {
-            log.error("No factory found for provider id {}. Registering this data root will fail", providerId);
-            valid = false;
-        }
 
+        if (StringUtils.isNotEmpty(cqConf)) {
+            log.debug("Found cq:conf property pointing at {}", cqConf);
+            ConfigurationBuilder cfgBuilder = root.adaptTo(ConfigurationBuilder.class);
+            ValueMap properties = cfgBuilder.name(CONFIGURATION_NAME).asValueMap();
+            providerId = properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, String.class);
+            log.debug("Configured provider id is {}", providerId);
+            factory = providerFactories.get(providerId);
+        } else {
+
+            if (StringUtils.isBlank(rootPath)) {
+                log.error("Root path is empty. Registering this data root will fail");
+                valid = false;
+            }
+            if (StringUtils.isBlank(providerId)) {
+                log.error("No providerId property found on node {}. Registering this data root will fail", rootPath);
+                valid = false;
+            }
+
+            if ((factory = providerFactories.get(providerId)) == null) {
+                log.error("No factory found for provider id {}. Registering this data root will fail", providerId);
+                valid = false;
+            }
+        }
+        log.debug("Factory retrieved... {}", factory != null);
         // register valid
         if (valid) {
             final ResourceProvider provider = factory.createResourceProvider(root);
@@ -238,7 +276,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             if (!session.itemExists(absolutePropertyPath)) {
                 return null;
             }
-            return session.getProperty(absolutePropertyPath).getString();
+            return session.getProperty(absolutePropertyPath)
+                .getString();
         } catch (RepositoryException ex) {
             return null;
         }
@@ -259,21 +298,26 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             // For each observed path create an event listener object which redirects the event to the main class
             final Session session = resolver.adaptTo(Session.class);
             if (session != null) {
-                this.observationEventListeners = new EventListener[this.obervationPaths.length];
-                for (int i = 0; i < this.obervationPaths.length; i++) {
+                this.observationEventListeners = new EventListener[this.observationPaths.length];
+                for (int i = 0; i < this.observationPaths.length; i++) {
                     this.observationEventListeners[i] = new EventListener() {
                         public void onEvent(EventIterator events) {
                             CatalogDataResourceProviderManagerImpl.this.onEvent(events);
                         }
                     };
-                    session.getWorkspace().getObservationManager().addEventListener(
-                        this.observationEventListeners[i],
-                        Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
-                        this.obervationPaths[i], // absolute path
-                        true, // isDeep
-                        null, // uuids
-                        null, // node types
-                        true); // noLocal
+                    session.getWorkspace()
+                        .getObservationManager()
+                        .addEventListener(this.observationEventListeners[i],
+                            Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
+                            this.observationPaths[i],
+                            // absolute path
+                            true,
+                            // isDeep
+                            null,
+                            // uuids
+                            null,
+                            // node types
+                            true); // noLocal
                 }
             }
 
@@ -291,7 +335,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 final Session session = resolver.adaptTo(Session.class);
                 if (session != null && this.observationEventListeners != null) {
                     for (EventListener eventListener : this.observationEventListeners) {
-                        session.getWorkspace().getObservationManager().removeEventListener(eventListener);
+                        session.getWorkspace()
+                            .getObservationManager()
+                            .removeEventListener(eventListener);
                     }
                 }
             }
@@ -323,6 +369,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     public void onEvent(EventIterator events) {
         try {
             // collect all actions to be performed for this event
+
             final Map<String, Boolean> actions = new HashMap<>();
             boolean nodeAdded = false;
             boolean nodeRemoved = false;
@@ -334,8 +381,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                     nodeAdded = true;
                     Session session = resolver.adaptTo(Session.class);
                     final Node node = session.getNode(path);
-                    if (node != null && node.isNodeType("sling:Folder") &&
-                        node.hasProperty(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID)) {
+                    if (node != null && node.isNodeType(JcrResourceConstants.NT_SLING_FOLDER) && node.hasProperty(
+                        CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID) || node.hasProperty(CONF_ROOT)) {
                         actions.put(path, true);
                     }
                 } else if (eventType == Event.NODE_REMOVED && providers.containsKey(path)) {
@@ -343,6 +390,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                     actions.put(path, false);
                 } else if ((eventType == Event.PROPERTY_CHANGED || eventType == Event.PROPERTY_ADDED || eventType == Event.PROPERTY_REMOVED)
                     && isRelevantPath(path)) {
+                    // narrow down the properties to be watched.
                     // force re-registering
                     nodeAdded = true;
                     nodeRemoved = true;
@@ -374,7 +422,13 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     }
 
     private boolean isRelevantPath(String path) {
-        return findDataRoots(resolver).stream().map(Resource::getPath).anyMatch(path::startsWith);
+        boolean isRelevant = path.startsWith(CONF_ROOT) && WATCHED_PROPERTIES.stream().anyMatch(path::endsWith);
+        ;
+
+        return isRelevant || findDataRoots(resolver).stream()
+            .map(Resource::getPath)
+            .anyMatch(path::startsWith);
+
     }
 
     @Reference(
@@ -385,6 +439,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         policy = ReferencePolicy.DYNAMIC)
     @SuppressWarnings("unused")
     void bindFactory(CatalogDataResourceProviderFactory factory, Map<String, String> properties) {
+        log.debug("Binding provider factory {}", factory.getClass().getName());
         providerFactories.put(properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_SERVICE_ID), factory);
         // the resolver is null before activation and after deactivation
         if (resolver != null) {
@@ -394,6 +449,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     @SuppressWarnings("unused")
     void unbindFactory(CatalogDataResourceProviderFactory factory, Map<String, String> properties) {
+        log.debug("Unbinding provider factory {}", factory.getClass().getName());
         providerFactories.remove(properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_SERVICE_ID));
         // the resolver is null before activation and after deactivation
         if (resolver != null) {

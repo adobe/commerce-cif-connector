@@ -15,6 +15,7 @@
 package com.adobe.cq.commerce.graphql.resource;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
@@ -28,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
-import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
@@ -43,9 +43,9 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
     private ResourceMapper<T> resourceMapper;
     private GraphqlQueryLanguageProvider<T> queryLanguageProvider;
 
-    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, InheritanceValueMap properties) {
+    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, Map<String, String> properties) {
         this.root = root;
-        rootCategoryId = Integer.valueOf(properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
+        rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY));
         resourceMapper = new ResourceMapper<T>(root, graphqlDataService, scheduler, properties);
         queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlDataService, properties);
     }

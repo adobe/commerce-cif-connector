@@ -53,6 +53,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
+                    <exportScr>true</exportScr>
                     <instructions>
                         <Export-Package>
                             com.adobe.cq.commerce.virtual.catalog.data
@@ -69,6 +70,15 @@
                         <id>baseline</id>
                         <phase>none</phase>
                     </execution>
+                    <execution>
+                        <id>scr-metadata</id>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                        <configuration>
+                            <supportIncrementalBuild>true</supportIncrementalBuild>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             
@@ -78,7 +88,7 @@
                 <configuration>
                     <addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
                     <excludes combine.children="append">
-                        <exclude>src/test/resources/*</exclude>
+                        <exclude>src/test/resources/**/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -178,10 +188,19 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.testing.sling-mock</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.sling</groupId>-->
+        <!--            <artifactId>org.apache.sling.testing.sling-mock</artifactId>-->
+        <!--            <version>2.3.18</version>-->
+        <!--            <scope>test</scope>-->
+        <!--            <exclusions>-->
+        <!--                &lt;!&ndash; Exclude the older version of the API and use the one from the uber-jar &ndash;&gt;-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>org.apache.sling</groupId>-->
+        <!--                    <artifactId>org.apache.sling.models.api</artifactId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
@@ -200,6 +219,16 @@
             <artifactId>cq-testing</artifactId>
             <version>5.6.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.sling</groupId>
+                    <artifactId>org.apache.sling.jcr.resource</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.sling</groupId>
+                    <artifactId>org.apache.sling.adapter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
@@ -212,8 +241,44 @@
             <artifactId>com.adobe.granite.test.tooling</artifactId>
             <version>1.0.26</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.sling</groupId>
+                    <artifactId>org.apache.sling.adapter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-        
+
+        <dependency>
+            <groupId>io.wcm</groupId>
+            <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
+            <version>2.1.6</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.sling</groupId>
+                    <artifactId>org.apache.sling.jcr.resource</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.caconfig-mock-plugin</artifactId>
+            <version>1.3.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.logging-mock</artifactId>
+            <version>2.0.0</version>
+
+        </dependency>
     </dependencies>
     
     <profiles>

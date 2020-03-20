@@ -41,7 +41,6 @@ import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableVariant;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
 import com.adobe.cq.commerce.magento.graphql.SimpleProduct;
-import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.google.common.collect.Lists;
 
 class ResourceMapper<T> {
@@ -62,17 +61,17 @@ class ResourceMapper<T> {
     private Integer rootCategoryId;
     private String storeView;
 
-    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, InheritanceValueMap properties) {
+    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, Map<String, String> properties) {
         this.root = root;
         this.scheduler = scheduler;
         this.graphqlDataService = graphqlDataService;
         config = graphqlDataService.getConfiguration();
 
         // Get Magento store view property
-        storeView = properties.getInherited(Constants.MAGENTO_STORE_PROPERTY, String.class);
+        storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY);
 
         // Get root category id
-        rootCategoryId = Integer.valueOf(properties.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, String.class));
+        rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY));
 
         if (config.catalogCachingEnabled() && config.catalogCachingSchedulerEnabled()) {
             scheduleCacheRefresh();

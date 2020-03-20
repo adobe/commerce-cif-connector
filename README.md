@@ -42,14 +42,9 @@ For previous versions, we only provide the version requirements of the `all` pac
 | CIF Connector | AEM 6.4 | AEM 6.5 | Magento | Java |
 |---------------|---------|---------|---------|------|
 | 0.9.0         | 6.4.4.0 | 6.5.0   | 2.3.4   | 1.8  |
-| 0.8.0         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
-| 0.7.0         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
-| 0.6.0         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
-| 0.5.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.4.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.3.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1 & 2.3.2   | 1.8  |
-| 0.2.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
-| 0.1.0 (all)   | 6.4.4.0 | 6.5.0   | 2.3.1   | 1.8  |
+| 0.8.1         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
+
+For a list of requirements for previous versions, see [Historical System Requirements](VERSIONS.md).
 
 ## CIF Magento GraphQL Configuration
 
@@ -69,15 +64,28 @@ The CIF Magento GraphQL AEM commerce connector has to be configured to access yo
     * Create a child configuration
         * For `Magento GraphQL Service Identifier` enter the ID of the GraphQL client you already configured (see "pre-requisites")
 
-3) Binding of product catalog to AEM resource tree
+3) Create a cloud service configuration for Magento
+    * In AEM go to Tools -> General -> Configuration Browser (or http://localhost:4502/libs/granite/configurations/content/view.html/conf) 
+    * Create a configuration
+        * Give it any name you wish
+        * Check the Cloud Configurations capability (this is essential since the connector configuration will make use of this capability)
+    * Go to Tools -> Cloud Services -> CIF Configuration (or http://localhost:4502/libs/commerce/gui/content/configuration.html/conf)
+    * You'll find the configuration created in the previous step there. Click on it and click 'Create configuration'
+    * All the fields are required:
+        * For `Commerce provider` choose `magento-graphql`
+        * For `Root category id` enter the ID of the Magento root category you want to define as the root
+        * For `Magento store view` enter the code of the Magento store view that you want to use 
+        * For `Catalog identifier` select the ID of the connector instance you created in the previous step
+        * For `Graphql client` select the GraphQL client you created at step 1
+
+4) Binding of product catalog to AEM resource tree
     * Go to AEM Commerce product console (http://localhost:4502/aem/products.html/var/commerce/products)
     * Click on Create > Bind Products
-    * Enter Title, unique name and select `magento-graphql` as commerce provider
-    * For `Magento store view` enter the code of the Magento store view you want to use or keep "default"
-    * For `Root category id` enter the ID of the Magento root category you want to define as the root of that binding
-    * For `Project`, you can select the ID of the connector instance you created in the previous step
+    * Enter a title and a name
+    * For the `Context-Aware Configuration` select the configuration you created in step 3
+    * Save the changes
 
-4) AEM content editor product drag & drop
+5) AEM content editor product drag & drop
     * To allow authors to drag & drop product assets from the AEM Assets Browser to a page a project specific configuration is needed to configure which component is used when dragging a product to a page. See AEM documentation about [Configuring a Paragraph System so that Dragging an Asset Creates a Component Instance](https://helpx.adobe.com/experience-manager/6-4/sites/developing/using/developing-components.html#ConfiguringaParagraphSystemsothatDragginganAssetCreatesaComponentInstance) for details.
 
 ## Usage
