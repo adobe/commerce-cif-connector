@@ -92,7 +92,7 @@ The CIF Magento GraphQL AEM commerce connector has to be configured to access yo
 The project also provides product and category pickers to be used in any component dialog to select products or categories.
 
 ### Product Picker
-To use the product picker a developer has to add `/libs/commerce/gui/components/common/cifproductfield` to a component dialog. For example use the following for the cq:dialog:
+To use the product picker a developer has to add `/libs/commerce/gui/components/common/cifproductfield` to a component dialog. For example use the following for the `cq:dialog`:
 
 ```
 <product jcr:primaryType="nt:unstructured" fieldLabel="Product" name="./product" sling:resourceType="commerce/gui/components/common/cifproductfield"/>
@@ -106,8 +106,14 @@ The product picker field supports the following optional properties:
 * `selectionId` (id, sku, slug, path, combinedSku) - allows to choose the product attribute to be returned by the picker (default = id). Using `sku` returns the sku of the selected product, while using `combinedSku` returns a string like `base#variant` with the skus of the base product and the selected variant, or a single sku if a base product is selected.
 * `filter` (folderOrProduct, folderOrProductOrVariant) - filters the content to be rendered by the picker while navigating the product tree. `folderOrProduct` - renders folders and products. `folderOrProductOrVariant` - renders folders, product and product variants. If a product or product variant is rendered it becomes also selectable in the picker. (default = `folderOrProduct`) 
 
+### Product Drag'n'drop (DnD)
+The connector includes a Sling post-processor that makes it possible to DnD a Product on a component, and configure the behavior of the DnD functionality. For example, you can refer to the `cq:dropTarget` configuration of the `productcarousel` and `productteaser` components in the [AEM CIF Core Components](https://github.com/adobe/aem-core-cif-components). The following parameters can be configured:
+
+* `selectionId` (id, sku, slug, path) - similar to the product picker, see above. Note that the AEM Assets panel does not currently permit to select product variants, so the `combinedSku` selection of the product picker is not supported by DnD.
+* `multiple` (true, false) - when true, DnDropping a product adds the value to the (array) JCR property so it's possible to select multiple products by DnD. When false, the property value is replaced so a single product can be DnDropped.
+
 ### Category Picker
-The category picker (provided by `/libs/commerce/gui/components/common/cifcategoryfield`) can be used in a component dialog as well. The following snippet can be used in a cq:dialog configuration:
+The category picker (provided by `/libs/commerce/gui/components/common/cifcategoryfield`) can be used in a component dialog as well. The following snippet can be used in a `cq:dialog` configuration:
 
 ```
 <category jcr:primaryType="nt:unstructured" fieldLabel="Category" name="./category" sling:resourceType="commerce/gui/components/common/cifcategoryfield"/>
