@@ -27,6 +27,10 @@ public class CIFProductFieldHelper extends WCMUsePojo {
 
     @Override
     public void activate() throws Exception {
+        if (getProperties().get("isError", false)) {
+            getResponse().sendError(500);
+        }
+
         String st = getRequest().getParameter("selectionId");
         if ("id".equals(st) || "sku".equals(st) || "path".equals(st) || "slug".equals(st) || "combinedSku".equals(st)) {
             selectionId = st;
