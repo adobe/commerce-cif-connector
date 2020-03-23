@@ -48,6 +48,7 @@
   <logger name="com.adobe.cq.commerce.graphql.resource.ResourceMapper" level="OFF"/>
   <logger name="com.adobe.cq.commerce.graphql.resource.GraphqlResourceProviderFactory" level="OFF"/>
   <logger name="com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl" level="OFF"/>
+  <logger name="com.adobe.cq.commerce.gui.components.common.cifproductfield.impl.SearchDataSourceServlet" level="OFF"/>
 
   <root level="INFO">          
     <appender-ref ref="STDOUT" />
