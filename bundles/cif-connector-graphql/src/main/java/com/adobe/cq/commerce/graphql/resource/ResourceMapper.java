@@ -53,6 +53,7 @@ class ResourceMapper<T> {
 
     private volatile Map<String, CategoryTree> categoryByPaths = Collections.emptyMap();
     private volatile Map<Integer, String> categoryPathsById = Collections.emptyMap();
+    private final ThreadLocal<Boolean> initializationError = new ThreadLocal<>();
 
     private Scheduler scheduler;
     private GraphqlDataService graphqlDataService;
@@ -99,8 +100,16 @@ class ResourceMapper<T> {
      * <li>to build the "cache" for each method call in case caching is disabled (in which case the "cache" is of no use, except to build
      * all the category paths)</li>
      * </ul>
+     *
+     * @return false if initialization failed with exception, otherwise returns true
      */
-    private void init() {
+    private boolean init() {
+        Boolean error = initializationError.get();
+        if (error != null && error) {
+            // don't reattempt initialization in the same request (thread) if it failed once
+            return false;
+        }
+
         if (!initDone) {
             try {
                 // Block in case another thread is already initializing the cache
@@ -108,21 +117,27 @@ class ResourceMapper<T> {
 
                 // The volatile keyword guarantees the happens-before "relationship"
                 if (!initDone) {
-                    refreshCache(); // If caching is disabled, repopulate the cache
+                    if (!refreshCache()) {
+                        initializationError.set(true);
+                        return false;
+                    }
                 }
             } finally {
                 initLock.unlock();
             }
         }
+        return true;
     }
 
     /**
      * Rebuilds the entire cache by calling {@link #buildAllCategoryPaths()}.
+     *
+     * @return false if cache fresh failed with exception, otherwise returns true
      */
-    protected void refreshCache() {
+    protected boolean refreshCache() {
         try {
             if (!initLock.tryLock()) {
-                return; // Prevents the sling scheduler from refreshing the cache if init() was called first
+                return true; // Prevents the sling scheduler from refreshing the cache if init() was called first
             }
             LOGGER.debug("Fetching catalog and building categories cache");
             buildAllCategoryPaths();
@@ -133,11 +148,13 @@ class ResourceMapper<T> {
             LOGGER.warn("Failed to refresh category cache for root category {} and store view {} : {}", rootCategoryId, storeView,
                 x.getLocalizedMessage());
             LOGGER.warn("", x);
+            return false;
         } finally {
             if (initLock.isHeldByCurrentThread()) {
                 initLock.unlock();
             }
         }
+        return true;
     }
 
     /**
@@ -310,7 +327,13 @@ class ResourceMapper<T> {
     }
 
     Iterator<Resource> listCategoryChildren(ResolveContext<T> ctx, Resource parent) {
-        init();
+        if (!init()) {
+            if (categoryByPaths.isEmpty()) {
+                List<Resource> list = new ArrayList<>();
+                list.add(new ErrorResource(ctx.getResourceResolver(), parent.getPath()));
+                return list.iterator();
+            }
+        }
 
         String parentPath = parent.getPath();
         String parentCifId = parent.getValueMap().get(Constants.CIF_ID, String.class);

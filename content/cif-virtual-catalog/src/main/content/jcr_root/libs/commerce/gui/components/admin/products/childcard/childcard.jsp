@@ -28,6 +28,17 @@
                   java.util.Iterator,
                   org.apache.sling.api.resource.ResourceUtil"%><%
 
+    boolean isError = resource.getValueMap().get("isError", false);
+    if (isError) { %>
+        <script>
+            var title = Granite.I18n.get("Error");
+            var message = Granite.I18n.get("Failed to load data.");
+            var ui = $(window).adaptTo("foundation-ui");
+            ui.alert(title, message, "error");
+        </script>
+        <%
+        return;
+    }
 
     Calendar modifiedDateRaw = properties.get(JcrConstants.JCR_LASTMODIFIED, Calendar.class);
     Calendar publishedDateRaw = properties.get("cq:lastReplicated", Calendar.class);

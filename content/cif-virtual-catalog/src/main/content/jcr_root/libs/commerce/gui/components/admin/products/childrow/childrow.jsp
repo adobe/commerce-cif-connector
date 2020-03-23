@@ -38,6 +38,18 @@
                   com.adobe.cq.commerce.common.CommerceHelper,
                   com.day.cq.i18n.I18n" %><%
 
+    boolean isError = resource.getValueMap().get("isError", false);
+    if (isError) { %>
+        <script>
+            var title = Granite.I18n.get("Error");
+            var message = Granite.I18n.get("Failed to load data.");
+            var ui = $(window).adaptTo("foundation-ui");
+            ui.alert(title, message, "error");
+        </script>
+        <%
+        return;
+    }
+
     WorkflowStatus workflowStatus = resource.adaptTo(WorkflowStatus.class);
     ReplicationStatus replicationStatus = resource.adaptTo(ReplicationStatus.class);
 

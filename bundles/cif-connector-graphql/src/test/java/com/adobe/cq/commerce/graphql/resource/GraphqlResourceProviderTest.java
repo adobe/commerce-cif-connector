@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.jcr.Node;
 
@@ -65,6 +66,8 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 import static com.adobe.cq.commerce.api.CommerceConstants.PN_COMMERCE_TYPE;
 import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.CIF_ID;
+import static com.adobe.cq.commerce.graphql.resource.Constants.HAS_CHILDREN;
+import static com.adobe.cq.commerce.graphql.resource.Constants.IS_ERROR;
 import static com.adobe.cq.commerce.graphql.resource.Constants.LEAF_CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.MAGENTO_GRAPHQL_PROVIDER;
 import static com.adobe.cq.commerce.graphql.resource.Constants.PRODUCT;
@@ -243,10 +246,70 @@ public class GraphqlResourceProviderTest {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
 
         Resource root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
+        assertNotNull(root);
         Iterator<Resource> it = provider.listChildren(resolveContext, root);
+        assertNotNull(it);
         assertTrue(it.hasNext());
         while (it.hasNext()) {
             assertCategoryPaths(provider, it.next(), 1);
+        }
+    }
+
+    @Test
+    public void testCategoryTreeError() throws Throwable {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+
+        Resource root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
+        assertNotNull(root);
+        Iterator<Resource> it = provider.listChildren(resolveContext, root);
+        assertNotNull(it);
+        assertTrue(it.hasNext());
+        Resource error = it.next();
+        assertTrue(error instanceof ErrorResource);
+        assertNull(error.adaptTo(Product.class));
+        assertEquals(ErrorResource.NAME, error.getName());
+        assertEquals(CATALOG_ROOT_PATH + "/" + ErrorResource.NAME, error.getPath());
+        ValueMap map = error.adaptTo(ValueMap.class);
+        assertNotNull(map);
+        assertTrue(map.get(IS_ERROR, false));
+        assertFalse(map.get(HAS_CHILDREN, true));
+        assertTrue(map.get(LEAF_CATEGORY, false));
+
+        // the same thread doesn't attempt reinitialization
+        // (correct GraphQL response still yields an error resource)
+        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
+
+        root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
+        assertNotNull(root);
+        it = provider.listChildren(resolveContext, root);
+        assertNotNull(it);
+        assertTrue(it.hasNext());
+        assertTrue(it.next() instanceof ErrorResource);
+
+        // reinitialization works on other thread
+
+        // store possible failure here
+        final AtomicReference<Throwable> failure = new AtomicReference<>();
+        Thread t = new Thread(() -> {
+            try {
+                Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
+
+                Resource root1 = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
+                assertNotNull(root1);
+                Iterator<Resource> it1 = provider.listChildren(resolveContext, root1);
+                assertNotNull(it1);
+                assertTrue(it1.hasNext());
+                // not an error resource
+                assertFalse(it1.next() instanceof ErrorResource);
+            } catch (Throwable x) {
+                failure.set(x);
+            }
+        });
+        t.start();
+        t.join();
+        // rethrow failure if any for JUnit
+        if (failure.get() != null) {
+            throw failure.get();
         }
     }
 

@@ -37,6 +37,12 @@
     attrs.add("data-item-title", title);
     attrs.add("data-href", "#" + UUID.randomUUID());
 
+    boolean isError = resource.getValueMap().get("isError", false);
+    if (isError) {
+        response.sendError(500, "Server error");
+        return;
+    }
+
     if (hasChildren(resource, product != null)) {
         attrs.add("variant", "drilldown");
     }
@@ -61,7 +67,7 @@
         if (hasChildren != null) {
             return hasChildren;
         }
-        
+
         for (Iterator<Resource> it = resource.listChildren(); it.hasNext();) {
             Resource r = it.next();
             if (isProduct) {

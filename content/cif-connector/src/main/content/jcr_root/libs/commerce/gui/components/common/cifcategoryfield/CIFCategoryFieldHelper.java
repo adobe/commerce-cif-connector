@@ -30,7 +30,11 @@ public class CIFCategoryFieldHelper extends WCMUsePojo {
     private String selectionId;
 
     @Override
-    public void activate() {
+    public void activate() throws Exception {
+        if (getProperties().get("isError", false)) {
+            getResponse().sendError(500);
+        }
+
         String st = getRequest().getParameter("selectionId");
         if ("id".equals(st) || "path".equals(st)) {
             selectionId = st;

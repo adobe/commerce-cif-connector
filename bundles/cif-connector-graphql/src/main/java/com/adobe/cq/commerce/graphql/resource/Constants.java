@@ -21,6 +21,8 @@ public class Constants {
     public static final String VARIANT = "variant";
     public static final String CATEGORY = "category";
     public static final String LEAF_CATEGORY = "isLeaf";
+    public static final String HAS_CHILDREN = "hasChildren";
+    public static final String IS_ERROR = "isError";
     public static final String SKU = "sku";
     public static final String SLUG = "slug";
     public static final String CIF_ID = "cifId";
