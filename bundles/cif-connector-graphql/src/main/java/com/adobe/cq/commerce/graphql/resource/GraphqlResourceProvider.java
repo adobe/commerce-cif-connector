@@ -21,7 +21,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.commons.scheduler.Scheduler;
-import org.apache.sling.spi.resource.provider.QueryLanguageProvider;
 import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
@@ -99,7 +98,7 @@ class GraphqlResourceProvider extends ResourceProvider<Object> {
     }
 
     @Override
-    public QueryLanguageProvider<Object> getQueryLanguageProvider() {
+    public GraphqlQueryLanguageProvider getQueryLanguageProvider() {
         return queryLanguageProvider;
     }
 }
