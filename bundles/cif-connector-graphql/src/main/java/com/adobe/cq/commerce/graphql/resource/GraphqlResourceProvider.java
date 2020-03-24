@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.QueryLanguageProvider;
@@ -34,24 +35,24 @@ import com.day.cq.commons.jcr.JcrConstants;
 import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.PRODUCT;
 
-class GraphqlResourceProvider<T> extends ResourceProvider<T> {
+class GraphqlResourceProvider extends ResourceProvider<Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlResourceProvider.class);
 
     private String root;
     private Integer rootCategoryId;
-    private ResourceMapper<T> resourceMapper;
-    private GraphqlQueryLanguageProvider<T> queryLanguageProvider;
+    private ResourceMapper resourceMapper;
+    private GraphqlQueryLanguageProvider queryLanguageProvider;
 
     GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, Map<String, String> properties) {
         this.root = root;
         rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY));
-        resourceMapper = new ResourceMapper<T>(root, graphqlDataService, scheduler, properties);
-        queryLanguageProvider = new GraphqlQueryLanguageProvider<T>(resourceMapper, graphqlDataService, properties);
+        resourceMapper = new ResourceMapper(root, graphqlDataService, scheduler, properties);
+        queryLanguageProvider = new GraphqlQueryLanguageProvider(resourceMapper, graphqlDataService, properties);
     }
 
     @Override
-    public Resource getResource(ResolveContext<T> ctx, String path, ResourceContext resourceContext, Resource parent) {
+    public Resource getResource(ResolveContext<Object> ctx, String path, ResourceContext resourceContext, Resource parent) {
         LOGGER.debug("getResource called for " + path);
 
         if (path.equals(root)) {
@@ -69,34 +70,36 @@ class GraphqlResourceProvider<T> extends ResourceProvider<T> {
             return null;
         }
 
-        CategoryResource category = resourceMapper.resolveCategory(ctx, path);
+        ResourceResolver resolver = ctx.getResourceResolver();
+        CategoryResource category = resourceMapper.resolveCategory(resolver, path);
         if (category != null) {
             return category;
         } else {
             Resource resource;
             if (path.endsWith("/image")) {
-                resource = resourceMapper.resolveProductImage(ctx, path);
+                resource = resourceMapper.resolveProductImage(resolver, path);
             } else {
-                resource = resourceMapper.resolveProduct(ctx, path);
+                resource = resourceMapper.resolveProduct(resolver, path);
             }
             return resource;
         }
     }
 
     @Override
-    public Iterator<Resource> listChildren(ResolveContext<T> ctx, Resource parent) {
+    public Iterator<Resource> listChildren(ResolveContext<Object> ctx, Resource parent) {
         ValueMap valueMap = parent.getValueMap();
         String commerceType = valueMap.get(CommerceConstants.PN_COMMERCE_TYPE, String.class);
+        ResourceResolver resolver = ctx.getResourceResolver();
         if (root.equals(parent.getPath()) || CATEGORY.equals(commerceType)) {
-            return resourceMapper.listCategoryChildren(ctx, parent);
+            return resourceMapper.listCategoryChildren(resolver, parent);
         } else if (PRODUCT.equals(commerceType)) {
-            return resourceMapper.listProductChildren(ctx, parent);
+            return resourceMapper.listProductChildren(resolver, parent);
         }
         return null;
     }
 
     @Override
-    public QueryLanguageProvider<T> getQueryLanguageProvider() {
+    public QueryLanguageProvider<Object> getQueryLanguageProvider() {
         return queryLanguageProvider;
     }
 }

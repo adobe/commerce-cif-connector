@@ -38,13 +38,13 @@ public class GraphqlResourceProviderFactoryTest {
         "/content", "/context/graphql-client-adapter-factory-context.json",
         "/conf/test-config/settings", "/context/jcr-conf.json"));
 
-    private GraphqlResourceProviderFactory<?> factory;
+    private GraphqlResourceProviderFactory factory;
     private GraphqlDataServiceImpl client;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
-        factory = new GraphqlResourceProviderFactory<>();
+        factory = new GraphqlResourceProviderFactory();
 
         client = Mockito.mock(GraphqlDataServiceImpl.class);
         MockGraphqlDataServiceConfiguration config = Mockito.spy(new MockGraphqlDataServiceConfiguration());
@@ -72,7 +72,7 @@ public class GraphqlResourceProviderFactoryTest {
     }
 
     @Test
-    public void testGetClientForPageWithIdentifier() throws Exception {
+    public void testGetClientForPageWithIdentifier() {
         // Get page which has the catalog identifier in its jcr:content node
         Resource root = context.resourceResolver().getResource("/content/pageA");
 

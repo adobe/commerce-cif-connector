@@ -53,7 +53,7 @@ import static com.adobe.cq.commerce.graphql.resource.Constants.MAGENTO_GRAPHQL_P
     property = {
         CatalogDataResourceProviderFactory.PROPERTY_FACTORY_SERVICE_ID + "=" + MAGENTO_GRAPHQL_PROVIDER
     })
-public class GraphqlResourceProviderFactory<T> implements CatalogDataResourceProviderFactory<T>, CatalogIdentifier {
+public class GraphqlResourceProviderFactory implements CatalogDataResourceProviderFactory<Object>, CatalogIdentifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlResourceProviderFactory.class);
 
@@ -83,7 +83,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
     protected Scheduler scheduler;
 
     @Override
-    public ResourceProvider<T> createResourceProvider(Resource root) {
+    public ResourceProvider<Object> createResourceProvider(Resource root) {
         LOGGER.debug("Creating resource provider for resource at path {}", root.getPath());
 
         ConfigurationBuilder configurationBuilder = root.adaptTo(ConfigurationBuilder.class);
@@ -120,7 +120,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
             return null;
         }
 
-        ResourceProvider<T> resourceProvider = new GraphqlResourceProvider<T>(root.getPath(), client, scheduler, collectedProperties);
+        ResourceProvider<Object> resourceProvider = new GraphqlResourceProvider(root.getPath(), client, scheduler, collectedProperties);
         return resourceProvider;
     }
 
