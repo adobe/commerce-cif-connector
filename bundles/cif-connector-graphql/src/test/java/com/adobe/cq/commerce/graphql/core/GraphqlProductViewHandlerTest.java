@@ -50,6 +50,8 @@ import static com.adobe.cq.commerce.graphql.search.CatalogSearchSupport.PN_CATAL
 
 public class GraphqlProductViewHandlerTest {
 
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+
     SlingHttpServletRequest servletRequest;
     ResourceResolver resourceResolver;
     TagManager tagManager;
@@ -182,11 +184,11 @@ public class GraphqlProductViewHandlerTest {
         // one hit with itemResourceType and resource
         hit.set("resource", Mockito.mock(Resource.class));
         output = viewHandler.generateHtmlOutput(hits, servletRequest, servletResponse);
-        Assert.assertEquals("Hit\n", output);
+        Assert.assertEquals("Hit" + LINE_SEPARATOR, output);
 
         // more hits with itemResourceType and resource
         hits.add(hit2);
         output = viewHandler.generateHtmlOutput(hits, servletRequest, servletResponse);
-        Assert.assertEquals("Hit\nHit\n", output);
+        Assert.assertEquals("Hit" + LINE_SEPARATOR + "Hit" + LINE_SEPARATOR, output);
     }
 }
