@@ -74,6 +74,13 @@
                                     fieldLabel="Magento Store View"
                                     name="./magentoStore"
                                     required="{Boolean}true"/>
+                    <graphqlEndpoint jcr:primaryType="nt:unstructured"
+                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                     fieldLabel="Magento Endpoint (client-side)"
+                                     fieldDescription="Magento GraphQL endpoint for client-side components."
+                                     name="./magentoGraphqlEndpoint"
+                                     required="{Boolean}true"
+                                     value="/magento/graphql"/>
                     <magentoRootCategoryId jcr:primaryType="nt:unstructured"
                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                            name="./magentoRootCategoryId"
