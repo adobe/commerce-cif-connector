@@ -255,6 +255,45 @@ public class GraphqlDataServiceImplTest {
     }
 
     @Test
+    public void testGetCategoryByIdError() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+        Exception exception = null;
+        try {
+            dataService.getCategoryById(1, null);
+        } catch (Exception e) {
+            exception = e;
+        }
+        assertNotNull(exception);
+    }
+
+    @Test
+    public void testGetCategoryByPath() throws Exception {
+        // This checks that the generated GraphQL query is what we expect
+        // It ensures that all changes made to the GraphQL queries are backed up by tests
+        String query = getResource("graphql-queries/categorylist-by-urlkey.txt");
+
+        Utils.setupHttpResponse("magento-graphql-categorylist-dresses.json", httpClient, HttpStatus.SC_OK, query);
+
+        CategoryTree category = dataService.getCategoryByPath("venia-dresses", null);
+        assertEquals(37, category.getId().intValue());
+        assertEquals("Dresses", category.getName());
+
+        assertNull(dataService.getCategoryByPath(null, null));
+    }
+
+    @Test
+    public void testGetCategoryByPathError() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+        Exception exception = null;
+        try {
+            dataService.getCategoryByPath(SKU, null);
+        } catch (Exception e) {
+            exception = e;
+        }
+        assertNotNull(exception);
+    }
+
+    @Test
     public void testSearchProducts() throws Exception {
         // This checks that the generated GraphQL query is what we expect
         // It ensures that all changes made to the GraphQL queries are backed up by tests
@@ -307,22 +346,6 @@ public class GraphqlDataServiceImplTest {
         Utils.setupHttpResponse("magento-graphql-category-search.json", httpClient, HttpStatus.SC_OK, query);
         List<CategoryTree> categories = dataService.searchCategories("1.2.3.4.5", null, 0, 3, null);
         assertEquals(2, categories.size());
-    }
-
-    @Test
-    public void testGetCategoryTree() throws Exception {
-        // This checks that the generated GraphQL query is what we expect
-        // It ensures that all changes made to the GraphQL queries are backed up by tests
-        String query = getResource("graphql-queries/root-category.txt");
-
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, query);
-
-        CategoryTree categoryTree = dataService.getCategoryTree(ROOT_CATEGORY_ID, null);
-        assertEquals(ROOT_CATEGORY_ID, categoryTree.getId());
-        assertEquals(ROOT_CATEGORY_NAME, categoryTree.getName());
-
-        assertEquals(5, categoryTree.getChildren().size());
-        assertEquals("21", categoryTree.getChildrenCount());
     }
 
     @Test

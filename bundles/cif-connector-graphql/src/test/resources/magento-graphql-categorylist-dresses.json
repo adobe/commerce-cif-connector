@@ -1,0 +1,15 @@
+{
+  "data": {
+    "categoryList": [
+      {
+        "id": 37,
+        "name": "Dresses",
+        "url_path": "venia-dresses",
+        "url_key": "venia-dresses",
+        "product_count": 12,
+        "children_count": "0",
+        "children": []
+      }
+    ]
+  }
+}

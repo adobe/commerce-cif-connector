@@ -24,7 +24,10 @@
                   com.adobe.cq.commerce.api.Product,
                   com.adobe.cq.commerce.common.CommerceHelper" %><%
 
-    String title = CommerceHelper.getCardTitle(resource, pageManager);
+    String title = resource.getValueMap().get("jcr:title", "");
+    if (StringUtils.isBlank(title)) {
+        title = resource.getName();
+    }
 
     List<String> applicableRelationships = getActionRels(resource, properties, product, acm, sling);
 

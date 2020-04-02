@@ -78,7 +78,8 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     // We maintain some caches to speed up all lookups
     private Cache<ArrayKey, Optional<ProductInterface>> productCache;
-    private Cache<ArrayKey, Optional<CategoryProducts>> categoryCache;
+    private Cache<ArrayKey, Optional<CategoryProducts>> categoryProductsCache;
+    private Cache<ArrayKey, Optional<List<CategoryTree>>> categoryDataCache;
 
     private Map<String, GraphqlClient> clients = new ConcurrentHashMap<>();
 
@@ -133,9 +134,15 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
             .build();
 
         // Used when the products of a given category are being fetched
-        categoryCache = CacheBuilder.newBuilder()
+        categoryProductsCache = CacheBuilder.newBuilder()
             .maximumSize(configuration.productCachingEnabled() ? configuration.categoryCachingSize() : 0)
             .expireAfterWrite(configuration.productCachingTimeMinutes(), TimeUnit.MINUTES)
+            .build();
+
+        // Used when a single category is being fetched
+        categoryDataCache = CacheBuilder.newBuilder()
+            .maximumSize(configuration.categoryCachingEnabled() ? configuration.categoryCachingSize() : 0)
+            .expireAfterWrite(configuration.categoryCachingTimeMinutes(), TimeUnit.MINUTES)
             .build();
 
         requestOptions = new RequestOptions().withGson(QueryDeserializer.getGson());
@@ -169,6 +176,62 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         }
     }
 
+    @Override
+    public CategoryTree getCategoryById(Integer id, String storeView) {
+        if (id == null) {
+            return null;
+        }
+
+        try {
+            ArrayKey key = toCategoryDataCacheKey(id, storeView);
+            List<CategoryTree> categoryTrees = categoryDataCache.get(key, () -> getCategoryByIdImpl(id, storeView)).orElse(null);
+            return categoryTrees == null ? null : categoryTrees.get(0);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public CategoryTree getCategoryByPath(String urlPath, String storeView) {
+        if (StringUtils.isBlank(urlPath)) {
+            return null;
+        }
+
+        String mainPart = null;
+        String[] parts = urlPath.split("/");
+        for (int i = parts.length; i > 0;) {
+            String part = parts[--i];
+            if (StringUtils.isNotBlank(part)) {
+                mainPart = part;
+                break;
+            }
+        }
+
+        if (mainPart == null) {
+            return null;
+        }
+
+        try {
+            String urlKey = mainPart;
+            ArrayKey key = toCategoryDataCacheKey(urlKey, storeView);
+            List<CategoryTree> categories = categoryDataCache.get(key, () -> getCategoryByKeyImpl(urlKey, storeView)).orElse(null);
+            if (categories == null) {
+                return null;
+            }
+
+            // make sure the right category is returned in case of urlKey duplication
+            for (CategoryTree category : categories) {
+                if (urlPath.equals(category.getUrlPath())) {
+                    return category;
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     Optional<ProductInterface> getProductBySkuImpl(String sku, String storeView) {
 
         LOGGER.debug("Trying to fetch product " + sku);
@@ -192,6 +255,38 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.debug("Fetched product " + (product != null ? product.getName() : null));
 
         return Optional.ofNullable(product);
+    }
+
+    Optional<List<CategoryTree>> getCategoryByIdImpl(Integer id, String storeView) {
+        LOGGER.debug("Trying to fetch category " + id);
+
+        FilterEqualTypeInput input = new FilterEqualTypeInput().setEq(id.toString());
+        CategoryFilterInput filter = new CategoryFilterInput().setIds(input);
+
+        return getCategoryTree(storeView, filter);
+    }
+
+    Optional<List<CategoryTree>> getCategoryByKeyImpl(String urlKey, String storeView) {
+        LOGGER.debug("Trying to fetch category " + urlKey);
+
+        FilterEqualTypeInput name = new FilterEqualTypeInput().setEq(urlKey);
+        CategoryFilterInput filter = new CategoryFilterInput().setUrlKey(name);
+
+        return getCategoryTree(storeView, filter);
+    }
+
+    private Optional<List<CategoryTree>> getCategoryTree(String storeView, CategoryFilterInput filter) {
+        CategoryTreeQueryDefinition queryArgs = q -> GraphqlQueries.CATEGORY_LAMBDA.apply(q).children(
+            GraphqlQueries.CATEGORY_LAMBDA::apply);
+        String queryString = Operations.query(query -> query.categoryList(q -> q.filters(filter), queryArgs)).toString();
+        GraphqlResponse<Query, Error> response = execute(queryString, storeView);
+        if (response.getData() == null && response.getErrors() != null) {
+            throw new RuntimeException();
+        }
+        Query query = response.getData();
+        List<CategoryTree> categoryList = query.getCategoryList();
+
+        return categoryList == null ? Optional.empty() : categoryList.isEmpty() ? Optional.empty() : Optional.of(categoryList);
     }
 
     @Override
@@ -268,47 +363,11 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     }
 
     @Override
-    public CategoryTree getCategoryTree(Integer categoryId, String storeView) {
-        return getCategoriesImpl(categoryId, storeView);
-    }
-
-    CategoryTree getCategoriesImpl(Integer categoryId, String storeView) {
-
-        LOGGER.debug("Trying to fetch category " + categoryId);
-
-        // Search parameters
-        CategoryArgumentsDefinition searchArgs = q -> q.id(categoryId);
-
-        // Create "recursive" query with depth 5 to fetch category data and children
-        // There isn't any better way to build such a query with GraphQL
-        CategoryTreeQueryDefinition queryArgs = q -> GraphqlQueries.CATEGORY_TREE_LAMBDA
-            .apply(q)
-            .children(r -> GraphqlQueries.CATEGORY_TREE_LAMBDA
-                .apply(r)
-                .children(s -> GraphqlQueries.CATEGORY_TREE_LAMBDA
-                    .apply(s)
-                    .children(t -> GraphqlQueries.CATEGORY_TREE_LAMBDA
-                        .apply(t)
-                        .children(u -> GraphqlQueries.CATEGORY_TREE_LAMBDA
-                            .apply(u)))));
-
-        String queryString = Operations.query(query -> query.category(searchArgs, queryArgs)).toString();
-        GraphqlResponse<Query, Error> response = execute(queryString, storeView);
-
-        Query query = response.getData();
-        CategoryTree category = query.getCategory();
-
-        LOGGER.debug("Fetched category " + (category != null ? category.getName() : null));
-
-        return category;
-    }
-
-    @Override
     public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
         try {
             ArrayKey key = toCategoryCacheKey(categoryId, currentPage, pageSize, storeView);
             Callable<Optional<CategoryProducts>> loader = () -> getCategoryProductsImpl(categoryId, currentPage, pageSize, storeView);
-            return categoryCache.get(key, loader).orElse(null);
+            return categoryProductsCache.get(key, loader).orElse(null);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
@@ -386,6 +445,14 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     private ArrayKey toCategoryCacheKey(Integer categoryId, Integer currentPage, Integer pageSize, String storeView) {
         return toCacheKey(categoryId, currentPage, pageSize, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+    }
+
+    private ArrayKey toCategoryDataCacheKey(String key, String storeView) {
+        return toCacheKey(key, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
+    }
+
+    private ArrayKey toCategoryDataCacheKey(Integer id, String storeView) {
+        return toCacheKey(id, StringUtils.defaultString(storeView, MAGENTO_DEFAULT_STORE));
     }
 
     private ArrayKey toCacheKey(Object... parts) {

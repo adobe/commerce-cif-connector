@@ -56,12 +56,16 @@ class CategoryResource extends SyntheticResource {
         if (category != null) {
             map.put(JcrConstants.JCR_TITLE, category.getName());
             map.put(CIF_ID, category.getId());
-            if (category.getChildren() == null || category.getChildren().isEmpty()) {
-                map.put(LEAF_CATEGORY, true);
-            } else {
-                map.put(LEAF_CATEGORY, false);
+            String str = category.getChildrenCount();
+            int childCount = 0;
+            try {
+                childCount = Integer.parseInt(str);
+            } catch (Exception x) {
+                // ignore
             }
-            boolean hasChildren = category.getChildren() != null && !category.getChildren().isEmpty();
+            boolean hasChildren = childCount > 0;
+            hasChildren |= category.getChildren() != null && !category.getChildren().isEmpty();
+            map.put(LEAF_CATEGORY, !hasChildren);
             hasChildren |= category.getProductCount() != null && category.getProductCount() > 0;
             map.put("hasChildren", hasChildren);
         } else {

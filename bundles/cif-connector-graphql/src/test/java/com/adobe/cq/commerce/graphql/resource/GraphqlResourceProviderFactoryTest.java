@@ -48,7 +48,6 @@ public class GraphqlResourceProviderFactoryTest {
 
         client = Mockito.mock(GraphqlDataServiceImpl.class);
         MockGraphqlDataServiceConfiguration config = Mockito.spy(new MockGraphqlDataServiceConfiguration());
-        Mockito.when(config.catalogCachingSchedulerEnabled()).thenReturn(false);
         Mockito.when(client.getConfiguration()).thenReturn(config);
         Mockito.when(client.getIdentifier()).thenReturn("my-catalog");
 

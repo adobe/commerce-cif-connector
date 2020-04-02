@@ -1,0 +1,1 @@
+{categoryList(filters:{url_key:{eq:"venia-dresses"}}){id,name,url_path,url_key,product_count,children_count,children{id,name,url_path,url_key,product_count,children_count}}}
