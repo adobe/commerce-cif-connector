@@ -4,6 +4,7 @@ See below for a full list of minimum system requirements for historical versions
 
 | CIF Connector | AEM 6.4 | AEM 6.5 | Magento | Java |
 |---------------|---------|---------|---------|------|
+| 0.10.0        | 6.4.4.0 | 6.5.0   | 2.3.4   | 1.8  |
 | 0.9.0         | 6.4.4.0 | 6.5.0   | 2.3.4   | 1.8  |
 | 0.8.1         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
 | 0.8.0         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3   | 1.8  |
