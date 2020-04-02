@@ -24,7 +24,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.commons.scheduler.Scheduler;
-import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -53,7 +52,7 @@ import static com.adobe.cq.commerce.graphql.resource.Constants.MAGENTO_GRAPHQL_P
     property = {
         CatalogDataResourceProviderFactory.PROPERTY_FACTORY_SERVICE_ID + "=" + MAGENTO_GRAPHQL_PROVIDER
     })
-public class GraphqlResourceProviderFactory<T> implements CatalogDataResourceProviderFactory<T>, CatalogIdentifier {
+public class GraphqlResourceProviderFactory implements CatalogDataResourceProviderFactory<Object>, CatalogIdentifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlResourceProviderFactory.class);
 
@@ -83,7 +82,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
     protected Scheduler scheduler;
 
     @Override
-    public ResourceProvider<T> createResourceProvider(Resource root) {
+    public GraphqlResourceProvider createResourceProvider(Resource root) {
         LOGGER.debug("Creating resource provider for resource at path {}", root.getPath());
 
         ConfigurationBuilder configurationBuilder = root.adaptTo(ConfigurationBuilder.class);
@@ -120,7 +119,7 @@ public class GraphqlResourceProviderFactory<T> implements CatalogDataResourcePro
             return null;
         }
 
-        ResourceProvider<T> resourceProvider = new GraphqlResourceProvider<T>(root.getPath(), client, scheduler, collectedProperties);
+        GraphqlResourceProvider resourceProvider = new GraphqlResourceProvider(root.getPath(), client, scheduler, collectedProperties);
         return resourceProvider;
     }
 

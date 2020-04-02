@@ -150,7 +150,7 @@ public class GraphqlResourceProviderTest {
         Map<String, String> properties = new HashMap<>();
         properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, rootValueMap.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY,
             ""));
-        provider = new GraphqlResourceProvider<>(CATALOG_ROOT_PATH, dataService, scheduler, properties);
+        provider = new GraphqlResourceProvider(CATALOG_ROOT_PATH, dataService, scheduler, properties);
 
         when(resourceResolver.getResource(any())).then(invocationOnMock -> {
             String path = (String) invocationOnMock.getArguments()[0];
@@ -164,8 +164,8 @@ public class GraphqlResourceProviderTest {
     @Test
     public void testFactoryInitMethod() throws InterruptedException, IOException {
         Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
-
-        ResourceMapper resourceMapper = new ResourceMapper(CATALOG_ROOT_PATH, dataService, scheduler, rootValueMap);
+        Map properties = rootValueMap;
+        ResourceMapper resourceMapper = new ResourceMapper(CATALOG_ROOT_PATH, dataService, scheduler, properties);
         ResourceMapper spy = spy(resourceMapper);
 
         final Runnable cacheRefreshJob = new Runnable() {

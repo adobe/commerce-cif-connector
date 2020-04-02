@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.spi.resource.provider.QueryLanguageProvider;
 import org.apache.sling.spi.resource.provider.ResolveContext;
@@ -38,7 +39,7 @@ import com.adobe.cq.commerce.magento.graphql.ProductInterface;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T> {
+public class GraphqlQueryLanguageProvider implements QueryLanguageProvider<Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphqlQueryLanguageProvider.class);
 
@@ -53,12 +54,12 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
     static final String LIMIT_PARAMETER = "_commerce_limit";
     static final String COMMERCE_TYPE_PARAMETER = "_commerce_commerce_type";
 
-    private ResourceMapper<T> resourceMapper;
+    private ResourceMapper resourceMapper;
     private GraphqlDataService graphqlDataService;
     private ObjectMapper jsonMapper;
     private String storeView;
 
-    GraphqlQueryLanguageProvider(ResourceMapper<T> resourceMapper, GraphqlDataService graphqlDataService, Map<String, String> properties) {
+    GraphqlQueryLanguageProvider(ResourceMapper resourceMapper, GraphqlDataService graphqlDataService, Map<String, String> properties) {
         this.resourceMapper = resourceMapper;
         this.graphqlDataService = graphqlDataService;
         jsonMapper = new ObjectMapper();
@@ -69,12 +70,12 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
     }
 
     @Override
-    public String[] getSupportedLanguages(ResolveContext<T> paramResolveContext) {
+    public String[] getSupportedLanguages(ResolveContext<Object> paramResolveContext) {
         return SUPPORTED_LANGUAGES;
     }
 
     @Override
-    public Iterator<Resource> findResources(ResolveContext<T> ctx, String query, String language) {
+    public Iterator<Resource> findResources(ResolveContext<Object> ctx, String query, String language) {
         if (!VIRTUAL_PRODUCT_QUERY_LANGUAGE.equals(language)) {
             return null;
         }
@@ -113,6 +114,7 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
             }
         }
 
+        ResourceResolver resolver = ctx.getResourceResolver();
         if ("product".equals(commerceType)) {
             List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, categoryId, pagination.getLeft(),
                 pagination.getRight(), storeView);
@@ -133,13 +135,13 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
                 String path = root + product.getSku(); // Default is no category is found
                 if (categories != null && !categories.isEmpty()) {
                     CategoryInterface category = categories.stream()
-                        .filter(c -> c.getUrlPath() != null && resourceMapper.resolveCategory(ctx, root + c.getUrlPath()) != null)
+                        .filter(c -> c.getUrlPath() != null && resourceMapper.resolveCategory(resolver, root + c.getUrlPath()) != null)
                         .findFirst().orElse(null);
                     if (category != null) {
                         path = root + category.getUrlPath() + "/" + product.getSku();
                     }
                 }
-                resources.add(new ProductResource(ctx.getResourceResolver(), path, product));
+                resources.add(new ProductResource(resolver, path, product));
             }
 
             return resources.iterator();
@@ -157,7 +159,7 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
 
             for (CategoryTree category : categories) {
                 String path = root + category.getUrlPath();
-                resources.add(new CategoryResource(ctx.getResourceResolver(), path, category));
+                resources.add(new CategoryResource(resolver, path, category));
             }
             return resources.iterator();
         } else {
@@ -211,7 +213,7 @@ public class GraphqlQueryLanguageProvider<T> implements QueryLanguageProvider<T>
     }
 
     @Override
-    public Iterator<ValueMap> queryResources(ResolveContext<T> paramResolveContext, String query, String language) {
+    public Iterator<ValueMap> queryResources(ResolveContext<Object> paramResolveContext, String query, String language) {
         return null;
     }
 

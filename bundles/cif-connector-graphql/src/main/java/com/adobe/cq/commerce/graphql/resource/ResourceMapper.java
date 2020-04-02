@@ -30,7 +30,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.commons.scheduler.ScheduleOptions;
 import org.apache.sling.commons.scheduler.Scheduler;
-import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ import com.adobe.cq.commerce.magento.graphql.ProductInterface;
 import com.adobe.cq.commerce.magento.graphql.SimpleProduct;
 import com.google.common.collect.Lists;
 
-class ResourceMapper<T> {
+class ResourceMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceMapper.class);
 
@@ -226,7 +225,7 @@ class ResourceMapper<T> {
         return root;
     }
 
-    CategoryResource resolveCategory(ResolveContext<T> ctx, String path) {
+    CategoryResource resolveCategory(ResourceResolver resolver, String path) {
         init();
 
         // We lookup the category path in the cache
@@ -236,12 +235,12 @@ class ResourceMapper<T> {
         String subPath = path.substring(root.length() + 1);
         CategoryTree category = categoryByPaths.get(subPath);
         if (category != null) {
-            return new CategoryResource(ctx.getResourceResolver(), path, category);
+            return new CategoryResource(resolver, path, category);
         }
         return null;
     }
 
-    ProductResource resolveProduct(ResolveContext<T> ctx, String path) {
+    ProductResource resolveProduct(ResourceResolver resolver, String path) {
         List<String> productParts = resolveProductParts(path);
 
         try {
@@ -256,7 +255,7 @@ class ResourceMapper<T> {
             ProductInterface product = graphqlDataService.getProductBySku(sku, storeView);
             if (product != null && product.getId() != null) {
                 boolean isVariant = productParts.size() > 1;
-                return new ProductResource(ctx.getResourceResolver(), path, product, isVariant ? productParts.get(1) : null);
+                return new ProductResource(resolver, path, product, isVariant ? productParts.get(1) : null);
             }
         } catch (Exception e) {
             LOGGER.error("Error while fetching category products", e);
@@ -266,7 +265,7 @@ class ResourceMapper<T> {
         return null;
     }
 
-    SyntheticImageResource resolveProductImage(ResolveContext<T> ctx, String path) {
+    SyntheticImageResource resolveProductImage(ResourceResolver resolver, String path) {
         String productPath = path.substring(0, path.length() - "/image".length());
         List<String> productParts = resolveProductParts(productPath);
         try {
@@ -282,8 +281,7 @@ class ResourceMapper<T> {
                 }
 
                 if (imageUrl != null) {
-                    return new SyntheticImageResource(ctx.getResourceResolver(), path, SyntheticImageResource.IMAGE_RESOURCE_TYPE,
-                        imageUrl);
+                    return new SyntheticImageResource(resolver, path, SyntheticImageResource.IMAGE_RESOURCE_TYPE, imageUrl);
                 } else {
                     return null;
                 }
@@ -326,11 +324,11 @@ class ResourceMapper<T> {
         return productParts;
     }
 
-    Iterator<Resource> listCategoryChildren(ResolveContext<T> ctx, Resource parent) {
+    Iterator<Resource> listCategoryChildren(ResourceResolver resolver, Resource parent) {
         if (!init()) {
             if (categoryByPaths.isEmpty()) {
                 List<Resource> list = new ArrayList<>();
-                list.add(new ErrorResource(ctx.getResourceResolver(), parent.getPath()));
+                list.add(new ErrorResource(resolver, parent.getPath()));
                 return list.iterator();
             }
         }
@@ -339,7 +337,6 @@ class ResourceMapper<T> {
         String parentCifId = parent.getValueMap().get(Constants.CIF_ID, String.class);
         boolean isRoot = parentPath.equals(root);
         String key = isRoot ? "" : parentPath.substring(root.length() + 1);
-        ResourceResolver resolver = ctx.getResourceResolver();
         List<Resource> children = new ArrayList<>();
 
         CategoryTree categoryTree = categoryByPaths.get(key);
@@ -363,7 +360,7 @@ class ResourceMapper<T> {
         return children.isEmpty() ? null : children.iterator();
     }
 
-    Iterator<Resource> listProductChildren(ResolveContext<T> ctx, Resource parent) {
+    Iterator<Resource> listProductChildren(ResourceResolver resolver, Resource parent) {
         init();
 
         String sku = parent.getValueMap().get(Constants.SKU, String.class);
@@ -385,7 +382,6 @@ class ResourceMapper<T> {
                 ConfigurableProduct product = (ConfigurableProduct) productInterface;
                 List<ConfigurableVariant> variants = product.getVariants();
                 if (variants != null && !variants.isEmpty()) {
-                    ResourceResolver resolver = ctx.getResourceResolver();
                     for (ConfigurableVariant variant : variants) {
                         SimpleProduct simpleProduct = variant.getProduct();
                         String path = parentPath + "/" + simpleProduct.getSku();
@@ -400,8 +396,8 @@ class ResourceMapper<T> {
 
             if (imageUrl != null) {
                 String imagePath = parentPath + "/image";
-                Resource imageResource = new SyntheticImageResource(ctx.getResourceResolver(), imagePath,
-                    SyntheticImageResource.IMAGE_RESOURCE_TYPE, imageUrl);
+                Resource imageResource = new SyntheticImageResource(resolver, imagePath, SyntheticImageResource.IMAGE_RESOURCE_TYPE,
+                    imageUrl);
                 children.add(0, imageResource);
             }
 

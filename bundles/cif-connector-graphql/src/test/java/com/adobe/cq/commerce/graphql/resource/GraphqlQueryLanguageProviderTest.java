@@ -49,9 +49,9 @@ import static org.mockito.Matchers.eq;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class GraphqlQueryLanguageProviderTest {
 
-    ResourceMapper<?> resourceMapper;
+    ResourceMapper resourceMapper;
     GraphqlDataService graphqlDataService;
-    GraphqlQueryLanguageProvider<?> queryLanguageProvider;
+    GraphqlQueryLanguageProvider queryLanguageProvider;
     ResolveContext ctx;
 
     @Before
@@ -59,7 +59,7 @@ public class GraphqlQueryLanguageProviderTest {
         resourceMapper = Mockito.mock(ResourceMapper.class);
         graphqlDataService = Mockito.mock(GraphqlDataService.class);
         ctx = Mockito.mock(ResolveContext.class);
-        queryLanguageProvider = new GraphqlQueryLanguageProvider<>(resourceMapper, graphqlDataService, null);
+        queryLanguageProvider = new GraphqlQueryLanguageProvider(resourceMapper, graphqlDataService, null);
     }
 
     @Test
