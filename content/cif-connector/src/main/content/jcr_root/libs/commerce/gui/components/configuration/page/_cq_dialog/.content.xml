@@ -73,7 +73,8 @@
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                     fieldLabel="Store View"
                                     fieldDescription="The Store View identifier, empty will automatically fall back to 'default'."
-                                    name="./magentoStore"/>
+                                    name="./magentoStore"
+                                    cq:showOnCreate="{Boolean}true"/>
                     <graphqlEndpoint jcr:primaryType="nt:unstructured"
                                      sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                      fieldLabel="GraphQL Proxy Path"
@@ -81,7 +82,8 @@
                                      name="./magentoGraphqlEndpoint"
                                      required="{Boolean}true"
                                      value="/magento/graphql"
-                                     defaultValue="/magento/graphql"/>
+                                     defaultValue="/magento/graphql"
+                                     cq:showOnCreate="{Boolean}true"/>
                     <magentoRootCategoryId jcr:primaryType="nt:unstructured"
                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                            name="./magentoRootCategoryId"
