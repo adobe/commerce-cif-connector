@@ -65,11 +65,6 @@ class ResourceMapper {
             if (category != null) {
                 return new CategoryResource(resolver, path, category);
             }
-        } else {
-            CategoryTree category = graphqlDataService.getCategoryById(rootCategoryId, storeView);
-            if (category != null) {
-                return new CategoryResource(resolver, path, category);
-            }
         }
         return null;
     }
