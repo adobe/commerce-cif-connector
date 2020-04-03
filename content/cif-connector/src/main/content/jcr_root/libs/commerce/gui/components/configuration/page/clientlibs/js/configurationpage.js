@@ -135,7 +135,6 @@
      * Populates the commerce identifier select component after the commerce provider is selected.
      */
     function commerceProviderSelectedHandler() {
-        console.log(`Commerce provider field changed`);
         const commerceProvider = getSelectedCommerceProvider();
         if (commerceProvider !== '') {
             const catalogs = getCatalogIdentifiers(commerceProvider);
@@ -154,7 +153,6 @@
     function catalogIdentifierSelectedHandler() {
         const catalogIdentifier = catalogIdentifierCoralSelectComponent.selectedItem.value;
         catalogIdentifierHidden.value = catalogIdentifier;
-        console.log(`Setting the hidden field value to ${catalogIdentifier}`);
     }
 
     $(document).on('foundation-contentloaded', () => {
