@@ -199,7 +199,7 @@ Karma will test with Chrome and Firefox. Make sure you have both browsers instal
 
 ## Releases to Maven Central
 
-Releases are triggered by manually running `mvn release:prepare release:clean -Dskip-it` on the `master` branch in the **top-level folder** of this repository. Once you choose the release and the next snapshot versions, this commits the change along with a release git tag like for example `cif-connector-reactor-x.y.z`. Note that the commits are not automatically pushed to the git repository, so you have some time to check your changes and then manually push them. The push then triggers a dedicated `CircleCI` build that performs the deployment of all the artifacts to Maven Central.
+Releases are triggered by manually running `mvn release:prepare release:clean` on the `master` branch in the **top-level folder** of this repository. Once you choose the release and the next snapshot versions, this commits the change along with a release git tag like for example `cif-connector-reactor-x.y.z`. Note that the commits are not automatically pushed to the git repository, so you have some time to check your changes and then manually push them. The push then triggers a dedicated `CircleCI` build that performs the deployment of all the artifacts to Maven Central.
 
 Note that the `skip-it` property ensures that the integration tests sub-modules are not released.
 
