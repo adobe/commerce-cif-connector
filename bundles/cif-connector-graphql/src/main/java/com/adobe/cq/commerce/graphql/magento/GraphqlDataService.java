@@ -92,11 +92,4 @@ public interface GraphqlDataService {
      * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
      */
     public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView);
-
-    /**
-     * Returns the OSGi configuration of that GraphQL client.
-     *
-     * @return The OSGi configuration of this instance.
-     */
-    public GraphqlDataServiceConfiguration getConfiguration();
 }

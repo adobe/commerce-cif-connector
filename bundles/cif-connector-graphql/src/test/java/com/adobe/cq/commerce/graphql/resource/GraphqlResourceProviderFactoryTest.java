@@ -21,15 +21,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import com.adobe.cq.commerce.graphql.magento.GraphqlAemContext;
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl;
 import com.adobe.cq.commerce.graphql.magento.MockGraphqlDataServiceConfiguration;
 import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class GraphqlResourceProviderFactoryTest {
 
@@ -46,10 +44,10 @@ public class GraphqlResourceProviderFactoryTest {
 
         factory = new GraphqlResourceProviderFactory();
 
-        client = Mockito.mock(GraphqlDataServiceImpl.class);
+        client = new GraphqlDataServiceImpl();
         MockGraphqlDataServiceConfiguration config = Mockito.spy(new MockGraphqlDataServiceConfiguration());
-        Mockito.when(client.getConfiguration()).thenReturn(config);
-        Mockito.when(client.getIdentifier()).thenReturn("my-catalog");
+        Whitebox.setInternalState(client, "configuration", config);
+        Mockito.when(config.identifier()).thenReturn("my-catalog");
 
         factory.bindGraphqlDataService(client, null);
     }

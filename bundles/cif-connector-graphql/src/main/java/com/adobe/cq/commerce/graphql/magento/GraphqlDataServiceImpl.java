@@ -399,10 +399,6 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         return Optional.ofNullable(category.getProducts());
     }
 
-    public GraphqlDataServiceConfiguration getConfiguration() {
-        return configuration;
-    }
-
     @Override
     public String getIdentifier() {
         return configuration.identifier();
