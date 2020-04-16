@@ -6,7 +6,7 @@
             "magentoRootCategoryId": "4",
             "cq:graphqlClient": "default",
             "cq:catalogIdentifier": "my-catalog",
-            "magentoStore": "4",
+            "magentoStore": "default",
             "jcr:created": "Thu Feb 06 2020 14:21:13 GMT+0200",
             "cq:catalogDataResourceProviderFactory": "magento-graphql"
         }
