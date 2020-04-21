@@ -462,6 +462,30 @@ public class GraphqlResourceProviderTest {
     }
 
     @Test
+    public void testImageResourceNoProduct() throws IOException, CommerceException {
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"image\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
+        Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_OK, "{product");
+
+        Resource resource = provider.getResource(resolveContext, PRODUCT_PATH + "/image", null, null);
+        assertNull(resource);
+    }
+
+    @Test
+    public void testImageResourceProductError() throws IOException, CommerceException {
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"image\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
+        Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_INTERNAL_SERVER_ERROR, "{product");
+
+        Resource resource = provider.getResource(resolveContext, PRODUCT_PATH + "/image", null, null);
+        assertNull(resource);
+    }
+
+    @Test
     public void testQueryLanguageProvider() throws IOException {
         Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
             "{categoryList(filters:{url_key:{eq:\"coats\"");
