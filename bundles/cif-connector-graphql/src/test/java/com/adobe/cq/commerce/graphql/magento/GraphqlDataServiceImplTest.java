@@ -259,6 +259,12 @@ public class GraphqlDataServiceImplTest {
     }
 
     @Test
+    public void testGetCategoryByIdNull() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+        assertNull(dataService.getCategoryById(null, null));
+    }
+
+    @Test
     public void testGetCategoryByPath() throws Exception {
         // This checks that the generated GraphQL query is what we expect
         // It ensures that all changes made to the GraphQL queries are backed up by tests
@@ -277,6 +283,12 @@ public class GraphqlDataServiceImplTest {
     public void testGetCategoryByPathError() throws Exception {
         Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
         dataService.getCategoryByPath(SKU, null);
+    }
+
+    @Test
+    public void testGetCategoryByPathEmpty() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+        assertNull(dataService.getCategoryByPath("/", null));
     }
 
     @Test
