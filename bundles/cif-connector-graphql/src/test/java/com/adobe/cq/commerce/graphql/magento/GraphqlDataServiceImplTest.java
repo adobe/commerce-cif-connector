@@ -370,16 +370,10 @@ public class GraphqlDataServiceImplTest {
         dataService.execute("{dummy}", null);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testInvalidResponse() throws Exception {
         Utils.setupHttpResponse("sample-graphql-generic-response.json", httpClient, HttpStatus.SC_OK);
-        Exception exception = null;
-        try {
-            dataService.getProductBySku(SKU, null);
-        } catch (Exception e) {
-            exception = e;
-        }
-        assertNotNull(exception);
+        dataService.getProductBySku(SKU, null);
     }
 
     @Test
