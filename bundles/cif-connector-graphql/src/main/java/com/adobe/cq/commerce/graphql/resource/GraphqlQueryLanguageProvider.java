@@ -117,7 +117,7 @@ public class GraphqlQueryLanguageProvider implements QueryLanguageProvider<Objec
         ResourceResolver resolver = ctx.getResourceResolver();
         if ("product".equals(commerceType)) {
             List<ProductInterface> products = graphqlDataService.searchProducts(fulltext, categoryId, pagination.getLeft(),
-                pagination.getRight(), storeView);
+                pagination.getRight(), storeView, null);
 
             // The Magento page might start before 'offset' and be bigger than 'limit', so we extract exactly what we need
             int start = offset - ((pagination.getLeft() - 1) * pagination.getRight());
@@ -149,7 +149,7 @@ public class GraphqlQueryLanguageProvider implements QueryLanguageProvider<Objec
             List<Resource> resources = new ArrayList<>();
             String root = resourceMapper.getRoot() + "/";
             List<CategoryTree> categories = graphqlDataService.searchCategories(fulltext, categoryId, pagination.getLeft(),
-                pagination.getRight(), storeView);
+                pagination.getRight(), storeView, null);
 
             int start = offset;
             int end = Math.min(categories.size(), offset + limit);

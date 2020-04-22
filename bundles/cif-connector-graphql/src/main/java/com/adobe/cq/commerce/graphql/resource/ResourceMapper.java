@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.slf4j.Logger;
@@ -61,7 +62,8 @@ class ResourceMapper {
         // Remove root (/var/commerce/products/cloudcommerce) then try to find the category path Men/Coats
         String subPath = path.substring(root.length() + 1);
         if (StringUtils.isNotBlank(subPath)) {
-            CategoryTree category = graphqlDataService.getCategoryByPath(subPath, storeView);
+            Pair<String, Long> epoch = toEpoch(subPath);
+            CategoryTree category = graphqlDataService.getCategoryByPath(epoch.getLeft(), storeView, epoch.getRight());
             if (category != null) {
                 return new CategoryResource(resolver, path, category);
             }
@@ -81,7 +83,8 @@ class ResourceMapper {
             // --> and use the 2nd part (if any) to select the right variant
 
             String sku = productParts.get(0);
-            ProductInterface product = graphqlDataService.getProductBySku(sku, storeView);
+            String subPath = path.substring(root.length() + 1);
+            ProductInterface product = graphqlDataService.getProductBySku(sku, storeView, toEpoch(subPath).getRight());
             if (product != null && product.getId() != null) {
                 boolean isVariant = productParts.size() > 1;
                 return new ProductResource(resolver, path, product, isVariant ? productParts.get(1) : null);
@@ -99,7 +102,8 @@ class ResourceMapper {
         List<String> productParts = resolveProductParts(productPath);
         try {
             String sku = productParts.size() == 1 ? productParts.get(0) : productParts.get(1);
-            ProductInterface product = graphqlDataService.getProductBySku(sku, storeView);
+            String subPath = path.substring(root.length() + 1);
+            ProductInterface product = graphqlDataService.getProductBySku(sku, storeView, toEpoch(subPath).getRight());
             if (product != null) {
                 String imageUrl = product.getImage().getUrl();
                 if (imageUrl == null && product instanceof ConfigurableProduct) {
@@ -135,14 +139,15 @@ class ResourceMapper {
         // --> we find the category /Men/Coats and try to fetch the product meskwielt.1-s and variant meskwielt.2-l
 
         String subPath = path.substring(root.length() + 1);
+        Pair<String, Long> epoch = toEpoch(subPath);
         int backtrackCounter = 0;
         List<String> productParts = new ArrayList<>();
-        String[] parts = subPath.split("/");
+        String[] parts = epoch.getLeft().split("/");
         for (String part : Lists.reverse(Arrays.asList(parts))) {
             productParts.add(part);
             backtrackCounter -= part.length() + 1;
-            String categorySubPath = StringUtils.substring(subPath, 0, backtrackCounter);
-            if (graphqlDataService.getCategoryByPath(categorySubPath, storeView) != null) {
+            String categorySubPath = StringUtils.substring(epoch.getLeft(), 0, backtrackCounter);
+            if (graphqlDataService.getCategoryByPath(categorySubPath, storeView, toEpoch(subPath).getRight()) != null) {
                 break;
             }
         }
@@ -155,13 +160,14 @@ class ResourceMapper {
         String parentCifId = parent.getValueMap().get(Constants.CIF_ID, String.class);
         boolean isRoot = parentPath.equals(root);
         String subPath = isRoot ? "" : parentPath.substring(root.length() + 1);
+        Pair<String, Long> epoch = toEpoch(subPath);
         List<Resource> children = new ArrayList<>();
         CategoryTree categoryTree;
         try {
             if (StringUtils.isNotBlank(subPath)) {
-                categoryTree = graphqlDataService.getCategoryByPath(subPath, storeView);
+                categoryTree = graphqlDataService.getCategoryByPath(epoch.getLeft(), storeView, epoch.getRight());
             } else {
-                categoryTree = graphqlDataService.getCategoryById(rootCategoryId, storeView);
+                categoryTree = graphqlDataService.getCategoryById(rootCategoryId, storeView, epoch.getRight());
             }
         } catch (Exception x) {
             List<Resource> list = new ArrayList<>();
@@ -172,14 +178,14 @@ class ResourceMapper {
             List<CategoryTree> subChildren = categoryTree.getChildren();
             if (subChildren != null) {
                 for (CategoryTree child : subChildren) {
-                    children.add(new CategoryResource(resolver, root + "/" + child.getUrlPath(), child));
+                    children.add(new CategoryResource(resolver, parentPath + "/" + child.getUrlKey(), child));
                 }
             }
         }
 
         if (children.isEmpty() && StringUtils.isNotBlank(parentCifId)) {
             try {
-                return new CategoryProductsIterator(parent, graphqlDataService, 20, storeView);
+                return new CategoryProductsIterator(parent, graphqlDataService, 20, storeView, epoch.getRight());
             } catch (Exception e) {
                 LOGGER.error("Error while fetching category products for " + parentPath + " (" + parentCifId + ")", e);
             }
@@ -191,9 +197,10 @@ class ResourceMapper {
     Iterator<Resource> listProductChildren(ResourceResolver resolver, Resource parent) {
         String sku = parent.getValueMap().get(Constants.SKU, String.class);
         String parentPath = parent.getPath();
+        String subPath = parentPath.equals(root) ? "" : parentPath.substring(root.length() + 1);
 
         try {
-            ProductInterface productInterface = graphqlDataService.getProductBySku(sku, storeView);
+            ProductInterface productInterface = graphqlDataService.getProductBySku(sku, storeView, toEpoch(subPath).getRight());
             if (productInterface == null) {
                 return null;
             }
@@ -233,4 +240,22 @@ class ResourceMapper {
             return null;
         }
     }
+
+    private Pair<String, Long> toEpoch(String path) {
+        LOGGER.info("Trying to extract epoch from {}", path);
+        if (path.startsWith("_")) {
+            String[] parts = path.split("/");
+            try {
+                String newPath = StringUtils.substringAfter(path, "/");
+                Long epoch = Long.parseLong(parts[0].substring(1));
+                LOGGER.info("Getting {} --> {}", newPath, epoch);
+                return Pair.of(newPath, epoch);
+            } catch (NumberFormatException e) {
+                LOGGER.error("Cannot parse expected epoch long value", e);
+                return Pair.of(path, null);
+            }
+        }
+        return Pair.of(path, null);
+    }
+
 }

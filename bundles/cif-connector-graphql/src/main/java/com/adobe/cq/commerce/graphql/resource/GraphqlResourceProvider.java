@@ -41,17 +41,21 @@ class GraphqlResourceProvider extends ResourceProvider<Object> {
     private Integer rootCategoryId;
     private ResourceMapper resourceMapper;
     private GraphqlQueryLanguageProvider queryLanguageProvider;
+    private GraphqlDataService graphqlDataService;
+    private String storeView;
 
     GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Map<String, String> properties) {
         this.root = root;
+        this.graphqlDataService = graphqlDataService;
         rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY));
         resourceMapper = new ResourceMapper(root, graphqlDataService, properties);
         queryLanguageProvider = new GraphqlQueryLanguageProvider(resourceMapper, graphqlDataService, properties);
+        storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY);
     }
 
     @Override
     public Resource getResource(ResolveContext<Object> ctx, String path, ResourceContext resourceContext, Resource parent) {
-        LOGGER.debug("getResource called for " + path);
+        LOGGER.debug("getResource() called for " + path);
 
         if (path.equals(root)) {
             Resource resource = ctx.getParentResourceProvider().getResource(
@@ -66,6 +70,16 @@ class GraphqlResourceProvider extends ResourceProvider<Object> {
         if (path.contains(JcrConstants.JCR_CONTENT) || path.endsWith(".jpg") ||
             path.contains("assets") || path.contains("thumbnail") || path.contains("rep:policy")) {
             return null;
+        }
+
+        String subPath = path.substring(root.length() + 1);
+        LOGGER.info("Trying to check epoch root {} --> {}", path, subPath);
+        if (!subPath.contains("/") && subPath.startsWith("_")) {
+            Long epoch = toEpoch(subPath);
+            LOGGER.info("Parsed epoch root {}", epoch);
+            if (epoch != null) {
+                return new PreviewResource(ctx.getResourceResolver(), path, epoch, rootCategoryId, graphqlDataService, storeView);
+            }
         }
 
         ResourceResolver resolver = ctx.getResourceResolver();
@@ -85,6 +99,8 @@ class GraphqlResourceProvider extends ResourceProvider<Object> {
 
     @Override
     public Iterator<Resource> listChildren(ResolveContext<Object> ctx, Resource parent) {
+        LOGGER.debug("listChildren() called for " + parent.getPath());
+
         ValueMap valueMap = parent.getValueMap();
         String commerceType = valueMap.get(CommerceConstants.PN_COMMERCE_TYPE, String.class);
         ResourceResolver resolver = ctx.getResourceResolver();
@@ -99,5 +115,14 @@ class GraphqlResourceProvider extends ResourceProvider<Object> {
     @Override
     public GraphqlQueryLanguageProvider getQueryLanguageProvider() {
         return queryLanguageProvider;
+    }
+
+    private Long toEpoch(String path) {
+        try {
+            return Long.parseLong(path.substring(1));
+        } catch (NumberFormatException e) {
+            LOGGER.error("Cannot parse expected epoch long value", e);
+            return null;
+        }
     }
 }

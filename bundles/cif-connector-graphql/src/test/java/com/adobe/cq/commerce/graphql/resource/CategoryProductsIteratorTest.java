@@ -56,20 +56,20 @@ public class CategoryProductsIteratorTest {
 
         String json1 = getResource("magento-graphql-category-products-page1.json");
         Query query1 = QueryDeserializer.getGson().fromJson(json1, Query.class);
-        when(graphqlDataService.getCategoryProducts(CATEGORY_ID, 1, 3, STORE_VIEW)).thenReturn(query1.getCategory().getProducts());
+        when(graphqlDataService.getCategoryProducts(CATEGORY_ID, 1, 3, STORE_VIEW, null)).thenReturn(query1.getCategory().getProducts());
 
         String json2 = getResource("magento-graphql-category-products-page2.json");
         Query query2 = QueryDeserializer.getGson().fromJson(json2, Query.class);
-        when(graphqlDataService.getCategoryProducts(CATEGORY_ID, 2, 3, STORE_VIEW)).thenReturn(query2.getCategory().getProducts());
+        when(graphqlDataService.getCategoryProducts(CATEGORY_ID, 2, 3, STORE_VIEW, null)).thenReturn(query2.getCategory().getProducts());
 
         String json3 = getResource("magento-graphql-category-products-page3.json");
         Query query3 = QueryDeserializer.getGson().fromJson(json3, Query.class);
-        when(graphqlDataService.getCategoryProducts(CATEGORY_ID, 3, 3, STORE_VIEW)).thenReturn(query3.getCategory().getProducts());
+        when(graphqlDataService.getCategoryProducts(CATEGORY_ID, 3, 3, STORE_VIEW, null)).thenReturn(query3.getCategory().getProducts());
     }
 
     @Test
     public void testIterator() {
-        CategoryProductsIterator it = new CategoryProductsIterator(category, graphqlDataService, 3, STORE_VIEW);
+        CategoryProductsIterator it = new CategoryProductsIterator(category, graphqlDataService, 3, STORE_VIEW, null);
 
         int count = 0;
         while (it.hasNext()) {
@@ -78,7 +78,7 @@ public class CategoryProductsIteratorTest {
             Assert.assertEquals(CATALOG_ROOT_PATH + "/product-" + count, product.getPath());
         }
         Assert.assertEquals(8, count);
-        Mockito.verify(graphqlDataService, Mockito.times(3)).getCategoryProducts(any(), any(), any(), any());
+        Mockito.verify(graphqlDataService, Mockito.times(3)).getCategoryProducts(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -88,9 +88,9 @@ public class CategoryProductsIteratorTest {
         String json3 = getResource("magento-graphql-category-products-page3.json");
         Query query3 = QueryDeserializer.getGson().fromJson(json3, Query.class);
         query3.getCategory().getProducts().setItems(Collections.emptyList());
-        when(graphqlDataService.getCategoryProducts(CATEGORY_ID, 3, 3, STORE_VIEW)).thenReturn(query3.getCategory().getProducts());
+        when(graphqlDataService.getCategoryProducts(CATEGORY_ID, 3, 3, STORE_VIEW, null)).thenReturn(query3.getCategory().getProducts());
 
-        CategoryProductsIterator it = new CategoryProductsIterator(category, graphqlDataService, 3, STORE_VIEW);
+        CategoryProductsIterator it = new CategoryProductsIterator(category, graphqlDataService, 3, STORE_VIEW, null);
 
         int count = 0;
         while (it.hasNext()) {
@@ -99,7 +99,7 @@ public class CategoryProductsIteratorTest {
             Assert.assertEquals(CATALOG_ROOT_PATH + "/product-" + count, product.getPath());
         }
         Assert.assertEquals(6, count);
-        Mockito.verify(graphqlDataService, Mockito.times(3)).getCategoryProducts(any(), any(), any(), any());
+        Mockito.verify(graphqlDataService, Mockito.times(3)).getCategoryProducts(any(), any(), any(), any(), any());
     }
 
     private String getResource(String filename) throws IOException {

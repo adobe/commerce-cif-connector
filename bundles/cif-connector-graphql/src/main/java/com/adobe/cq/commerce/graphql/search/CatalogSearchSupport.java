@@ -14,13 +14,21 @@
 
 package com.adobe.cq.commerce.graphql.search;
 
+import java.time.OffsetDateTime;
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.graphql.resource.Constants;
+import com.adobe.cq.launches.api.Launch;
+import com.adobe.cq.wcm.launches.utils.LaunchUtils;
 import com.day.cq.commons.inherit.ComponentInheritanceValueMap;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.commons.inherit.InheritanceValueMap;
@@ -28,6 +36,9 @@ import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
 public class CatalogSearchSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogSearchSupport.class);
+
     public static final String PN_CATALOG_PATH = "cq:catalogPath";
     public static final String COMPONENT_DIALIG_URI_MARKER = "/_cq_dialog.html/";
     public static final String PAGE_PROPERTIES_URI_MARKER = "/sites/properties.html";
@@ -80,12 +91,32 @@ public class CatalogSearchSupport {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        Page parentPage = resolver.adaptTo(PageManager.class).getContainingPage(path);
+        PageManager pageManager = resolver.adaptTo(PageManager.class);
+        Page parentPage = pageManager.getContainingPage(path);
         if (parentPage == null) {
             return null;
         }
+        LOGGER.info("Picker parent page {}", parentPage.getPath());
+
+        Long epoch = null;
+        if (parentPage.getPath() != null && LaunchUtils.isLaunchBasedPath(parentPage.getPath())) {
+            Resource launchResource = LaunchUtils.getLaunchResource(parentPage.adaptTo(Resource.class));
+            Launch launch = launchResource.adaptTo(Launch.class);
+            Calendar liveDate = launch.getLiveDate();
+            if (liveDate != null) {
+                TimeZone timeZone = liveDate.getTimeZone();
+                OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(liveDate.toInstant(), timeZone.toZoneId());
+                epoch = offsetDateTime.toEpochSecond();
+            }
+            Resource targetResource = LaunchUtils.getTargetResource(parentPage.adaptTo(Resource.class), null);
+            Page targetPage = pageManager.getPage(targetResource.getPath());
+            parentPage = targetPage != null ? targetPage : parentPage;
+        }
+
+        LOGGER.info("Picker checking properties at {}", parentPage.getPath());
         InheritanceValueMap inheritedProperties = new HierarchyNodeInheritanceValueMap(parentPage.getContentResource());
-        return inheritedProperties.getInherited(PN_CATALOG_PATH, String.class);
+        String catalogPath = inheritedProperties.getInherited(PN_CATALOG_PATH, String.class);
+        return (catalogPath != null && epoch != null) ? (catalogPath + "/_" + epoch) : catalogPath;
     }
 
     /**
@@ -96,6 +127,10 @@ public class CatalogSearchSupport {
      * @return the value of the {@link #PN_CATALOG_PATH} property or or {@code null} if not found
      */
     public String findCatalogPathForPicker(SlingHttpServletRequest request) {
+        if (request != null && request.getRequestURL() != null) {
+            LOGGER.info("Picker path at {}", request.getRequestURL().toString());
+        }
+
         String requestURI = request.getRequestURI();
         if (requestURI.contains(COMPONENT_DIALIG_URI_MARKER)) {
             String suffix = request.getRequestPathInfo().getSuffix();

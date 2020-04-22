@@ -29,6 +29,7 @@ public class CategoryProductsIterator implements Iterator<Resource> {
     private Resource category;
 
     private String storeView;
+    private Long previewVersion;
     private Integer categoryId;
     private Integer totalCount;
 
@@ -48,12 +49,14 @@ public class CategoryProductsIterator implements Iterator<Resource> {
      * @param pageSize The page size when fetching data.
      * @param storeView The Magento store view used to access the Magento catalog.
      */
-    public CategoryProductsIterator(Resource category, GraphqlDataService graphqlDataService, Integer pageSize, String storeView) {
+    public CategoryProductsIterator(Resource category, GraphqlDataService graphqlDataService, Integer pageSize, String storeView,
+                                    Long previewVersion) {
         this.category = category;
         this.categoryId = category.getValueMap().get(Constants.CIF_ID, Integer.class);
         this.graphqlDataService = graphqlDataService;
         this.pageSize = pageSize != null ? pageSize : 20;
         this.storeView = storeView;
+        this.previewVersion = previewVersion;
     }
 
     @Override
@@ -68,7 +71,8 @@ public class CategoryProductsIterator implements Iterator<Resource> {
         }
 
         Integer nextPage = (items.size() / pageSize) + 1; // Magento pagination starts at page 1
-        CategoryProducts categoryProducts = graphqlDataService.getCategoryProducts(categoryId, nextPage, pageSize, storeView);
+        CategoryProducts categoryProducts = graphqlDataService.getCategoryProducts(categoryId, nextPage, pageSize, storeView,
+            previewVersion);
         totalCount = categoryProducts.getTotalCount();
 
         List<ProductInterface> products = categoryProducts.getItems();

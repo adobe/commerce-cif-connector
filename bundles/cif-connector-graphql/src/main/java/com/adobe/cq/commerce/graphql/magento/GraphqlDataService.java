@@ -32,7 +32,7 @@ public interface GraphqlDataService {
      * @return The Magento GraphQL product or null if the product is not found.
      * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
      */
-    public ProductInterface getProductBySku(String sku, String storeView);
+    public ProductInterface getProductBySku(String sku, String storeView, Long previewVersion);
 
     /**
      * Fetches a category by identifier.
@@ -42,7 +42,7 @@ public interface GraphqlDataService {
      * @return the Magento GraphQL category or null if the category is not found
      * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized
      */
-    public CategoryTree getCategoryById(Integer id, String storeView);
+    public CategoryTree getCategoryById(Integer id, String storeView, Long previewVersion);
 
     /**
      * Fetches a category by URL path.
@@ -53,7 +53,7 @@ public interface GraphqlDataService {
      * @return the Magento GraphQL category or null if the category is not found
      * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized
      */
-    public CategoryTree getCategoryByPath(String urlPath, String storeView);
+    public CategoryTree getCategoryByPath(String urlPath, String storeView, Long previewVersion);
 
     /**
      * Performs a full-text search and returns the matching products.
@@ -66,7 +66,8 @@ public interface GraphqlDataService {
      * @return The list of matching products or an empty list if the search doesn't match any product.
      * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
      */
-    public List<ProductInterface> searchProducts(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView);
+    public List<ProductInterface> searchProducts(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView,
+        Long previewVersion);
 
     /**
      * Performs a full-text search and returns the matching categories.
@@ -79,7 +80,8 @@ public interface GraphqlDataService {
      * @return The list of matching categories or an empty list if the search doesn't match any category.
      * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
      */
-    public List<CategoryTree> searchCategories(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView);
+    public List<CategoryTree> searchCategories(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView,
+        Long previewVersion);
 
     /**
      * Returns the paginated products results for the given category id and pagination arguments.
@@ -91,5 +93,6 @@ public interface GraphqlDataService {
      * @return The list of products for this category.
      * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
      */
-    public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView);
+    public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView,
+        Long previewVersion);
 }
