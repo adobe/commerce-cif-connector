@@ -17,10 +17,10 @@ package libs.commerce.gui.components.common.cifcategoryfield;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 
-import com.adobe.cq.commerce.common.CommerceHelper;
 import com.adobe.cq.sightly.WCMUsePojo;
 import com.day.cq.commons.jcr.JcrConstants;
 
@@ -69,7 +69,11 @@ public class CIFCategoryFieldHelper extends WCMUsePojo {
     }
 
     public String getTitle() {
-        return CommerceHelper.getCardTitle(getResource(), getPageManager());
+        String title = getProperties().get("jcr:title", "");
+        if (StringUtils.isBlank(title)) {
+            title = getResource().getName();
+        }
+        return title;
     }
 
     public String getThumbnailImageUrl() {

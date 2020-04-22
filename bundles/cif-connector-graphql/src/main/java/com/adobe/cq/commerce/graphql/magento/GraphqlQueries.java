@@ -81,10 +81,11 @@ class GraphqlQueries {
      * Generic "lambda" query for category tree WITHOUT "children" part.
      * The "children" part cannot be added because it would otherwise introduce an infinite recursion.
      */
-    static final Function<CategoryTreeQuery, CategoryTreeQuery> CATEGORY_TREE_LAMBDA = q -> q
+    static final Function<CategoryTreeQuery, CategoryTreeQuery> CATEGORY_LAMBDA = q -> q
         .id()
         .name()
         .urlPath()
+        .urlKey()
         .productCount()
         .childrenCount();
 

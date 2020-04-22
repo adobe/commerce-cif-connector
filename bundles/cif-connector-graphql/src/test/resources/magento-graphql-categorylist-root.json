@@ -1,0 +1,72 @@
+{
+  "data": {
+    "categoryList": [
+      {
+        "id": 4,
+        "name": "Default Category",
+        "url_path": null,
+        "url_key": "default-category",
+        "product_count": 1,
+        "children_count": "20",
+        "children": [
+          {
+            "id": 37,
+            "name": "Dresses",
+            "url_path": "venia-dresses",
+            "url_key": "venia-dresses",
+            "product_count": 12,
+            "children_count": "0"
+          },
+          {
+            "id": 34,
+            "name": "Bottoms",
+            "url_path": "venia-bottoms",
+            "url_key": "venia-bottoms",
+            "product_count": 0,
+            "children_count": "2"
+          },
+          {
+            "id": 31,
+            "name": "Tops",
+            "url_path": "venia-tops",
+            "url_key": "venia-tops",
+            "product_count": 0,
+            "children_count": "2"
+          },
+          {
+            "id": 27,
+            "name": "Accessories",
+            "url_path": "venia-accessories",
+            "url_key": "venia-accessories",
+            "product_count": 14,
+            "children_count": "3"
+          },
+          {
+            "id": 38,
+            "name": "Shop The Look",
+            "url_path": "shop-the-look",
+            "url_key": "shop-the-look",
+            "product_count": 0,
+            "children_count": "6"
+          },
+          {
+            "id": 46,
+            "name": "Software",
+            "url_path": "software",
+            "url_key": "software",
+            "product_count": 3,
+            "children_count": "0"
+          },
+          {
+            "id": 47,
+            "name": "New Products",
+            "url_path": "new-products3",
+            "url_key": "new-products3",
+            "product_count": 2,
+            "children_count": "0"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "data": {
+    "categoryList": [
+      {
+        "id": 4,
+        "name": "We.Retail Root Category",
+        "url_path": null,
+        "position": 3,
+        "product_count": 0,
+        "children_count": "3",
+        "children": [
+          {
+            "id": 5,
+            "name": "Equipment",
+            "url_path": "equipment",
+            "position": 1
+          },
+          {
+            "id": 15,
+            "name": "Men",
+            "url_path": "men",
+            "position": 2
+          },
+          {
+            "id": 7,
+            "name": "Women",
+            "url_path": "women",
+            "position": 3
+          }
+        ]
+      }
+    ]
+  }
+}
