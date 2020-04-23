@@ -145,6 +145,7 @@ public class GraphqlResourceProviderFactory implements CatalogDataResourceProvid
             GraphqlDataServiceConfiguration.CQ_CATALOG_IDENTIFIER, String.class));
         properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, ivm.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY,
             String.class));
+        properties.put(Constants.MAGENTO_STORE_PROPERTY, ivm.getInherited("cq:" + Constants.MAGENTO_STORE_PROPERTY, String.class));
 
         return properties;
     }

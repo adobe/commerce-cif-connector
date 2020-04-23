@@ -15,6 +15,7 @@
 package com.adobe.cq.commerce.graphql.resource;
 
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.spi.resource.provider.QueryLanguageProvider;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.Assert;
 import org.junit.Before;
@@ -66,6 +67,8 @@ public class GraphqlResourceProviderFactoryTest {
         ResourceProvider<?> provider = factory.createResourceProvider(root);
 
         Assert.assertNotNull(provider);
+        checkResourceProviderInternals(provider);
+
     }
 
     @Test
@@ -75,6 +78,7 @@ public class GraphqlResourceProviderFactoryTest {
 
         ResourceProvider<?> provider = factory.createResourceProvider(root);
         Assert.assertNotNull(provider);
+        checkResourceProviderInternals(provider);
     }
 
     @Test
@@ -84,6 +88,21 @@ public class GraphqlResourceProviderFactoryTest {
 
         ResourceProvider<?> provider = factory.createResourceProvider(root);
         Assert.assertNotNull(provider);
+        checkResourceProviderInternals(provider);
+
+    }
+
+    private void checkResourceProviderInternals(ResourceProvider<?> provider) {
+        ResourceMapper resourceMapper = (ResourceMapper) Whitebox.getInternalState(provider, "resourceMapper");
+        Assert.assertNotNull(resourceMapper);
+        String storeView = (String) Whitebox.getInternalState(resourceMapper, "storeView");
+        Assert.assertEquals("default", storeView);
+
+        QueryLanguageProvider queryLanguageProvider = (QueryLanguageProvider) Whitebox.getInternalState(provider,
+            "queryLanguageProvider");
+        Assert.assertNotNull(queryLanguageProvider);
+        storeView = (String) Whitebox.getInternalState(queryLanguageProvider, "storeView");
+        Assert.assertEquals("default", storeView);
     }
 
     @Test
