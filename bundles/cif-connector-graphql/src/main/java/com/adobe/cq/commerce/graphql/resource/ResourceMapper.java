@@ -14,6 +14,9 @@
 
 package com.adobe.cq.commerce.graphql.resource;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -242,20 +245,18 @@ class ResourceMapper {
     }
 
     private Pair<String, Long> toEpoch(String path) {
-        LOGGER.info("Trying to extract epoch from {}", path);
-        if (path.startsWith("_")) {
-            String[] parts = path.split("/");
-            try {
-                String newPath = StringUtils.substringAfter(path, "/");
-                Long epoch = Long.parseLong(parts[0].substring(1));
-                LOGGER.info("Getting {} --> {}", newPath, epoch);
-                return Pair.of(newPath, epoch);
-            } catch (NumberFormatException e) {
-                LOGGER.error("Cannot parse expected epoch long value", e);
-                return Pair.of(path, null);
-            }
+        LOGGER.info("Trying to extract preview-version from {}", path);
+        String[] parts = path.split("/");
+        try {
+            String newPath = StringUtils.substringAfter(path, "/");
+            OffsetDateTime offsetDateTime = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(parts[0], OffsetDateTime::from);
+            Long epoch = offsetDateTime.toEpochSecond();
+            LOGGER.info("Getting {} --> {}", newPath, epoch);
+            return Pair.of(newPath, epoch);
+        } catch (DateTimeParseException e) {
+            LOGGER.error("Cannot parse expected iso date format " + parts[0]);
+            return Pair.of(path, null);
         }
-        return Pair.of(path, null);
     }
 
 }

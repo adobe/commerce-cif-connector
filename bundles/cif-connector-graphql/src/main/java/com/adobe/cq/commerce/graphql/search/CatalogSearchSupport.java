@@ -15,6 +15,7 @@
 package com.adobe.cq.commerce.graphql.search;
 
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -98,7 +99,7 @@ public class CatalogSearchSupport {
         }
         LOGGER.info("Picker parent page {}", parentPage.getPath());
 
-        Long epoch = null;
+        String previewVersion = null;
         if (parentPage.getPath() != null && LaunchUtils.isLaunchBasedPath(parentPage.getPath())) {
             Resource launchResource = LaunchUtils.getLaunchResource(parentPage.adaptTo(Resource.class));
             Launch launch = launchResource.adaptTo(Launch.class);
@@ -106,7 +107,7 @@ public class CatalogSearchSupport {
             if (liveDate != null) {
                 TimeZone timeZone = liveDate.getTimeZone();
                 OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(liveDate.toInstant(), timeZone.toZoneId());
-                epoch = offsetDateTime.toEpochSecond();
+                previewVersion = offsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             }
             Resource targetResource = LaunchUtils.getTargetResource(parentPage.adaptTo(Resource.class), null);
             Page targetPage = pageManager.getPage(targetResource.getPath());
@@ -116,7 +117,7 @@ public class CatalogSearchSupport {
         LOGGER.info("Picker checking properties at {}", parentPage.getPath());
         InheritanceValueMap inheritedProperties = new HierarchyNodeInheritanceValueMap(parentPage.getContentResource());
         String catalogPath = inheritedProperties.getInherited(PN_CATALOG_PATH, String.class);
-        return (catalogPath != null && epoch != null) ? (catalogPath + "/_" + epoch) : catalogPath;
+        return (catalogPath != null && previewVersion != null) ? (catalogPath + "/" + previewVersion) : catalogPath;
     }
 
     /**

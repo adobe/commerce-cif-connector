@@ -14,6 +14,9 @@
 
 package com.adobe.cq.commerce.graphql.resource;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -73,8 +76,8 @@ class GraphqlResourceProvider extends ResourceProvider<Object> {
         }
 
         String subPath = path.substring(root.length() + 1);
-        LOGGER.info("Trying to check epoch root {} --> {}", path, subPath);
-        if (!subPath.contains("/") && subPath.startsWith("_")) {
+        LOGGER.info("Trying to check preview-version root {} --> {}", path, subPath);
+        if (!subPath.contains("/")) {
             Long epoch = toEpoch(subPath);
             LOGGER.info("Parsed epoch root {}", epoch);
             if (epoch != null) {
@@ -117,11 +120,12 @@ class GraphqlResourceProvider extends ResourceProvider<Object> {
         return queryLanguageProvider;
     }
 
-    private Long toEpoch(String path) {
+    private Long toEpoch(String dateTime) {
         try {
-            return Long.parseLong(path.substring(1));
-        } catch (NumberFormatException e) {
-            LOGGER.error("Cannot parse expected epoch long value", e);
+            OffsetDateTime offsetDateTime = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(dateTime, OffsetDateTime::from);
+            return offsetDateTime.toEpochSecond();
+        } catch (DateTimeParseException e) {
+            LOGGER.error("Cannot parse expected iso date format " + dateTime);
             return null;
         }
     }
