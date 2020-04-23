@@ -20,7 +20,6 @@ import java.util.Map;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
@@ -43,10 +42,10 @@ class GraphqlResourceProvider extends ResourceProvider<Object> {
     private ResourceMapper resourceMapper;
     private GraphqlQueryLanguageProvider queryLanguageProvider;
 
-    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, Map<String, String> properties) {
+    GraphqlResourceProvider(String root, GraphqlDataService graphqlDataService, Map<String, String> properties) {
         this.root = root;
         rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY));
-        resourceMapper = new ResourceMapper(root, graphqlDataService, scheduler, properties);
+        resourceMapper = new ResourceMapper(root, graphqlDataService, properties);
         queryLanguageProvider = new GraphqlQueryLanguageProvider(resourceMapper, graphqlDataService, properties);
     }
 

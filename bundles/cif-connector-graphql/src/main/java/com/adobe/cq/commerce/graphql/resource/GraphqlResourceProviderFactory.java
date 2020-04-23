@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.ConfigurationBuilder;
-import org.apache.sling.commons.scheduler.Scheduler;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -78,9 +77,6 @@ public class GraphqlResourceProviderFactory implements CatalogDataResourceProvid
         clients.remove(identifier);
     }
 
-    @Reference
-    protected Scheduler scheduler;
-
     @Override
     public GraphqlResourceProvider createResourceProvider(Resource root) {
         LOGGER.debug("Creating resource provider for resource at path {}", root.getPath());
@@ -119,7 +115,7 @@ public class GraphqlResourceProviderFactory implements CatalogDataResourceProvid
             return null;
         }
 
-        GraphqlResourceProvider resourceProvider = new GraphqlResourceProvider(root.getPath(), client, scheduler, collectedProperties);
+        GraphqlResourceProvider resourceProvider = new GraphqlResourceProvider(root.getPath(), client, collectedProperties);
         return resourceProvider;
     }
 

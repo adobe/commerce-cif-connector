@@ -38,8 +38,8 @@ public class MockGraphqlDataServiceConfiguration implements Annotation, GraphqlD
     }
 
     @Override
-    public boolean catalogCachingEnabled() {
-        return GraphqlDataServiceConfiguration.CATALOG_CACHING_ENABLED_DEFAULT;
+    public boolean categoryCachingEnabled() {
+        return GraphqlDataServiceConfiguration.CATEGORY_CACHING_ENABLED_DEFAULT;
     }
 
     @Override
@@ -53,13 +53,8 @@ public class MockGraphqlDataServiceConfiguration implements Annotation, GraphqlD
     }
 
     @Override
-    public int catalogCachingTimeMinutes() {
-        return GraphqlDataServiceConfiguration.CATALOG_CACHING_TIME_DEFAULT;
-    }
-
-    @Override
-    public boolean catalogCachingSchedulerEnabled() {
-        return GraphqlDataServiceConfiguration.CATALOG_CACHING_SCHEDULING;
+    public int categoryCachingTimeMinutes() {
+        return GraphqlDataServiceConfiguration.CATEGORY_CACHING_TIME_DEFAULT;
     }
 
     @Override

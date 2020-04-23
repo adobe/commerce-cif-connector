@@ -35,6 +35,27 @@ public interface GraphqlDataService {
     public ProductInterface getProductBySku(String sku, String storeView);
 
     /**
+     * Fetches a category by identifier.
+     *
+     * @param id the identifier of the category
+     * @param storeView an optional Magento store view, can be null
+     * @return the Magento GraphQL category or null if the category is not found
+     * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized
+     */
+    public CategoryTree getCategoryById(Integer id, String storeView);
+
+    /**
+     * Fetches a category by URL path.
+     *
+     * @param urlPath the URL path of the category
+     * @param storeView an optional Magento store view, can be null
+     *
+     * @return the Magento GraphQL category or null if the category is not found
+     * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized
+     */
+    public CategoryTree getCategoryByPath(String urlPath, String storeView);
+
+    /**
      * Performs a full-text search and returns the matching products.
      *
      * @param text The full-text search.
@@ -61,16 +82,6 @@ public interface GraphqlDataService {
     public List<CategoryTree> searchCategories(String text, Integer categoryId, Integer currentPage, Integer pageSize, String storeView);
 
     /**
-     * Returns the Magento category tree for the given category id.
-     *
-     * @param categoryId The category id.
-     * @param storeView An optional Magento store view, can be null.
-     * @return The category tree starting at the given category.
-     * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
-     */
-    public CategoryTree getCategoryTree(Integer categoryId, String storeView);
-
-    /**
      * Returns the paginated products results for the given category id and pagination arguments.
      *
      * @param categoryId The category id.
@@ -81,11 +92,4 @@ public interface GraphqlDataService {
      * @throws RuntimeException if the GraphQL HTTP request does not return 200 or if the JSON response cannot be parsed or deserialized.
      */
     public CategoryProducts getCategoryProducts(Integer categoryId, Integer currentPage, Integer pageSize, String storeView);
-
-    /**
-     * Returns the OSGi configuration of that GraphQL client.
-     *
-     * @return The OSGi configuration of this instance.
-     */
-    public GraphqlDataServiceConfiguration getConfiguration();
 }

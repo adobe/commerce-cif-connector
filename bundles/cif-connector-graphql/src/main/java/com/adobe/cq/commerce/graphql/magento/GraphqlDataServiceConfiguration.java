@@ -34,10 +34,9 @@ public @interface GraphqlDataServiceConfiguration {
     boolean PRODUCT_CACHING_ENABLED_DEFAULT = true;
 
     // Catalog caching default configuration
-    boolean CATALOG_CACHING_ENABLED_DEFAULT = true;
-    int CATALOG_CACHING_TIME_DEFAULT = 60;
+    boolean CATEGORY_CACHING_ENABLED_DEFAULT = true;
+    int CATEGORY_CACHING_TIME_DEFAULT = 60;
     int CATALOG_PAGING_LIMIT = 50;
-    boolean CATALOG_CACHING_SCHEDULING = true;
 
     @AttributeDefinition(
         name = "Magento GraphQL Service Identifier",
@@ -67,25 +66,19 @@ public @interface GraphqlDataServiceConfiguration {
 
     @AttributeDefinition(
         name = "Category cache size (= number of categories in the cache)",
-        description = "The size of the categories cache, used when the products of a given category are fetched",
+        description = "The size of the categories cache, used when the category data as well as the products of a category are fetched",
         type = AttributeType.INTEGER)
     int categoryCachingSize() default CATEGORY_CACHE_SIZE;
 
     @AttributeDefinition(
-        name = "Enable/disable catalog caching",
-        description = "Enables/disables the caching of the catalog categories structure in the resource resolver mapper",
+        name = "Enable/disable category data caching",
+        description = "Enables/disables the caching of the category data in the connector",
         type = AttributeType.BOOLEAN)
-    boolean catalogCachingEnabled() default CATALOG_CACHING_ENABLED_DEFAULT;
+    boolean categoryCachingEnabled() default CATEGORY_CACHING_ENABLED_DEFAULT;
 
     @AttributeDefinition(
-        name = "Catalog caching time in minutes",
-        description = "The caching time (in minutes) of the catalog categories structure in the resource resolver mapper",
+        name = "Category caching time in minutes",
+        description = "The caching time (in minutes) of category data in the connector",
         type = AttributeType.INTEGER)
-    int catalogCachingTimeMinutes() default CATALOG_CACHING_TIME_DEFAULT;
-
-    @AttributeDefinition(
-        name = "Enable/disable cache scheduler",
-        description = "Enable/disable the periodic update of the catalog cache. Only disable this when testing!",
-        type = AttributeType.BOOLEAN)
-    boolean catalogCachingSchedulerEnabled() default CATALOG_CACHING_SCHEDULING;
+    int categoryCachingTimeMinutes() default CATEGORY_CACHING_TIME_DEFAULT;
 }

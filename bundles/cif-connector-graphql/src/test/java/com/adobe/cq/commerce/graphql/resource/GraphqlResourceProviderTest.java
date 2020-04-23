@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.jcr.Node;
 
@@ -32,8 +31,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.commons.scheduler.ScheduleOptions;
-import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider;
 import org.apache.sling.spi.resource.provider.QueryLanguageProvider;
 import org.apache.sling.spi.resource.provider.ResolveContext;
@@ -80,7 +77,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -108,7 +104,6 @@ public class GraphqlResourceProviderTest {
     private GraphqlResourceProvider provider;
     private Resource rootResource;
     private InheritanceValueMap rootValueMap;
-    private Scheduler scheduler;
 
     @Rule
     public final AemContext context = GraphqlAemContext.createContext(ImmutableMap.<String, String>of("/var",
@@ -141,16 +136,11 @@ public class GraphqlResourceProviderTest {
         when(resolveContext.getResourceResolver()).thenReturn(resourceResolver);
         when(jcrResourceProvider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null)).thenReturn(rootResource);
 
-        scheduler = mock(Scheduler.class);
-        ScheduleOptions opts = mock(ScheduleOptions.class);
-        when(scheduler.schedule(any(), any())).thenReturn(Boolean.FALSE);
-        when(scheduler.NOW(Mockito.anyInt(), Mockito.anyLong())).thenReturn(opts);
-
         rootValueMap = new ComponentInheritanceValueMap(rootResource);
         Map<String, String> properties = new HashMap<>();
         properties.put(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY, rootValueMap.getInherited(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY,
             ""));
-        provider = new GraphqlResourceProvider(CATALOG_ROOT_PATH, dataService, scheduler, properties);
+        provider = new GraphqlResourceProvider(CATALOG_ROOT_PATH, dataService, properties);
 
         when(resourceResolver.getResource(any())).then(invocationOnMock -> {
             String path = (String) invocationOnMock.getArguments()[0];
@@ -159,44 +149,6 @@ public class GraphqlResourceProviderTest {
             }
             return provider.getResource(resolveContext, path, null, null);
         });
-    }
-
-    @Test
-    public void testFactoryInitMethod() throws InterruptedException, IOException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
-        Map properties = rootValueMap;
-        ResourceMapper resourceMapper = new ResourceMapper(CATALOG_ROOT_PATH, dataService, scheduler, properties);
-        ResourceMapper spy = spy(resourceMapper);
-
-        final Runnable cacheRefreshJob = new Runnable() {
-            public void run() {
-                spy.getAbsoluteCategoryPath("4"); // Call any method that calls ResourceMapper.init()
-            }
-        };
-
-        final Runnable schedulerJob = new Runnable() {
-            public void run() {
-                spy.refreshCache();
-            }
-        };
-
-        // One of the "init()" thread will initialize the cache, the other will block,
-        // and the scheduler thread will not be able to get the lock
-
-        Thread t1 = new Thread(cacheRefreshJob);
-        Thread t2 = new Thread(cacheRefreshJob);
-        Thread t3 = new Thread(schedulerJob);
-
-        t1.start();
-        t2.start();
-        t3.start();
-
-        t1.join();
-        t2.join();
-        t3.join();
-
-        // With caching enabled, buildAllCategoryPaths() should be called only once by the 1st thread
-        Mockito.verify(spy, Mockito.times(1)).buildAllCategoryPaths();
     }
 
     @Test
@@ -243,7 +195,10 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testCategoryTree() throws IOException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
+        Utils.setupHttpResponse("magento-graphql-categorylist-root.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{ids:{eq:\"4\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-dresses.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"venia-dresses\"");
 
         Resource root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
         assertNotNull(root);
@@ -251,7 +206,14 @@ public class GraphqlResourceProviderTest {
         assertNotNull(it);
         assertTrue(it.hasNext());
         while (it.hasNext()) {
-            assertCategoryPaths(provider, it.next(), 1);
+            Resource category = it.next();
+            assertTrue(category.getPath().substring(CATALOG_ROOT_PATH.length() + 1).split("/").length == 1);
+            assertNull(category.adaptTo(Product.class));
+            if ("venia-dresses".equals(category.getName())) {
+                // deep read cifId
+                String cifId = category.getValueMap().get(CIF_ID, String.class);
+                assertEquals(cifId, category.getValueMap().get("./" + CIF_ID, String.class));
+            }
         }
     }
 
@@ -274,70 +236,15 @@ public class GraphqlResourceProviderTest {
         assertTrue(map.get(IS_ERROR, false));
         assertFalse(map.get(HAS_CHILDREN, true));
         assertTrue(map.get(LEAF_CATEGORY, false));
-
-        // the same thread doesn't attempt reinitialization
-        // (correct GraphQL response still yields an error resource)
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
-
-        root = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
-        assertNotNull(root);
-        it = provider.listChildren(resolveContext, root);
-        assertNotNull(it);
-        assertTrue(it.hasNext());
-        assertTrue(it.next() instanceof ErrorResource);
-
-        // reinitialization works on other thread
-
-        // store possible failure here
-        final AtomicReference<Throwable> failure = new AtomicReference<>();
-        Thread t = new Thread(() -> {
-            try {
-                Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK);
-
-                Resource root1 = provider.getResource(resolveContext, CATALOG_ROOT_PATH, null, null);
-                assertNotNull(root1);
-                Iterator<Resource> it1 = provider.listChildren(resolveContext, root1);
-                assertNotNull(it1);
-                assertTrue(it1.hasNext());
-                // not an error resource
-                assertFalse(it1.next() instanceof ErrorResource);
-            } catch (Throwable x) {
-                failure.set(x);
-            }
-        });
-        t.start();
-        t.join();
-        // rethrow failure if any for JUnit
-        if (failure.get() != null) {
-            throw failure.get();
-        }
-    }
-
-    private void assertCategoryPaths(GraphqlResourceProvider provider, Resource category, int depth) {
-        assertTrue(category.getPath().substring(CATALOG_ROOT_PATH.length() + 1).split("/").length == depth);
-        assertNull(category.adaptTo(Product.class));
-        String cifId = category.getValueMap().get(CIF_ID, String.class);
-        // deep read cifId
-        assertEquals(cifId, category.getValueMap().get("./" + CIF_ID, String.class));
-        Boolean isLeaf = category.getValueMap().get(LEAF_CATEGORY, Boolean.class);
-        if (Boolean.FALSE.equals(isLeaf)) {
-            Iterator<Resource> it = provider.listChildren(resolveContext, category);
-            if (it != null) {
-                while (it.hasNext()) {
-                    Resource child = it.next();
-                    // deep read child/cifId
-                    String childCifId = child.getValueMap().get(CIF_ID, String.class);
-                    assertEquals(childCifId, category.getValueMap().get(child.getName() + "/" + CIF_ID, String.class));
-                    assertCategoryPaths(provider, child, depth + 1);
-                }
-            }
-        }
     }
 
     @Test
     public void testCategoryProductChildren() throws IOException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category(id:4)");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
         Utils.setupHttpResponse("magento-graphql-category-products.json", httpClient, HttpStatus.SC_OK, "{category(id:19)");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"meskwielt\"");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{products(filter:{sku:{eq:\"meskwielt\"}");
 
         Resource coats = provider.getResource(resolveContext, CATALOG_ROOT_PATH + "/men/coats", null, null);
@@ -374,8 +281,13 @@ public class GraphqlResourceProviderTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testConfigurableProductResource() throws IOException, CommerceException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"meskwielt\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"meskwielt-Purple-XS\"");
 
         Resource resource = provider.getResource(resolveContext, PRODUCT_PATH, null, null);
         assertTrue(resource instanceof ProductResource);
@@ -432,7 +344,12 @@ public class GraphqlResourceProviderTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testSimpleProductResource() throws IOException, CommerceException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"24-MB01\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"image\"");
         Utils.setupHttpResponse("magento-graphql-simple-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
         String productPath = CATALOG_ROOT_PATH + "/men/coats/24-MB01";
@@ -491,7 +408,10 @@ public class GraphqlResourceProviderTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testOtherProductResource() throws IOException, CommerceException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"24-MB01\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
         Utils.setupHttpResponse("magento-graphql-other-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
         String productPath = CATALOG_ROOT_PATH + "/men/coats/24-MB01";
@@ -505,7 +425,12 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testMasterVariantResource() throws IOException, CommerceException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"meskwielt-Purple-XS\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"meskwielt\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
         Resource resource = provider.getResource(resolveContext, MASTER_VARIANT_PATH, null, null);
@@ -522,7 +447,10 @@ public class GraphqlResourceProviderTest {
 
     @Test
     public void testImageResource() throws IOException, CommerceException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"image\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
         Utils.setupHttpResponse("magento-graphql-product.json", httpClient, HttpStatus.SC_OK, "{product");
 
         Resource resource = provider.getResource(resolveContext, PRODUCT_PATH + "/image", null, null);
@@ -534,8 +462,33 @@ public class GraphqlResourceProviderTest {
     }
 
     @Test
+    public void testImageResourceNoProduct() throws IOException, CommerceException {
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"image\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
+        Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_OK, "{product");
+
+        Resource resource = provider.getResource(resolveContext, PRODUCT_PATH + "/image", null, null);
+        assertNull(resource);
+    }
+
+    @Test
+    public void testImageResourceProductError() throws IOException, CommerceException {
+        Utils.setupHttpResponse("magento-graphql-categorylist-empty.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"image\"");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
+        Utils.setupHttpResponse("magento-graphql-no-product.json", httpClient, HttpStatus.SC_INTERNAL_SERVER_ERROR, "{product");
+
+        Resource resource = provider.getResource(resolveContext, PRODUCT_PATH + "/image", null, null);
+        assertNull(resource);
+    }
+
+    @Test
     public void testQueryLanguageProvider() throws IOException {
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, "{category");
+        Utils.setupHttpResponse("magento-graphql-categorylist-coats.json", httpClient, HttpStatus.SC_OK,
+            "{categoryList(filters:{url_key:{eq:\"coats\"");
         Utils.setupHttpResponse("magento-graphql-products-search.json", httpClient, HttpStatus.SC_OK, "{product");
 
         // The search request coming from com.adobe.cq.commerce.impl.omnisearch.ProductsOmniSearchHandler is serialized in JSON

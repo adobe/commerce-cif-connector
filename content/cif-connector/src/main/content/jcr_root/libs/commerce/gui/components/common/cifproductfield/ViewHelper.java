@@ -16,8 +16,8 @@ package libs.commerce.gui.components.common.cifproductfield;
 
 import java.util.Calendar;
 
-import com.adobe.cq.commerce.common.CommerceHelper;
 import com.day.cq.commons.Externalizer;
+import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.resource.Resource;
 
 import com.adobe.cq.commerce.api.Product;
@@ -80,7 +80,11 @@ public class ViewHelper extends WCMUsePojo {
     }
 
     public String getTitle() {
-        return isProduct() ? product.getTitle() : CommerceHelper.getCardTitle(getResource(), getPageManager());
+        String title = isProduct() ? product.getTitle() : getProperties().get("jcr:title", "");
+        if (StringUtils.isBlank(title)) {
+            title = getResource().getName();
+        }
+        return title;
     }
 
     public String getThumbnailImageUrl() {

@@ -1,0 +1,24 @@
+{
+  "data": {
+    "categoryList": [
+      {
+        "id": 19,
+        "name": "Coats",
+        "url_path": "men/coats",
+        "url_key": "coats",
+        "product_count": 0,
+        "children_count": "0",
+        "children": []
+      },
+      {
+        "id": 25,
+        "name": "Coats",
+        "url_path": "women/coats",
+        "url_key": "coats",
+        "product_count": 0,
+        "children_count": "0",
+        "children": []
+      }
+    ]
+  }
+}

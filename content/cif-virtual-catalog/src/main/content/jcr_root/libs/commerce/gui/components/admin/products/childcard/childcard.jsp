@@ -53,7 +53,10 @@
 
     String lastReplicationAction = properties.get("cq:lastReplicationAction", String.class);
     boolean deactivated = "Deactivate".equals(lastReplicationAction);
-    String title = CommerceHelper.getCardTitle(resource, pageManager);
+    String title = resource.getValueMap().get("jcr:title", "");
+    if (StringUtils.isBlank(title)) {
+        title = resource.getName();
+    }
 
     List<String> applicableRelationships = getActionRels(resource, properties, product, acm, sling);
 

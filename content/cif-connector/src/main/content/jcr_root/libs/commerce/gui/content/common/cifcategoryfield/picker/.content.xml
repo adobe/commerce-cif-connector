@@ -64,12 +64,12 @@
                 sling:resourceType="granite/ui/components/coral/foundation/columnview"
                 granite:class="cq-commerce-picker-collection"
                 icon="viewColumn"
-                limit="{Long}40"
+                limit="{Long}19"
                 loadAncestors="{Boolean}true"
                 path="${empty requestPathInfo.suffix ? (empty param.root ? commerceProductsBasePath : param.root) : requestPathInfo.suffix}"
                 rootPath="${empty param.root ? commerceProductsBasePath : param.root}"
                 selectionCount="${empty param.selectionCount ? &quot;single&quot; : param.selectionCount}"
-                size="${empty requestPathInfo.selectors[1] ? &quot;40&quot; : requestPathInfo.selectors[1]}"
+                size="${empty requestPathInfo.selectors[1] ? &quot;19&quot; : requestPathInfo.selectors[1]}"
                 previewSrc="/mnt/overlay/commerce/gui/content/common/cifcategoryfield/columnpreview.html{+id}"
                 src="/mnt/overlay/commerce/gui/content/common/cifcategoryfield/picker/views/column{.offset,limit}.html{+id}?root=${granite:encodeURIComponent(empty param.root ? commerceProductsBasePath : param.root)}&amp;filter=${granite:encodeURIComponent(param.filter)}&amp;selectionCount=${granite:encodeURIComponent(param.selectionCount)}&amp;selectionId=${granite:encodeURIComponent(param.selectionId)}">
             <datasource
@@ -77,7 +77,7 @@
                     sling:resourceType="commerce/gui/components/common/cifcategoryfield/datasources/children"
                     filter="${paramValues.filter[0]}"
                     itemResourceType="commerce/gui/components/common/cifcategoryfield/columnitem"
-                    limit="${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}"
+                    limit="${empty requestPathInfo.selectors[1] ? &quot;20&quot; : requestPathInfo.selectors[1] + 1}"
                     offset="${requestPathInfo.selectors[0]}"
                     path="${empty requestPathInfo.suffix ? (empty param.root ? commerceProductsBasePath : param.root) : requestPathInfo.suffix}"/>
         </column>

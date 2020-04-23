@@ -33,7 +33,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.adobe.cq.testing.mockserver.RequestResponseRule;
@@ -74,7 +73,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     }
 
     @Before
-    public void resetMockServer() throws ClientException {
+    public void resetMockServer() {
         mockServerRule.reset();
     }
 
@@ -84,14 +83,44 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         cAdminAuthor.deletePage(new String[] { JCR_BASE_PATH }, true, false, SC_OK);
     }
 
-    public static RequestResponseRule.Builder CATALOG_RULE = rule()
+    public static RequestResponseRule.Builder CATEGORY_ROOT_RULE = rule()
         .on(request()
             .withMethod(HttpMethod.POST)
             .withRequestURI("/graphql")
-            .withBody(s -> s.startsWith("{\"query\":\"{category(id:4)")))
+            .withBody(s -> s.startsWith("{\"query\":\"{categoryList(filters:{ids:{eq:\\\"4\\\"")))
         .send(response()
             .withStatus(HttpStatus.OK_200)
-            .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-category-tree-2.3.1.json")
+            .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-categorylist-root.json")
+            .withContentType("application/json; charset=utf-8"));
+
+    public static RequestResponseRule.Builder CATEGORY_MEN_RULE = rule()
+        .on(request()
+            .withMethod(HttpMethod.POST)
+            .withRequestURI("/graphql")
+            .withBody(s -> s.startsWith("{\"query\":\"{categoryList(filters:{url_key:{eq:\\\"men\\\"")))
+        .send(response()
+            .withStatus(HttpStatus.OK_200)
+            .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-categorylist-men.json")
+            .withContentType("application/json; charset=utf-8"));
+
+    public static RequestResponseRule.Builder CATEGORY_COATS_RULE = rule()
+        .on(request()
+            .withMethod(HttpMethod.POST)
+            .withRequestURI("/graphql")
+            .withBody(s -> s.startsWith("{\"query\":\"{categoryList(filters:{url_key:{eq:\\\"coats\\\"")))
+        .send(response()
+            .withStatus(HttpStatus.OK_200)
+            .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-categorylist-coats.json")
+            .withContentType("application/json; charset=utf-8"));
+
+    public static RequestResponseRule.Builder CATEGORY_MESKWIELT_EMPTY_RULE = rule()
+        .on(request()
+            .withMethod(HttpMethod.POST)
+            .withRequestURI("/graphql")
+            .withBody(s -> s.startsWith("{\"query\":\"{categoryList(filters:{url_key:{eq:\\\"meskwielt\\\"")))
+        .send(response()
+            .withStatus(HttpStatus.OK_200)
+            .withContentFromResource("/com/adobe/cq/commerce/it/http/magento-graphql-categorylist-men.json")
             .withContentType("application/json; charset=utf-8"));
 
     public static RequestResponseRule.Builder SEARCH_PRODUCTS_IN_CATEGORY = rule()
@@ -128,7 +157,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     public void testCategoryRoot() throws Exception {
 
         // Prepare
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_ROOT_RULE.build());
 
         // Perform
         SlingHttpResponse response = cAuthorAuthor.doGet("/libs/commerce/gui/content/products.html" + JCR_BASE_PATH, null, NO_CACHE_HEADERS,
@@ -144,14 +173,15 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Assert.assertTrue(doc.select(String.format(CORAL_COLUMN_FORMAT_EQUALS, JCR_BASE_PATH + "/women")).size() > 0);
 
         // Check that child categories are not displayed
-        Assert.assertTrue(doc.select(String.format(CORAL_COLUMN_FORMAT_EQUALS, JCR_BASE_PATH + "/men/pants")).size() == 0);
+        Assert.assertEquals(0, doc.select(String.format(CORAL_COLUMN_FORMAT_EQUALS, JCR_BASE_PATH + "/men/pants")).size());
     }
 
     @Test
     public void testProductsInCategory() throws Exception {
 
         // Prepare
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_COATS_RULE.build());
+        mockServerRule.add(CATEGORY_MEN_RULE.build());
         mockServerRule.add(SEARCH_PRODUCTS_IN_CATEGORY.build());
 
         // Perform
@@ -166,14 +196,16 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Assert.assertTrue(doc.select(String.format(CORAL_COLUMN_FORMAT_EQUALS, JCR_BASE_PATH + "/men/coats/meotwibrt")).size() > 0);
 
         // Check that products from other categories are not displayed
-        Assert.assertTrue(doc.select(String.format(CORAL_COLUMN_FORMAT_EQUALS, JCR_BASE_PATH + "/men/footwear/meotwisus")).size() == 0);
+        Assert.assertEquals(0, doc.select(String.format(CORAL_COLUMN_FORMAT_EQUALS, JCR_BASE_PATH + "/men/footwear/meotwisus")).size());
     }
 
     @Test
     public void testProductDetails() throws Exception {
 
         // Prepare
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_MESKWIELT_EMPTY_RULE.build());
+        mockServerRule.add(CATEGORY_COATS_RULE.build());
+        mockServerRule.add(CATEGORY_MEN_RULE.build());
         mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
 
         // Perform
@@ -194,13 +226,14 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     public void testProductPropertiesPage() throws ClientException {
 
         // Prepare
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_MESKWIELT_EMPTY_RULE.build());
+        mockServerRule.add(CATEGORY_COATS_RULE.build());
         mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
 
         // 1. Update the scaffolding to point to the test catalog
         String scaffoldingPath = "/apps/commerce/scaffolding/product/jcr:content";
         UrlEncodedFormEntity postParams = FormEntityBuilder.create().addParameter("cq:targetPath", JCR_BASE_PATH).build();
-        SlingHttpResponse postResponse = cAdminAuthor.doPost(scaffoldingPath, postParams, 200);
+        cAdminAuthor.doPost(scaffoldingPath, postParams, 200);
 
         // 2. Request a product properties page
         String productPropertiesUrl = "/mnt/overlay/commerce/gui/content/products/properties.html";
@@ -220,12 +253,11 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
 
         Assert.assertEquals("The SKU field is correct", 1, doc.select("input[name=sku]").size());
         Assert.assertEquals("The SKU field has the correct value", "meskwielt", doc.select("input[name=sku]").val());
-
     }
 
     @Test
     public void testCifFolderProperties() throws Exception {
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_MEN_RULE.build());
         SlingHttpResponse response = cAuthorAuthor.doGet(FOLDER_PROPERTIES + JCR_BASE_PATH + "/men", SC_OK);
 
         mockServerRule.verify();
@@ -243,7 +275,6 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
 
     @Test
     public void testJCRFolderProperties() throws Exception {
-        mockServerRule.add(CATALOG_RULE.build());
         SlingHttpResponse response = cAuthorAuthor.doGet(FOLDER_PROPERTIES + "/var/commerce/products/" + JCR_PRODUCT_ROOT, SC_OK);
 
         mockServerRule.verify();
@@ -258,10 +289,10 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     public void testCategoryFolderProperties() throws Exception {
 
         // Prepare
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_COATS_RULE.build());
 
         // Perform
-        SlingHttpResponse response = cAuthorAuthor.doGet(FOLDER_PROPERTIES + JCR_BASE_PATH + "/women/footwear", null, NO_CACHE_HEADERS,
+        SlingHttpResponse response = cAuthorAuthor.doGet(FOLDER_PROPERTIES + JCR_BASE_PATH + "/men/coats", null, NO_CACHE_HEADERS,
             SC_OK);
 
         // Verify
@@ -269,15 +300,16 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Document doc = Jsoup.parse(response.getContent());
 
         // Verify property fields
-        Assert.assertNotEquals("Footwear", doc.select("input[name=jcr:title]").val());
-        Assert.assertFalse(doc.select("input[name=jcr:title]").hasAttr("disabled"));
+        Assert.assertEquals("Coats", doc.select("input[name=jcr:title]").val());
+        Assert.assertTrue(doc.select("input[name=jcr:title]").hasAttr("disabled"));
     }
 
     @Test
     public void testAssetsProductsFinder() throws Exception {
 
         // Prepare
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_COATS_RULE.build());
+        mockServerRule.add(CATEGORY_MEN_RULE.build());
         mockServerRule.add(SEARCH_PRODUCTS_FULL_TEXT.build());
         mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
 
@@ -307,7 +339,8 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     public void testOmnisearch() throws Exception {
 
         // Prepare
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_COATS_RULE.build());
+        mockServerRule.add(CATEGORY_MEN_RULE.build());
         mockServerRule.add(SEARCH_PRODUCTS_FULL_TEXT.build());
         mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
 
@@ -333,12 +366,11 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
         Assert.assertEquals(JCR_BASE_PATH + "/men/coats/meskwielt", elements.attr("data-path"));
     }
 
-    @Ignore // CIF-1094, re-enable when we will execute integration tests on CircleCI
     @Test
     public void testOmnisearchSuggestions() throws Exception {
 
         // Prepare
-        mockServerRule.add(CATALOG_RULE.build());
+        mockServerRule.add(CATEGORY_COATS_RULE.build());
         mockServerRule.add(SEARCH_PRODUCTS_FULL_TEXT.build());
         mockServerRule.add(SEARCH_PRODUCT_BY_SKU.build());
 
@@ -353,8 +385,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
             .getList();
 
         // Perform
-        SlingHttpResponse response = cAuthorAuthor.doGet("/libs/granite/omnisearch", params,
-            NO_CACHE_HEADERS, SC_OK);
+        SlingHttpResponse response = cAuthorAuthor.doGet("/libs/granite/omnisearch", params, NO_CACHE_HEADERS, SC_OK);
 
         // Verify
         mockServerRule.verify();

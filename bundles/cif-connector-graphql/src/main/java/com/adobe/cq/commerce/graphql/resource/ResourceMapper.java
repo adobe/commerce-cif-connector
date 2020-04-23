@@ -16,25 +16,17 @@ package com.adobe.cq.commerce.graphql.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.commons.scheduler.ScheduleOptions;
-import org.apache.sling.commons.scheduler.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.graphql.magento.GraphqlDataService;
-import com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceConfiguration;
 import com.adobe.cq.commerce.magento.graphql.CategoryTree;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableProduct;
 import com.adobe.cq.commerce.magento.graphql.ConfigurableVariant;
@@ -43,182 +35,21 @@ import com.adobe.cq.commerce.magento.graphql.SimpleProduct;
 import com.google.common.collect.Lists;
 
 class ResourceMapper {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceMapper.class);
-
     private String root;
-    private volatile boolean initDone = false;
-    private volatile ReentrantLock initLock = new ReentrantLock();
-
-    private volatile Map<String, CategoryTree> categoryByPaths = Collections.emptyMap();
-    private volatile Map<Integer, String> categoryPathsById = Collections.emptyMap();
-    private final ThreadLocal<Boolean> initializationError = new ThreadLocal<>();
-
-    private Scheduler scheduler;
     private GraphqlDataService graphqlDataService;
-    private GraphqlDataServiceConfiguration config;
     private Integer rootCategoryId;
     private String storeView;
 
-    ResourceMapper(String root, GraphqlDataService graphqlDataService, Scheduler scheduler, Map<String, String> properties) {
+    ResourceMapper(String root, GraphqlDataService graphqlDataService, Map<String, String> properties) {
         this.root = root;
-        this.scheduler = scheduler;
         this.graphqlDataService = graphqlDataService;
-        config = graphqlDataService.getConfiguration();
 
         // Get Magento store view property
         storeView = properties.get(Constants.MAGENTO_STORE_PROPERTY);
 
         // Get root category id
         rootCategoryId = Integer.valueOf(properties.get(Constants.MAGENTO_ROOT_CATEGORY_ID_PROPERTY));
-
-        if (config.catalogCachingEnabled() && config.catalogCachingSchedulerEnabled()) {
-            scheduleCacheRefresh();
-        }
-    }
-
-    /**
-     * Schedules a periodic job to refresh the cache.
-     */
-    private void scheduleCacheRefresh() {
-        final Runnable cacheRefreshJob = new Runnable() {
-            public void run() {
-                refreshCache();
-            }
-        };
-
-        long period = graphqlDataService.getConfiguration().catalogCachingTimeMinutes() * 60;
-        ScheduleOptions opts = scheduler.NOW(-1, period).name("ResourceMapper.refreshCache");
-        scheduler.schedule(cacheRefreshJob, opts);
-    }
-
-    /**
-     * This method is used for 2 purposes:<br>
-     * <ul>
-     * <li>to initially build the cache in case the Sling scheduler has not yet started the <code>cacheRefreshJob</code></li>
-     * <li>to build the "cache" for each method call in case caching is disabled (in which case the "cache" is of no use, except to build
-     * all the category paths)</li>
-     * </ul>
-     *
-     * @return false if initialization failed with exception, otherwise returns true
-     */
-    private boolean init() {
-        Boolean error = initializationError.get();
-        if (error != null && error) {
-            // don't reattempt initialization in the same request (thread) if it failed once
-            return false;
-        }
-
-        if (!initDone) {
-            try {
-                // Block in case another thread is already initializing the cache
-                initLock.lock();
-
-                // The volatile keyword guarantees the happens-before "relationship"
-                if (!initDone) {
-                    if (!refreshCache()) {
-                        initializationError.set(true);
-                        return false;
-                    }
-                }
-            } finally {
-                initLock.unlock();
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Rebuilds the entire cache by calling {@link #buildAllCategoryPaths()}.
-     *
-     * @return false if cache fresh failed with exception, otherwise returns true
-     */
-    protected boolean refreshCache() {
-        try {
-            if (!initLock.tryLock()) {
-                return true; // Prevents the sling scheduler from refreshing the cache if init() was called first
-            }
-            LOGGER.debug("Fetching catalog and building categories cache");
-            buildAllCategoryPaths();
-            if (config.catalogCachingEnabled()) {
-                initDone = true;
-            }
-        } catch (Exception x) {
-            LOGGER.warn("Failed to refresh category cache for root category {} and store view {} : {}", rootCategoryId, storeView,
-                x.getLocalizedMessage());
-            LOGGER.warn("", x);
-            return false;
-        } finally {
-            if (initLock.isHeldByCurrentThread()) {
-                initLock.unlock();
-            }
-        }
-        return true;
-    }
-
-    /**
-     * This method builds various category caches used to lookup categories and products in a faster way.
-     */
-    protected void buildAllCategoryPaths() {
-        CategoryTree categoryTree = graphqlDataService.getCategoryTree(rootCategoryId, storeView);
-        if (categoryTree == null || CollectionUtils.isEmpty(categoryTree.getChildren())) {
-            LOGGER.warn("The Magento catalog is null or empty");
-            return;
-        }
-
-        // We first build all the category paths
-        Map<String, CategoryTree> categoryByPathsMap = new HashMap<>();
-        Map<Integer, String> categoryPathsByIdMap = new HashMap<>();
-
-        // We make sure that the root doesn't have a child category without url path or name
-        Iterator<CategoryTree> it = categoryTree.getChildren().iterator();
-        while (it.hasNext()) {
-            CategoryTree child = it.next();
-            if (StringUtils.isAnyBlank(child.getName(), child.getUrlPath())) {
-                LOGGER.warn("Ignoring top-level category " + child.getId() + " with null or empty url path and/or name");
-                it.remove();
-            }
-        }
-
-        // We insert the root with an empty path
-        categoryByPathsMap.put("", categoryTree);
-        categoryPathsByIdMap.put(categoryTree.getId(), "");
-
-        // Add all children
-        for (CategoryTree child : categoryTree.getChildren()) {
-            buildAllCategoryPathsFor(child, categoryByPathsMap, categoryPathsByIdMap);
-        }
-
-        categoryByPaths = categoryByPathsMap;
-        categoryPathsById = categoryPathsByIdMap;
-    }
-
-    private void buildAllCategoryPathsFor(CategoryTree categoryTree, Map<String, CategoryTree> categoryByPathsMap,
-        Map<Integer, String> categoryPathsByIdMap) {
-
-        LOGGER.debug("Adding cached category " + categoryTree.getId() + " --> " + categoryTree.getUrlPath());
-        categoryByPathsMap.put(categoryTree.getUrlPath(), categoryTree);
-        categoryPathsByIdMap.put(categoryTree.getId(), categoryTree.getUrlPath());
-
-        List<CategoryTree> children = categoryTree.getChildren();
-        if (children == null) {
-            return;
-        }
-
-        Iterator<CategoryTree> it = children.iterator();
-        while (it.hasNext()) {
-            CategoryTree child = it.next();
-            if (StringUtils.isAnyBlank(child.getName(), child.getUrlPath())) {
-                LOGGER.warn("Ignoring category " + child.getId() + " with null or empty url path and/or name");
-                it.remove();
-            }
-            buildAllCategoryPathsFor(child, categoryByPathsMap, categoryPathsByIdMap);
-        }
-    }
-
-    String getAbsoluteCategoryPath(String categoryId) {
-        init();
-        return root + "/" + categoryPathsById.get(Integer.valueOf(categoryId));
     }
 
     String getRoot() {
@@ -226,16 +57,14 @@ class ResourceMapper {
     }
 
     CategoryResource resolveCategory(ResourceResolver resolver, String path) {
-        init();
-
-        // We lookup the category path in the cache
         // Example for path: /var/commerce/products/cloudcommerce/Men/Coats
-        // Remove root (/var/commerce/products/cloudcommerce) then try to find the category path /Men/Coats
-
+        // Remove root (/var/commerce/products/cloudcommerce) then try to find the category path Men/Coats
         String subPath = path.substring(root.length() + 1);
-        CategoryTree category = categoryByPaths.get(subPath);
-        if (category != null) {
-            return new CategoryResource(resolver, path, category);
+        if (StringUtils.isNotBlank(subPath)) {
+            CategoryTree category = graphqlDataService.getCategoryByPath(subPath, storeView);
+            if (category != null) {
+                return new CategoryResource(resolver, path, category);
+            }
         }
         return null;
     }
@@ -295,8 +124,6 @@ class ResourceMapper {
     }
 
     private List<String> resolveProductParts(String path) {
-        init();
-
         // To speedup the lookup, we try to find the longest possible category path
         // Example for path: /var/commerce/products/cloudcommerce/Men/Coats/meskwielt.1-s
         // Remove root (/var/commerce/products/cloudcommerce) then try to find category /Men/Coats
@@ -311,12 +138,11 @@ class ResourceMapper {
         int backtrackCounter = 0;
         List<String> productParts = new ArrayList<>();
         String[] parts = subPath.split("/");
-        Set<String> categoryPaths = categoryByPaths.keySet(); // defensive copy in case the cache is updated while looping
         for (String part : Lists.reverse(Arrays.asList(parts))) {
             productParts.add(part);
             backtrackCounter -= part.length() + 1;
             String categorySubPath = StringUtils.substring(subPath, 0, backtrackCounter);
-            if (categoryPaths.contains(categorySubPath)) {
+            if (graphqlDataService.getCategoryByPath(categorySubPath, storeView) != null) {
                 break;
             }
         }
@@ -325,21 +151,23 @@ class ResourceMapper {
     }
 
     Iterator<Resource> listCategoryChildren(ResourceResolver resolver, Resource parent) {
-        if (!init()) {
-            if (categoryByPaths.isEmpty()) {
-                List<Resource> list = new ArrayList<>();
-                list.add(new ErrorResource(resolver, parent.getPath()));
-                return list.iterator();
-            }
-        }
-
         String parentPath = parent.getPath();
         String parentCifId = parent.getValueMap().get(Constants.CIF_ID, String.class);
         boolean isRoot = parentPath.equals(root);
-        String key = isRoot ? "" : parentPath.substring(root.length() + 1);
+        String subPath = isRoot ? "" : parentPath.substring(root.length() + 1);
         List<Resource> children = new ArrayList<>();
-
-        CategoryTree categoryTree = categoryByPaths.get(key);
+        CategoryTree categoryTree;
+        try {
+            if (StringUtils.isNotBlank(subPath)) {
+                categoryTree = graphqlDataService.getCategoryByPath(subPath, storeView);
+            } else {
+                categoryTree = graphqlDataService.getCategoryById(rootCategoryId, storeView);
+            }
+        } catch (Exception x) {
+            List<Resource> list = new ArrayList<>();
+            list.add(new ErrorResource(resolver, parent.getPath()));
+            return list.iterator();
+        }
         if (categoryTree != null) {
             List<CategoryTree> subChildren = categoryTree.getChildren();
             if (subChildren != null) {
@@ -361,8 +189,6 @@ class ResourceMapper {
     }
 
     Iterator<Resource> listProductChildren(ResourceResolver resolver, Resource parent) {
-        init();
-
         String sku = parent.getValueMap().get(Constants.SKU, String.class);
         String parentPath = parent.getPath();
 
@@ -402,7 +228,6 @@ class ResourceMapper {
             }
 
             return children.iterator();
-
         } catch (Exception e) {
             LOGGER.error("Error while fetching variants for product " + sku, e);
             return null;

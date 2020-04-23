@@ -25,7 +25,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHeader;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
@@ -69,6 +71,8 @@ public class GraphqlDataServiceImplTest {
     private GraphqlDataServiceImpl dataService;
     private GraphqlClient graphqlClient;
     private HttpClient httpClient;
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -242,16 +246,49 @@ public class GraphqlDataServiceImplTest {
         assertFalse(key1.hashCode() == "test1null".hashCode());
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testGetProductBySkuError() throws Exception {
         Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
-        Exception exception = null;
-        try {
-            dataService.getProductBySku(SKU, null);
-        } catch (Exception e) {
-            exception = e;
-        }
-        assertNotNull(exception);
+        dataService.getProductBySku(SKU, null);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testGetCategoryByIdError() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+        dataService.getCategoryById(1, null);
+    }
+
+    @Test
+    public void testGetCategoryByIdNull() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+        assertNull(dataService.getCategoryById(null, null));
+    }
+
+    @Test
+    public void testGetCategoryByPath() throws Exception {
+        // This checks that the generated GraphQL query is what we expect
+        // It ensures that all changes made to the GraphQL queries are backed up by tests
+        String query = getResource("graphql-queries/categorylist-by-urlkey.txt");
+
+        Utils.setupHttpResponse("magento-graphql-categorylist-dresses.json", httpClient, HttpStatus.SC_OK, query);
+
+        CategoryTree category = dataService.getCategoryByPath("venia-dresses", null);
+        assertEquals(37, category.getId().intValue());
+        assertEquals("Dresses", category.getName());
+
+        assertNull(dataService.getCategoryByPath(null, null));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testGetCategoryByPathError() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+        dataService.getCategoryByPath(SKU, null);
+    }
+
+    @Test
+    public void testGetCategoryByPathEmpty() throws Exception {
+        Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_OK);
+        assertNull(dataService.getCategoryByPath("/", null));
     }
 
     @Test
@@ -310,22 +347,6 @@ public class GraphqlDataServiceImplTest {
     }
 
     @Test
-    public void testGetCategoryTree() throws Exception {
-        // This checks that the generated GraphQL query is what we expect
-        // It ensures that all changes made to the GraphQL queries are backed up by tests
-        String query = getResource("graphql-queries/root-category.txt");
-
-        Utils.setupHttpResponse("magento-graphql-category-tree-2.3.1.json", httpClient, HttpStatus.SC_OK, query);
-
-        CategoryTree categoryTree = dataService.getCategoryTree(ROOT_CATEGORY_ID, null);
-        assertEquals(ROOT_CATEGORY_ID, categoryTree.getId());
-        assertEquals(ROOT_CATEGORY_NAME, categoryTree.getName());
-
-        assertEquals(5, categoryTree.getChildren().size());
-        assertEquals("21", categoryTree.getChildrenCount());
-    }
-
-    @Test
     public void testGetCategoryProducts() throws Exception {
         // This checks that the generated GraphQL query is what we expect
         // It ensures that all changes made to the GraphQL queries are backed up by tests
@@ -356,25 +377,15 @@ public class GraphqlDataServiceImplTest {
     @Test
     public void testHttpError() throws Exception {
         Utils.setupHttpResponse("magento-graphql-error.json", httpClient, HttpStatus.SC_SERVICE_UNAVAILABLE);
-        Exception exception = null;
-        try {
-            dataService.execute("{dummy}", null);
-        } catch (Exception e) {
-            exception = e;
-        }
-        assertEquals("GraphQL query failed with response code 503", exception.getMessage());
+        exceptionRule.expect(RuntimeException.class);
+        exceptionRule.expectMessage("GraphQL query failed with response code 503");
+        dataService.execute("{dummy}", null);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testInvalidResponse() throws Exception {
         Utils.setupHttpResponse("sample-graphql-generic-response.json", httpClient, HttpStatus.SC_OK);
-        Exception exception = null;
-        try {
-            dataService.getProductBySku(SKU, null);
-        } catch (Exception e) {
-            exception = e;
-        }
-        assertNotNull(exception);
+        dataService.getProductBySku(SKU, null);
     }
 
     @Test
