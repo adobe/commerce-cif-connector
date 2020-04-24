@@ -188,19 +188,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.sling</groupId>-->
-        <!--            <artifactId>org.apache.sling.testing.sling-mock</artifactId>-->
-        <!--            <version>2.3.18</version>-->
-        <!--            <scope>test</scope>-->
-        <!--            <exclusions>-->
-        <!--                &lt;!&ndash; Exclude the older version of the API and use the one from the uber-jar &ndash;&gt;-->
-        <!--                <exclusion>-->
-        <!--                    <groupId>org.apache.sling</groupId>-->
-        <!--                    <artifactId>org.apache.sling.models.api</artifactId>-->
-        <!--                </exclusion>-->
-        <!--            </exclusions>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
@@ -260,12 +247,6 @@
             <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
             <version>2.1.6</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.sling</groupId>
-                    <artifactId>org.apache.sling.jcr.resource</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
