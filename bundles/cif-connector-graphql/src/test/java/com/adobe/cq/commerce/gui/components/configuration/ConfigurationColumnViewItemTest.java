@@ -84,6 +84,14 @@ public class ConfigurationColumnViewItemTest {
     }
 
     @Test
+    public void testHasChildrenOnNonEmptyConfigFolder() {
+        context.currentResource(context.resourceResolver().getResource("/conf/folder4"));
+        ConfigurationColumnViewItem columnViewItem = context.request().adaptTo(ConfigurationColumnViewItem.class);
+
+        Assert.assertTrue("Empty config folder has no children", columnViewItem.hasChildren());
+    }
+
+    @Test
     public void testGetQuickActionsForFolderWithConfiguration() {
         context.currentResource(context.resourceResolver().getResource("/conf/testing"));
         ConfigurationColumnViewItem columnViewItem = context.request().adaptTo(ConfigurationColumnViewItem.class);
@@ -142,13 +150,41 @@ public class ConfigurationColumnViewItemTest {
     }
 
     @Test
+    public void testGetQuickActionsOnEmptyFolder() {
+        context.currentResource(context.resourceResolver().getResource("/conf/folder3/folder1"));
+        ConfigurationColumnViewItem columnViewItem = context.request().adaptTo(ConfigurationColumnViewItem.class);
+
+        String[] expectedActions = new String[] {
+            CREATE_PULLDOWN_ACTIVATOR,
+            CREATE_FOLDER_ACTIVATOR,
+        };
+
+        List<String> actualActions = columnViewItem.getQuickActionsRel();
+        Assert.assertArrayEquals("Returns the quick-actions", expectedActions, actualActions.toArray());
+    }
+
+    @Test
+    public void testGetQuickActionsFolderWithSettingsOnly() {
+        context.currentResource(context.resourceResolver().getResource("/conf/folder3/folder2"));
+        ConfigurationColumnViewItem columnViewItem = context.request().adaptTo(ConfigurationColumnViewItem.class);
+
+        String[] expectedActions = new String[] {
+            CREATE_PULLDOWN_ACTIVATOR,
+            CREATE_FOLDER_ACTIVATOR,
+        };
+
+        List<String> actualActions = columnViewItem.getQuickActionsRel();
+        Assert.assertArrayEquals("Returns the quick-actions", expectedActions, actualActions.toArray());
+    }
+
+    @Test
     public void testGetQuickActionsOnConfRoot() {
         context.currentResource(context.resourceResolver().getResource("/conf"));
         ConfigurationColumnViewItem columnViewItem = context.request().adaptTo(ConfigurationColumnViewItem.class);
 
         String[] expectedActions = new String[] {
             CREATE_PULLDOWN_ACTIVATOR,
-            CREATE_FOLDER_ACTIVATOR,
+            CREATE_FOLDER_ACTIVATOR
         };
 
         List<String> actualActions = columnViewItem.getQuickActionsRel();

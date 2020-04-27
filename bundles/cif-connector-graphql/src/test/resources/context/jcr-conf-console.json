@@ -1,5 +1,5 @@
 {
-  "jcr:primaryType": "sling:Folder",
+  "jcr:primaryType": "nt:folder",
   "testing": {
     "jcr:primaryType": "sling:Folder",
     "settings": {
@@ -43,6 +43,24 @@
     "jcr:primaryType": "sling:OrderedFolder",
     "folder1": {
       "jcr:primaryType": "sling:OrderedFolder"
+    },
+    "folder2": {
+      "jcr:primaryType": "sling:OrderedFolder",
+      "settings": {
+        "jcr:primaryType": "sling:Folder"
+      }
+    }
+  },
+  "folder4": {
+    "jcr:primaryType": "sling:OrderedFolder",
+    "settings": {
+      "jcr:primaryType": "sling:Folder",
+      "cloudconfigs": {
+        "jcr:primaryType": "sling:Folder"
+      }
+    },
+    "folder1": {
+      "jcr:primaryType": "sling:Folder"
     }
   }
 }
