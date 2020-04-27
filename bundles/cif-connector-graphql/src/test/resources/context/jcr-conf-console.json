@@ -17,5 +17,17 @@
         }
       }
     }
+  },
+  "folder1": {
+    "jcr:primaryType": "sling:Folder"
+  },
+  "folder2": {
+    "jcr:primaryType": "sling:OrderedFolder",
+    "settings": {
+      "jcr:primaryType": "sling:Folder",
+      "cloudconfigs": {
+        "jcr:primaryType": "sling:Folder"
+      }
+    }
   }
 }
