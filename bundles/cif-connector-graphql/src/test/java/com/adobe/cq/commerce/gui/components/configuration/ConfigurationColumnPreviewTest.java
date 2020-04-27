@@ -42,7 +42,7 @@ public class ConfigurationColumnPreviewTest {
 
     @Before
     public void setUp() {
-        context.load().json("/context/jcr-conf-console.json", "/conf/testing");
+        context.load().json("/context/jcr-conf-console.json", "/conf");
 
         ExpressionResolver expressionResolver = Mockito.mock(ExpressionResolver.class);
         Mockito.when(expressionResolver.resolve(Mockito.any(String.class), Mockito.any(Locale.class), Mockito.any(Class.class), Mockito.any(
