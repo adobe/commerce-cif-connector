@@ -16,18 +16,12 @@
 package com.adobe.cq.commerce.virtual.catalog.data.impl;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.observation.ResourceChange;
-import org.apache.sling.api.resource.observation.ResourceChangeListener;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,9 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.day.cq.wcm.api.WCMException;
-import com.day.util.diff.Diff;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import io.wcm.testing.mock.aem.junit.AemContextBuilder;
 
@@ -46,10 +38,11 @@ public class ProductBindingCreatorTest {
     @Rule
     public AemContext context = new AemContextBuilder(ResourceResolverType.JCR_OAK).build();
     private ProductBindingCreator creator;
+
     @Before
     public void setup() throws ParseException, RepositoryException, IOException {
         context.create().resource("/var/commerce/products");
-        context.load().json("/context/jcr-conf-page.json","/conf/testing/settings");
+        context.load().json("/context/jcr-conf-page.json", "/conf/testing/settings");
 
         creator = new ProductBindingCreator();
         context.registerInjectActivateService(creator);
@@ -59,7 +52,7 @@ public class ProductBindingCreatorTest {
     public void testCreateBindingWhenConfigurationIsCreated() throws WCMException, PersistenceException {
         Assert.assertNotNull(context.resourceResolver().getResource("/conf/testing/settings/cloudconfigs"));
 
-        ResourceChange change = new ResourceChange(ResourceChange.ChangeType.ADDED,"/conf/testing/settings/cloudconfigs/commerce",false );
+        ResourceChange change = new ResourceChange(ResourceChange.ChangeType.ADDED, "/conf/testing/settings/cloudconfigs/commerce", false);
 
         creator.onChange(ImmutableList.of(change));
 

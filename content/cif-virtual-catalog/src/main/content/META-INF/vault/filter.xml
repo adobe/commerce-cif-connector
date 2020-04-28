@@ -17,6 +17,7 @@
 <workspaceFilter version="1.0">
     <filter root="/libs/commerce/config">
         <include pattern="/libs/commerce/config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-virtual-commerce"/>
+        <include pattern="/libs/commerce/config/org.apache.sling.jcr.repoinit.RepositoryInitializer-default.config"/>
     </filter>
     <filter root="/libs/commerce/install">
         <include pattern="/libs/commerce/install/cq-commerce-virtual-catalog-(.*).jar"/>
@@ -36,4 +37,5 @@
     <filter root="/libs/commerce/gui/content/common/productfield/picker/search/form/tagid-property"/>
     
     <filter root="/oak:index/commerceCqVirtualCatalog" />
+
 </workspaceFilter>

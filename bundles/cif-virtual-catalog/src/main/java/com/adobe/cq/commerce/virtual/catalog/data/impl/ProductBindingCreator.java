@@ -45,7 +45,7 @@ import com.day.cq.commons.jcr.JcrConstants;
 public class ProductBindingCreator implements ResourceChangeListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProductBindingCreator.class);
-    private static final String VIRTUAL_PRODUCTS_SERVICE = "virtual-products-service";
+    private static final String PRODUCT_BINDING_SERVICE = "product-binding-service";
     private static final String BINDINGS_PARENT_PATH = "/var/commerce/products";
 
     private ResourceResolver resolver;
@@ -56,7 +56,7 @@ public class ProductBindingCreator implements ResourceChangeListener {
     protected void activate(final ComponentContext context) throws LoginException {
         LOG.debug("Activating the component");
         final Map<String, Object> map = new HashMap<>();
-        map.put(ResourceResolverFactory.SUBSERVICE, VIRTUAL_PRODUCTS_SERVICE);
+        map.put(ResourceResolverFactory.SUBSERVICE, PRODUCT_BINDING_SERVICE);
         resolver = resolverFactory.getServiceResourceResolver(map);
         LOG.debug("Do we have a resolver? {}", resolver != null);
     }
