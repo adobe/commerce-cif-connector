@@ -23,7 +23,9 @@ The main parts of the project are:
 
 ### Easy install with the "all" package
 
-You can easily install all the modules of the connector and also its required dependencies with the [all](all) content package. If you want to use the latest **released** version, just download it with the Maven Central link located at the top of this README and install it in your running AEM instance. You can also install the latest `all` content package with `mvn clean install -PautoInstallAll`.
+For local development and on-prem customer deployments you can install all the modules of the connector and also its required dependencies with the [all](all) content package. If you want to use the latest **released** version, just download it with the Maven Central link located at the top of this README and install it in your running AEM instance. You can also install the latest `all` content package with `mvn clean install -PautoInstallAll`.
+
+For AEM AMS customers please contact the SRE to deploy the CIF Connector.
 
 If you want to build all the modules yourself and get all the latest (yet) **unreleased** changes, check the [building and installing from source](#building-and-installing-from-source) section below.
 
