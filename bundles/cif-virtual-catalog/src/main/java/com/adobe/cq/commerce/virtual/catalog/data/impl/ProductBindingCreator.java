@@ -75,15 +75,8 @@ public class ProductBindingCreator implements ResourceChangeListener {
         }).forEach(change -> {
             if (change.getType() == ResourceChange.ChangeType.ADDED) {
                 processAddition(change);
-            } else if (change.getType() == ResourceChange.ChangeType.REMOVED) {
-                processRemoval(change);
             }
         });
-        try {
-            resolver.commit();
-        } catch (PersistenceException e) {
-            LOG.error(e.getMessage(), e);
-        }
     }
 
     private void processAddition(ResourceChange change) {
@@ -100,9 +93,9 @@ public class ProductBindingCreator implements ResourceChangeListener {
             properties = changedResource.getValueMap();
         }
 
-        String storeView = properties.get("magentoStore", "");
+        String storeView = properties.get(Constants.PN_MAGENTO_STORE, "");
         if (StringUtils.isEmpty(storeView)) {
-            LOG.warn("The configuration at path {} doesn't have a 'storeView' property");
+            LOG.warn("The configuration at path {} doesn't have a '{}' property", path, Constants.PN_MAGENTO_STORE);
             return;
         }
 
@@ -124,16 +117,13 @@ public class ProductBindingCreator implements ResourceChangeListener {
         }
 
         try {
-            LOG.debug("Creating a new resource at {}, properties are ", parent.getPath() + "/" + bindingName, mappingProperties);
+            LOG.debug("Creating a new resource at {}", parent.getPath() + "/" + bindingName);
             resolver.create(parent, bindingName, mappingProperties);
+            resolver.commit();
         } catch (PersistenceException e) {
             LOG.error(e.getMessage(), e);
         }
 
-    }
-
-    private void processRemoval(ResourceChange change) {
-        LOG.debug("Processing resource removal at {}", change.getPath());
     }
 
 }
