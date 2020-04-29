@@ -14,6 +14,8 @@
 
 package com.adobe.cq.commerce.graphql.resource;
 
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.PN_MAGENTO_STORE;
+
 public class Constants {
 
     public static final String MAGENTO_GRAPHQL_PROVIDER = "magento-graphql";
@@ -28,6 +30,6 @@ public class Constants {
     public static final String CIF_ID = "cifId";
     public static final String PRODUCT_FORMATTED_PRICE = "formattedPrice";
     public static final String STORE_HEADER = "Store";
-    public static final String MAGENTO_STORE_PROPERTY = "cq:magentoStore";
+    public static final String MAGENTO_STORE_PROPERTY = PN_MAGENTO_STORE;
     public static final String MAGENTO_ROOT_CATEGORY_ID_PROPERTY = "magentoRootCategoryId";
 }
