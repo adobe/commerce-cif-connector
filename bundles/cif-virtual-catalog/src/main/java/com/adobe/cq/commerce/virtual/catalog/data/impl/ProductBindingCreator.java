@@ -106,9 +106,9 @@ public class ProductBindingCreator implements ResourceChangeListener {
         LOG.debug("New binding name: {}", bindingName);
 
         Map<String, Object> mappingProperties = new HashMap<>();
-        mappingProperties.put("jcr:primaryType", "sling:Folder");
-        mappingProperties.put("jcr:title", bindingName);
-        mappingProperties.put("cq:conf", configRoot);
+        mappingProperties.put(JcrConstants.JCR_PRIMARYTYPE, "sling:Folder");
+        mappingProperties.put(JcrConstants.JCR_TITLE, bindingName);
+        mappingProperties.put(Constants.PN_CONF, configRoot);
 
         Resource parent = resolver.getResource(BINDINGS_PARENT_PATH);
         if (parent == null) {
