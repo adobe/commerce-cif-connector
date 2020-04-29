@@ -32,6 +32,9 @@ import org.slf4j.LoggerFactory;
 import com.adobe.cq.commerce.virtual.catalog.data.Constants;
 import com.day.cq.commons.jcr.JcrConstants;
 
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CLOUDCONFIGS_BUCKET_NAME;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CONF_CONTAINER_BUCKET_NAME;
+
 /**
  * Sling Model for the column-view item of the configuration console
  */
@@ -72,10 +75,10 @@ public class ConfigurationColumnViewItem {
 
         boolean isContainer = isConfigurationContainer();
         boolean hasChildren = resource.hasChildren();
-        boolean hasMoreChildren = StreamSupport.stream(resource.getChildren().spliterator(), false).count() > 1;
+        boolean hasMoreChildren = getChildCount(resource) > 1;
         boolean hasSettings = resource.getChild("settings") != null;
-        return isContainer && (hasCommerceSetting || hasMoreChildren) || !isContainer && !hasCommerceSetting &&
-            (hasChildren && !hasSettings || hasMoreChildren && hasSettings);
+        return isContainer && (hasCommerceSetting || hasMoreChildren) ||
+            !isContainer && !hasCommerceSetting && (hasChildren && !hasSettings || hasMoreChildren && hasSettings);
     }
 
     private boolean isCommerceBucket() {
@@ -111,22 +114,40 @@ public class ConfigurationColumnViewItem {
     }
 
     private boolean isConfigurationContainer() {
-        return (resource.getPath()
-            .startsWith(Constants.CONF_ROOT) && (resource.isResourceType(JcrConstants.NT_FOLDER) ||
-                resource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER) ||
-                resource.isResourceType(JcrResourceConstants.NT_SLING_ORDERED_FOLDER))
-            && resource
-                .getChild(Constants.CONF_CONTAINER_BUCKET_NAME + "/" + Constants.CLOUDCONFIGS_BUCKET_NAME) != null);
+        return resource.getPath().startsWith(Constants.CONF_ROOT) && isFolder(resource) &&
+            resource.getChild(CONF_CONTAINER_BUCKET_NAME + "/" + CLOUDCONFIGS_BUCKET_NAME) != null;
+    }
+
+    private boolean isFolder(Resource resource) {
+        return resource.isResourceType(JcrConstants.NT_FOLDER) || isSlingFolder(resource);
     }
 
     private boolean isSafeToDelete() {
-        return isCommerceBucket() || resource.getPath().startsWith(Constants.CONF_ROOT)
-            && (resource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER) ||
-                resource.isResourceType(JcrResourceConstants.NT_SLING_ORDERED_FOLDER))
-            && StreamSupport.stream(resource.getChildren().spliterator(), false).count() == 1
-            && resource.getChild(Constants.CONF_CONTAINER_BUCKET_NAME) != null
-            && StreamSupport.stream(resource.getChild(Constants.CONF_CONTAINER_BUCKET_NAME).getChildren().spliterator(), false).count() == 1
-            && resource.getChild(Constants.CONF_CONTAINER_BUCKET_NAME + "/" + Constants.CLOUDCONFIGS_BUCKET_NAME) != null
-            && !resource.getChild(Constants.CONF_CONTAINER_BUCKET_NAME + "/" + Constants.CLOUDCONFIGS_BUCKET_NAME).hasChildren();
+        // commerce config
+        if (isCommerceBucket()) {
+            return true;
+        }
+
+        // or container only without children
+        if (resource.getPath().startsWith(Constants.CONF_ROOT) && isSlingFolder(resource) &&
+            hasOnlyChild(resource, CONF_CONTAINER_BUCKET_NAME)) {
+            Resource container = resource.getChild(CONF_CONTAINER_BUCKET_NAME);
+            return hasOnlyChild(container, CLOUDCONFIGS_BUCKET_NAME) && !container.getChild(CLOUDCONFIGS_BUCKET_NAME).hasChildren();
+        }
+
+        return false;
+    }
+
+    private boolean isSlingFolder(Resource resource) {
+        return resource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER) ||
+            resource.isResourceType(JcrResourceConstants.NT_SLING_ORDERED_FOLDER);
+    }
+
+    private boolean hasOnlyChild(Resource resource, String child) {
+        return getChildCount(resource) == 1 && resource.getChild(child) != null;
+    }
+
+    private long getChildCount(Resource resource) {
+        return StreamSupport.stream(resource.getChildren().spliterator(), false).count();
     }
 }

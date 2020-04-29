@@ -51,15 +51,21 @@
 
         const createPullDown = document.querySelector(CREATE_PULLDOWN_SELECTOR);
         hide(createPullDown);
-        if (actionRels && createPullDown && actionRels.indexOf(CREATE_PULLDOWN_REL) >= 0) show(createPullDown);
+        if (actionRels && createPullDown && actionRels.indexOf(CREATE_PULLDOWN_REL) >= 0) {
+            show(createPullDown);
+        }
 
         const createFolderButton = document.querySelector(CREATE_FOLDER_SELECTOR);
         hide(createFolderButton);
-        if (actionRels && createFolderButton && actionRels.indexOf(CREATE_FOLDER_REL) >= 0) show(createFolderButton);
+        if (actionRels && createFolderButton && actionRels.indexOf(CREATE_FOLDER_REL) >= 0) {
+            show(createFolderButton);
+        }
 
         const createConfigButton = document.querySelector(CREATE_CONFIG_SELECTOR);
         hide(createConfigButton);
-        if (actionRels && createConfigButton && actionRels.indexOf(CREATE_CONFIG_REL) >= 0) show(createConfigButton);
+        if (actionRels && createConfigButton && actionRels.indexOf(CREATE_CONFIG_REL) >= 0) {
+            show(createConfigButton);
+        }
     }
 
     function init() {
