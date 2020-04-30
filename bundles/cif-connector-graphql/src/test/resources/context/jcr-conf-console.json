@@ -48,9 +48,6 @@
       "jcr:primaryType": "sling:OrderedFolder",
       "settings": {
         "jcr:primaryType": "sling:Folder"
-      },
-      "folder1": {
-        "jcr:primaryType": "nt:folder"
       }
     }
   },
