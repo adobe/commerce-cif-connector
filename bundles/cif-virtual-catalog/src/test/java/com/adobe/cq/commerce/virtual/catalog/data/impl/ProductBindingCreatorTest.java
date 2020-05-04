@@ -41,8 +41,8 @@ public class ProductBindingCreatorTest {
 
     @Before
     public void setup() throws ParseException, RepositoryException, IOException {
-        context.create().resource("/var/commerce/products");
         context.load().json("/context/jcr-conf-page.json", "/conf/testing/settings");
+        context.load().json("/context/jcr-catalog-bindings.json", "/var/commerce");
 
         creator = new ProductBindingCreator();
         context.registerInjectActivateService(creator);
@@ -58,5 +58,14 @@ public class ProductBindingCreatorTest {
 
         Assert.assertNotNull(context.resourceResolver().getResource("/var/commerce/products/testing-english"));
         Assert.assertTrue(true);
+    }
+
+    @Test
+    public void testDeleteBindingWhenConfigurationIsDeleted() {
+        ResourceChange change = new ResourceChange(ResourceChange.ChangeType.REMOVED,
+            "/conf/testing-to-be-deleted/settings/cloudconfigs/commerce", false);
+        creator.onChange(ImmutableList.of(change));
+
+        Assert.assertNull(context.resourceResolver().getResource("/var/commerce/products/testing-to-be-deleted"));
     }
 }

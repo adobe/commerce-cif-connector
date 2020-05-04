@@ -16,8 +16,16 @@
 package com.adobe.cq.commerce.virtual.catalog.data.impl;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.LoginException;
@@ -25,6 +33,7 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
@@ -76,7 +85,45 @@ public class ProductBindingCreator implements ResourceChangeListener {
             if (change.getType() == ResourceChange.ChangeType.ADDED) {
                 processAddition(change);
             }
+            if (change.getType() == ResourceChange.ChangeType.REMOVED) {
+                processDeletion(change);
+            }
         });
+    }
+
+    private void processDeletion(ResourceChange change) {
+        String path = change.getPath();
+        LOG.debug("Process resource deletion at path {}", path);
+
+        Resource parent = resolver.getResource(BINDINGS_PARENT_PATH);
+        Iterator<Resource> resourceIterator = parent.listChildren();
+
+        Stream<Resource> targetStream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(resourceIterator, Spliterator.ORDERED),
+            false);
+
+        targetStream.filter(res -> {
+            ValueMap properties = res.getValueMap();
+            LOG.debug("Checking the binding at {}", res.getPath());
+            String cqConf = properties.get(Constants.PN_CONF, "");
+            if (StringUtils.isEmpty(cqConf)) {
+                return false;
+            }
+            return path.equals(cqConf + "/" + Constants.COMMERCE_BUCKET_PATH);
+        }).findFirst().ifPresent(res -> {
+            LOG.debug("Found a binding at {} that uses {}, we'll delete it", res.getPath(), path);
+            deleteJcrNode(res);
+        });
+    }
+
+    private void deleteJcrNode(Resource res) {
+        Session session = resolver.adaptTo(Session.class);
+        try {
+            session.removeItem(res.getPath());
+            session.save();
+        } catch (RepositoryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
     }
 
     private void processAddition(ResourceChange change) {
@@ -116,10 +163,12 @@ public class ProductBindingCreator implements ResourceChangeListener {
             return;
         }
 
+        String bindingPath = parent.getPath() + "/" + bindingName;
+        LOG.debug("Check if we already have a binding at {}", bindingPath);
+
         try {
             LOG.debug("Creating a new resource at {}", parent.getPath() + "/" + bindingName);
-            resolver.create(parent, bindingName, mappingProperties);
-            resolver.commit();
+            ResourceUtil.getOrCreateResource(resolver, bindingPath, mappingProperties, "", true);
         } catch (PersistenceException e) {
             LOG.error(e.getMessage(), e);
         }
