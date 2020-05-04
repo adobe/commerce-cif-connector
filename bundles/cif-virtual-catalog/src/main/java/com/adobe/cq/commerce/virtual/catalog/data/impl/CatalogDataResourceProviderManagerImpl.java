@@ -217,6 +217,10 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             ConfigurationBuilder cfgBuilder = root.adaptTo(ConfigurationBuilder.class);
             ValueMap properties = cfgBuilder.name(CONFIGURATION_NAME).asValueMap();
             providerId = properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, String.class);
+            if (providerId == null) {
+                log.warn("No {} configured, nothing to register here", CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID);
+                return false;
+            }
             log.debug("Configured provider id is {}", providerId);
             factory = providerFactories.get(providerId);
         } else {
