@@ -74,7 +74,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
     // We cannot extend GraphqlClientImpl because it's not OSGi-exported so we use "object composition"
     protected GraphqlClient baseClient;
     protected RequestOptions requestOptions;
-    private GraphqlDataServiceConfiguration configuration;
+    private volatile GraphqlDataServiceConfiguration configuration;
 
     // We maintain some caches to speed up all lookups
     private Cache<ArrayKey, Optional<ProductInterface>> productCache;
@@ -94,7 +94,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.info("Registering GraphqlClient '{}'", identifier);
         clients.put(identifier, graphqlClient);
 
-        if (identifier.equals(configuration.identifier())) {
+        if (configuration != null && identifier.equals(configuration.identifier())) {
             LOGGER.info("GraphqlClient with identifier '{}' has been registered, the service is ready to handle requests.", identifier);
             baseClient = graphqlClient;
         }
@@ -105,7 +105,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
         LOGGER.info("De-registering GraphqlClient '{}'", identifier);
         clients.remove(identifier);
 
-        if (identifier.equals(configuration.identifier())) {
+        if (configuration != null && identifier.equals(configuration.identifier())) {
             LOGGER.info("GraphqlClient '{}' unregistered: requests cannot be handled until that dependency is satisfied", identifier);
             baseClient = null;
         }
@@ -113,6 +113,7 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
     @Activate
     public void activate(GraphqlDataServiceConfiguration conf) throws Exception {
+        configuration = conf;
         baseClient = clients.get(conf.identifier());
         if (baseClient == null) {
             // Because of the many:many OSGi dynamic dependencies between GraphqlDataServiceImpl and GraphqlClientImpl, we cannot enforce
@@ -124,8 +125,6 @@ public class GraphqlDataServiceImpl implements GraphqlDataService {
 
             LOGGER.warn("GraphqlClient '{}' not found: requests cannot be handled until that dependency is satisfied", conf.identifier());
         }
-
-        configuration = conf;
 
         // Used when a single product is being fetched
         productCache = CacheBuilder.newBuilder()
