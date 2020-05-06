@@ -169,14 +169,14 @@
         <dependency>
             <groupId>com.adobe.commerce.cif.testing</groupId>
             <artifactId>mock-server</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif.testing</groupId>
             <artifactId>mock-server</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
