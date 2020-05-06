@@ -10,6 +10,11 @@
       "jcr:primaryType": "sling:Folder",
       "jcr:title": "Test products no configuration",
       "cq:catalogDataResourceProviderFactory": "non-existent"
+    },
+    "testingWrongConfig": {
+      "jcr:primaryType": "sling:Folder",
+      "jcr:title": "Test products no configuration",
+      "cq:conf": "/conf/wrong-configuration"
     }
 }
 }
