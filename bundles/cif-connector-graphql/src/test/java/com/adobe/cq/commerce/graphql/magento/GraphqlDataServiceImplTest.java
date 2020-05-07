@@ -132,6 +132,22 @@ public class GraphqlDataServiceImplTest {
     }
 
     @Test
+    public void testLateClientBindingBeforeActivate() throws Exception {
+        dataService = new GraphqlDataServiceImpl();
+        dataService.bindGraphqlClient(graphqlClient, null);
+        assertNull(dataService.baseClient);
+
+        // unbind and rebind without config, to make sure we don't get a NPE
+        dataService.unbindGraphqlClient(graphqlClient, null);
+        dataService.bindGraphqlClient(graphqlClient, null);
+        assertNull(dataService.baseClient);
+
+        MockGraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
+        dataService.activate(config);
+        assertEquals(graphqlClient, dataService.baseClient);
+    }
+
+    @Test
     public void testWrongClient() throws Exception {
         dataService.unbindGraphqlClient(graphqlClient, null);
 
