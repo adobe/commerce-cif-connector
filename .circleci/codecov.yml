@@ -5,13 +5,13 @@ coverage:
       unittests:
         enabled: true
         target: 80%
-        threshold: null
+        threshold: 10%
         base: auto
         flags: unittests
       karma:
         enabled: true
         target: 80%
-        threshold: null
+        threshold: 10%
         base: auto
         flags: karma
     patch:
@@ -19,13 +19,13 @@ coverage:
       unittests:
         enabled: true
         target: 80%
-        threshold: null
+        threshold: 10%
         base: auto
         flags: unittests
       karma:
         enabled: true
         target: 80%
-        threshold: null
+        threshold: 10%
         base: auto
         flags: karma
 flags:
