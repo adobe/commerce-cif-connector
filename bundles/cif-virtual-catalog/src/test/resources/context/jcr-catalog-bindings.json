@@ -1,0 +1,17 @@
+{
+  "products": {
+    "jcr:primaryType": "sling:Folder",
+    "testing-1": {
+      "jcr:primaryType": "sling:Folder",
+      "cq:conf": "/non/existing"
+    },
+    "testing-2": {
+      "jcr:primaryType": "sling:Folder",
+      "cq:conf": "/non/existing/too"
+    },
+    "testing-to-be-deleted": {
+        "jcr:primaryType": "sling:Folder",
+        "cq:conf": "/conf/testing-to-be-deleted"
+    }
+  }
+}

@@ -25,21 +25,27 @@
                 com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderManager" %>
 <%@include file="/libs/foundation/global.jsp" %>
 <%
+    DataSource ds;
     // Get data for datasource
-    Map<String, CatalogDataResourceProviderFactory<?>> dataResourceProviderFactories =
-            sling.getService(CatalogDataResourceProviderManager.class).getProviderFactories();
+    CatalogDataResourceProviderManager resourceProviderManager =   sling.getService(CatalogDataResourceProviderManager.class);
+    if (resourceProviderManager == null) {
+        log.warn("CatalogDataResourceProviderManager not found");
+        ds = EmptyDataSource.instance();
+    }  else {
+        Map<String, CatalogDataResourceProviderFactory<?>> dataResourceProviderFactories = resourceProviderManager.getProviderFactories();
 
-    // Build datasource
-    ArrayList<Resource> resourceList = new ArrayList<Resource>();
-    for (String factoryName : dataResourceProviderFactories.keySet()) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("text", factoryName);
-        map.put("value", factoryName);
-        ValueMapResource syntheticResource = new ValueMapResource(resourceResolver, new ResourceMetadata(), "", new ValueMapDecorator(map));
-        resourceList.add(syntheticResource);
+        // Build datasource
+        ArrayList<Resource> resourceList = new ArrayList<Resource>();
+        for (String factoryName : dataResourceProviderFactories.keySet()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("text", factoryName);
+            map.put("value", factoryName);
+            ValueMapResource syntheticResource = new ValueMapResource(resourceResolver, new ResourceMetadata(), "",
+                    new ValueMapDecorator(map));
+            resourceList.add(syntheticResource);
+        }
+        ds = resourceList.isEmpty() ? EmptyDataSource.instance() : new SimpleDataSource(resourceList.iterator());
     }
-    DataSource ds = resourceList.isEmpty() ? EmptyDataSource.instance() : new SimpleDataSource(resourceList.iterator());
-
     // Put datasource in request for consumption
     request.setAttribute(DataSource.class.getName(), ds);
 %>

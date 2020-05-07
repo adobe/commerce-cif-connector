@@ -82,6 +82,7 @@ public class CatalogDataProviderManagerConfTest {
         // load sample content
         context.load().json("/context/jcr-conf.json", "/conf/testing/settings");
         context.load().json("/context/jcr-dataroots.json", COMMERCE_ROOT);
+        context.load().json("/context/jcr-wrong-conf.json", "/conf/wrong-configuration/settings");
 
         // register the services
         context.registerService(new MockResourceResolverFactory());
@@ -98,7 +99,7 @@ public class CatalogDataProviderManagerConfTest {
         String expectedDataRootPath = COMMERCE_ROOT + "/products/" + NN_DATA_ROOT;
 
         List<Resource> dataRoots = manager.getDataRoots();
-        Assert.assertEquals("The manager found two data roots", 2, dataRoots.size());
+        Assert.assertEquals("The manager found two data roots", 3, dataRoots.size());
 
         Resource dataRoot = dataRoots.get(0);
         Assert.assertEquals("The data root points to " + expectedDataRootPath, expectedDataRootPath, dataRoot.getPath());
