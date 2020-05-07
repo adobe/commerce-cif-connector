@@ -11,43 +11,64 @@
  */
 
 (function($) {
+    const CREATE_PULLDOWN_SELECTOR = '.cif-create-pulldown';
     const CREATE_CONFIG_SELECTOR = '.cif-create-config';
-    const REL_CREATE_CONFIG_NONE = 'none';
-    const REL_CREATE_CONFIG = 'cq-confadmin-actions-create-activator';
+    const CREATE_FOLDER_SELECTOR = '.cif-create-folder';
+    const CREATE_PULLDOWN_REL = 'cq-confadmin-actions-create-pulldown-activator';
+    const CREATE_CONFIG_REL = 'cq-confadmin-actions-create-config-activator';
+    const CREATE_FOLDER_REL = 'cq-confadmin-actions-create-folder-activator';
 
     $(document).on('foundation-contentloaded', event => {
-        initCreateConfig();
+        init();
     });
     $(document).on('foundation-selections-change', function(e) {
-        const createConfigButton = document.querySelector(CREATE_CONFIG_SELECTOR);
-        hide(createConfigButton);
+        const createPulldown = document.querySelector(CREATE_PULLDOWN_SELECTOR);
+        hide(createPulldown);
         if (e.target.activeItem) {
             const activeItem = e.target.activeItem;
-            checkCreateConfig(activeItem);
+            applyRenderConditions(activeItem);
         }
     });
 
     function hide(element) {
-        element.style.display = 'none';
+        if (element) {
+            element.style.display = 'none';
+        }
     }
 
     function show(element) {
-        element.style.display = 'block';
+        if (element) {
+            element.style.display = 'block';
+        }
     }
 
-    function checkCreateConfig(activeItem) {
+    function applyRenderConditions(activeItem) {
         const activeItemMeta = activeItem.querySelector('.foundation-collection-quickactions');
-        let relAction;
+        let actionRels;
         if (activeItemMeta) {
-            relAction = activeItemMeta.dataset['foundationCollectionQuickactionsRel'];
+            actionRels = activeItemMeta.dataset['foundationCollectionQuickactionsRel'];
         }
+
+        const createPullDown = document.querySelector(CREATE_PULLDOWN_SELECTOR);
+        hide(createPullDown);
+        if (actionRels && createPullDown && actionRels.indexOf(CREATE_PULLDOWN_REL) >= 0) {
+            show(createPullDown);
+        }
+
+        const createFolderButton = document.querySelector(CREATE_FOLDER_SELECTOR);
+        hide(createFolderButton);
+        if (actionRels && createFolderButton && actionRels.indexOf(CREATE_FOLDER_REL) >= 0) {
+            show(createFolderButton);
+        }
+
         const createConfigButton = document.querySelector(CREATE_CONFIG_SELECTOR);
         hide(createConfigButton);
-        if (relAction && createConfigButton && relAction === REL_CREATE_CONFIG_NONE) hide(createConfigButton);
-        if (relAction && createConfigButton && relAction === REL_CREATE_CONFIG) show(createConfigButton);
+        if (actionRels && createConfigButton && actionRels.indexOf(CREATE_CONFIG_REL) >= 0) {
+            show(createConfigButton);
+        }
     }
 
-    function initCreateConfig() {
+    function init() {
         //Default content path
         const activeItem = document.querySelector('.cq-confadmin-admin-childpages.foundation-collection');
         if (activeItem) {
@@ -62,10 +83,10 @@
                             contentPath === objElement.dataset['foundationCollectionId'] ||
                             contentPath === objElement.dataset['foundationCollectionId'] + '/'
                         )
-                            checkCreateConfig(objElement);
+                            applyRenderConditions(objElement);
                     });
                 } else {
-                    checkCreateConfig(activeItem);
+                    applyRenderConditions(activeItem);
                 }
             });
         }

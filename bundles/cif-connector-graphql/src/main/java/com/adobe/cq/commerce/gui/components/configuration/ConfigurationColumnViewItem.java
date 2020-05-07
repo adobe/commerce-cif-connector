@@ -16,6 +16,7 @@ package com.adobe.cq.commerce.gui.components.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -25,12 +26,14 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.virtual.catalog.data.Constants;
 import com.day.cq.commons.jcr.JcrConstants;
+
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CLOUDCONFIGS_BUCKET_NAME;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CONF_CONTAINER_BUCKET_NAME;
 
 /**
  * Sling Model for the column-view item of the configuration console
@@ -43,13 +46,16 @@ public class ConfigurationColumnViewItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationColumnViewItem.class);
 
-    @Self
-    private SlingHttpServletRequest request;
+    static final String CREATE_PULLDOWN_ACTIVATOR = "cq-confadmin-actions-create-pulldown-activator";
+    static final String CREATE_CONFIG_ACTIVATOR = "cq-confadmin-actions-create-config-activator";
+    static final String PROPERTIES_ACTIVATOR = "cq-confadmin-actions-properties-activator";
+    static final String CREATE_FOLDER_ACTIVATOR = "cq-confadmin-actions-create-folder-activator";
+    static final String DELETE_ACTIVATOR = "cq-confadmin-actions-delete-activator";
 
     @Inject
     private Resource resource;
 
-    boolean hasCommerceSetting;
+    private boolean hasCommerceSetting;
 
     @PostConstruct
     public void initModel() {
@@ -64,34 +70,84 @@ public class ConfigurationColumnViewItem {
     }
 
     public boolean hasChildren() {
+        if (isCommerceBucket())
+            return false;
+
         boolean isContainer = isConfigurationContainer();
-        return isContainer && hasCommerceSetting;
+        boolean hasChildren = resource.hasChildren();
+        boolean hasMoreChildren = getChildCount(resource) > 1;
+        boolean hasSettings = resource.getChild("settings") != null;
+        return isContainer && (hasCommerceSetting || hasMoreChildren) ||
+            !isContainer && !hasCommerceSetting && (hasChildren && !hasSettings || hasMoreChildren && hasSettings);
+    }
+
+    private boolean isCommerceBucket() {
+        return resource.getPath().endsWith(Constants.COMMERCE_BUCKET_PATH);
     }
 
     public List<String> getQuickActionsRel() {
         List<String> actions = new ArrayList<>();
-
         if (isConfigurationContainer()) {
             // for /conf/<bucket>/settings folder we add the "Create" activator
             // so we can do a "client-side render condition"
-            actions.add(hasCommerceSetting || resource.getPath().equals(Constants.CONF_ROOT) ? "none"
-                : "cq-confadmin-actions-create-activator");
+            if (!hasCommerceSetting && !resource.getPath().equals(Constants.CONF_ROOT)) {
+                actions.add(CREATE_PULLDOWN_ACTIVATOR);
+                actions.add(CREATE_CONFIG_ACTIVATOR);
+            }
         }
 
-        if (!isConfigurationContainer()) {
+        if (isCommerceBucket()) {
             // for items which are not configuration containers (folders)
-            actions.add("cq-confadmin-actions-properties-activator");
-            actions.add("cq-confadmin-actions-delete-activator");
+            actions.add(PROPERTIES_ACTIVATOR);
+        } else {
+            if (!actions.contains(CREATE_PULLDOWN_ACTIVATOR)) {
+                actions.add(CREATE_PULLDOWN_ACTIVATOR);
+            }
+            actions.add(CREATE_FOLDER_ACTIVATOR);
+        }
+
+        if (isSafeToDelete()) {
+            actions.add(DELETE_ACTIVATOR);
         }
 
         return actions;
     }
 
     private boolean isConfigurationContainer() {
-        return (resource.getPath()
-            .startsWith(Constants.CONF_ROOT) && (resource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER) || resource.isResourceType(
-                JcrResourceConstants.NT_SLING_ORDERED_FOLDER))
-            && resource
-                .getChild(Constants.CONF_CONTAINER_BUCKET_NAME + "/" + Constants.CLOUDCONFIGS_BUCKET_NAME) != null);
+        return resource.getPath().startsWith(Constants.CONF_ROOT) && isFolder(resource) &&
+            resource.getChild(CONF_CONTAINER_BUCKET_NAME + "/" + CLOUDCONFIGS_BUCKET_NAME) != null;
+    }
+
+    private boolean isFolder(Resource resource) {
+        return resource.isResourceType(JcrConstants.NT_FOLDER) || isSlingFolder(resource);
+    }
+
+    private boolean isSafeToDelete() {
+        // commerce config
+        if (isCommerceBucket()) {
+            return true;
+        }
+
+        // or container only without children
+        if (resource.getPath().startsWith(Constants.CONF_ROOT) && isSlingFolder(resource) &&
+            hasOnlyChild(resource, CONF_CONTAINER_BUCKET_NAME)) {
+            Resource container = resource.getChild(CONF_CONTAINER_BUCKET_NAME);
+            return hasOnlyChild(container, CLOUDCONFIGS_BUCKET_NAME) && !container.getChild(CLOUDCONFIGS_BUCKET_NAME).hasChildren();
+        }
+
+        return false;
+    }
+
+    private boolean isSlingFolder(Resource resource) {
+        return resource.isResourceType(JcrResourceConstants.NT_SLING_FOLDER) ||
+            resource.isResourceType(JcrResourceConstants.NT_SLING_ORDERED_FOLDER);
+    }
+
+    private boolean hasOnlyChild(Resource resource, String child) {
+        return getChildCount(resource) == 1 && resource.getChild(child) != null;
+    }
+
+    private long getChildCount(Resource resource) {
+        return StreamSupport.stream(resource.getChildren().spliterator(), false).count();
     }
 }

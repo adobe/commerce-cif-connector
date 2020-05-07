@@ -17,8 +17,8 @@
                  targetCollection=".cq-confadmin-admin-childpages">
         <head jcr:primaryType="nt:unstructured">
             <clientlibs jcr:primaryType="nt:unstructured"
-                        categories="[cq.common.wcm, cq.sites.collectionpage,commerce.gui.admin.configconsole]"
-                        sling:resourceType="granite/ui/components/foundation/includeclientlibs"/>
+                        categories="[cq.common.wcm, cq.sites.collectionpage,commerce.gui.admin.configconsole,granite.conf.ui.browser]"
+                        sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"/>
         </head>
         <views jcr:primaryType="nt:unstructured">
             <column jcr:primaryType="nt:unstructured"
@@ -51,16 +51,37 @@
         <actions jcr:primaryType="nt:unstructured">
             <primary jcr:primaryType="nt:unstructured"/>
             <secondary jcr:primaryType="nt:unstructured">
-                <create jcr:primaryType="nt:unstructured"
-                        granite:class="cq-confadmin-actions-createconfig-activator cif-create-config"
-                        relScope="collection"
-                        sling:resourceType="granite/ui/components/coral/foundation/collection/action"
-                        action="foundation.link"
-                        target=".cq-confadmin-admin-childpages"
-                        text="Create configuration"
-                        variant="primary">
-                    <data jcr:primaryType="nt:unstructured"
-                          href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}"/>
+                <create
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/pulldown"
+                    granite:rel="cq-confadmin-actions-create-folder-activator"
+                    granite:class="cq-confadmin-actions-create-pulldown-activator cif-create-pulldown"
+                    text="Create"
+                    variant="primary">
+                    <items jcr:primaryType="nt:unstructured">
+                        <createFolder jcr:primaryType="nt:unstructured"
+                            granite:rel="cq-confadmin-actions-create-folder-activator"
+                            granite:class="cq-confadmin-actions-create-folder-activator cif-create-folder"
+                            sling:resourceType="granite/ui/components/coral/foundation/collection/actionlink"
+                            relScope="collection"
+                            ignoreRel="{Boolean}false"
+                            action="create.conf.action"
+                            target=".cq-confadmin-admin-childpages"
+                            text="Configuration Folder"
+                            variant="primary">
+                        </createFolder>
+                        <createConfig jcr:primaryType="nt:unstructured"
+                            granite:class="cq-confadmin-actions-create-config-activator cif-create-config"
+                            relScope="collection"
+                            sling:resourceType="granite/ui/components/coral/foundation/collection/actionlink"
+                            action="foundation.link"
+                            target=".cq-confadmin-admin-childpages"
+                            text="Commerce Configuration"
+                            variant="primary">
+                            <data jcr:primaryType="nt:unstructured"
+                                  href.uritemplate="/mnt/overlay/commerce/gui/content/configuration/createconfiguration.html{+id}"/>
+                        </createConfig>
+                    </items>
                 </create>
             </secondary>
             <selection jcr:primaryType="nt:unstructured">
@@ -88,6 +109,68 @@
             </selection>
 
         </actions>
+        <footer
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/container">
+            <items jcr:primaryType="nt:unstructured">
+                <configParent jcr:primaryType="nt:unstructured"
+                              granite:id="view-configs-suffix"
+                              sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                              value="${requestPathInfo.suffix}"/>
+                <createConfigurationDialog
+                        granite:id="create-config-dialog"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Create Configuration Folder"
+                        sling:resourceType="granite/ui/components/coral/foundation/dialog">
+                    <items jcr:primaryType="nt:unstructured">
+                        <createConfigurationForm
+                                granite:id="create-config-form"
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form"
+                                autosubmitForm="{Boolean}false"
+                                action="${granite:encodeURIPath(requestPathInfo.suffix)}.createconf.json"
+                                style="vertical">
+                            <items jcr:primaryType="nt:unstructured">
+                                <title jcr:primaryType="nt:unstructured"
+                                       sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                       fieldLabel="Title"
+                                       required="{Boolean}true"
+                                       name="configTitle"/>
+                                <capabilities jcr:primaryType="nt:unstructured"
+                                      sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                      name="configCapabilities"
+                                      value="Cloud Configurations"/>
+                                <configParent
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                        name="configParent"/>
+                                <charset jcr:primaryType="nt:unstructured"
+                                         sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                         name="_charset_"
+                                         value="utf-8"/>
+                            </items>
+                        </createConfigurationForm>
+                    </items>
+                    <footer jcr:primaryType="nt:unstructured">
+                        <cancel
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/button"
+                                text="Cancel">
+                            <parentConfig
+                                    jcr:primaryType="nt:unstructured"
+                                    close="{Boolean}true"/>
+                        </cancel>
+                        <ok
+                                granite:id="create-configuration-button-confirm"
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/button"
+                                text="Create"
+                                disabled="{Boolean}true"
+                                variant="primary"/>
+                    </footer>
+                </createConfigurationDialog>
+            </items>
+        </footer>
     </jcr:content>
     <columnpreview jcr:primaryType="nt:unstructured"
                    path="${requestPathInfo.suffix}"

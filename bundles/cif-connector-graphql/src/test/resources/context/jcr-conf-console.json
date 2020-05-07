@@ -1,21 +1,66 @@
 {
-  "jcr:primaryType": "sling:Folder",
+  "jcr:primaryType": "nt:folder",
+  "testing": {
+    "jcr:primaryType": "sling:Folder",
+    "settings": {
+      "jcr:primaryType": "sling:Folder",
+      "cloudconfigs": {
+        "jcr:primaryType": "sling:Folder",
+        "commerce": {
+          "jcr:primaryType": "cq:Page",
+          "jcr:content": {
+            "jcr:title": "Mock configuration",
+            "magentoRootCategoryId": "4",
+            "cq:graphqlClient": "default",
+            "cq:catalogIdentifier": "my-catalog",
+            "magentoStore": "4",
+            "jcr:created": "Thu Feb 06 2020 14:21:13 GMT+0200",
+            "cq:catalogDataResourceProviderFactory": "magento-graphql"
+          }
+        }
+      }
+    }
+  },
   "settings": {
     "jcr:primaryType": "sling:Folder",
     "cloudconfigs": {
+      "jcr:primaryType": "sling:Folder"
+    }
+  },
+  "folder1": {
+    "jcr:primaryType": "sling:Folder"
+  },
+  "folder2": {
+    "jcr:primaryType": "sling:OrderedFolder",
+    "settings": {
       "jcr:primaryType": "sling:Folder",
-      "commerce": {
-        "jcr:primaryType": "cq:Page",
-        "jcr:content": {
-          "jcr:title": "Mock configuration",
-          "magentoRootCategoryId": "4",
-          "cq:graphqlClient": "default",
-          "cq:catalogIdentifier": "my-catalog",
-          "magentoStore": "4",
-          "jcr:created": "Thu Feb 06 2020 14:21:13 GMT+0200",
-          "cq:catalogDataResourceProviderFactory": "magento-graphql"
-        }
+      "cloudconfigs": {
+        "jcr:primaryType": "sling:Folder"
       }
+    }
+  },
+  "folder3": {
+    "jcr:primaryType": "sling:OrderedFolder",
+    "folder1": {
+      "jcr:primaryType": "sling:OrderedFolder"
+    },
+    "folder2": {
+      "jcr:primaryType": "sling:OrderedFolder",
+      "settings": {
+        "jcr:primaryType": "sling:Folder"
+      }
+    }
+  },
+  "folder4": {
+    "jcr:primaryType": "sling:OrderedFolder",
+    "settings": {
+      "jcr:primaryType": "sling:Folder",
+      "cloudconfigs": {
+        "jcr:primaryType": "sling:Folder"
+      }
+    },
+    "folder1": {
+      "jcr:primaryType": "sling:Folder"
     }
   }
 }
