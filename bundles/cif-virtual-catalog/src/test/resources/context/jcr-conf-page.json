@@ -1,0 +1,12 @@
+{
+  "cloudconfigs": {
+    "jcr:primaryType": "sling:Folder",
+    "commerce": {
+      "jcr:primaryType": "cq:Page",
+      "jcr:content": {
+        "jcr:primaryType": "cq:PageContent",
+        "magentoStore": "english"
+      }
+    }
+  }
+}
