@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node>
+    <primaryNodeType>sling:OsgiConfig</primaryNodeType>
+    <property>
+        <name>user.default</name>
+        <value></value>
+    </property>
+    <property>
+        <name>user.mapping</name>
+        <values>
+            <value>com.adobe.commerce.cif.connector-graphql:omnisearch-service=omnisearch-service</value>
+        </values>
+    </property>
+</node>
