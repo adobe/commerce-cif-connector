@@ -67,6 +67,9 @@
                             javax.annotation;version=0.0.0,
                             *
                         </Import-Package>
+                        <Sling-Initial-Content>
+                            SLING-INF/content;path:=/libs/commerce/config;overwrite:=true;
+                        </Sling-Initial-Content>
                         <!-- Enable processing of OSGI DS component annotations -->
                         <_dsannotations>*</_dsannotations>
                         <!-- Enable processing of OSGI metatype annotations -->

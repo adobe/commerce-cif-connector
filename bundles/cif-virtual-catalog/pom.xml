@@ -63,6 +63,9 @@
                             !javax.annotation,
                             *
                         </Import-Package>
+                        <Sling-Initial-Content>
+                            SLING-INF/content;path:=/libs/commerce/config;overwrite:=true;
+                        </Sling-Initial-Content>
                     </instructions>
                 </configuration>
                 <executions>

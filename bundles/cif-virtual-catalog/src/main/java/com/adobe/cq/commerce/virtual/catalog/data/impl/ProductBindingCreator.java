@@ -127,10 +127,15 @@ public class ProductBindingCreator implements ResourceChangeListener {
     }
 
     private void processAddition(ResourceChange change) {
+        resolver.refresh();
         String path = change.getPath();
         LOG.debug("Process resource addition at path {}", path);
 
         Resource changedResource = resolver.getResource(path);
+        if (changedResource == null) {
+            LOG.error("Resource at path {} cannot be read. Maybe the user {} doesn't have privileges?", path, resolver.getUserID());
+            return;
+        }
         Resource contentResource = changedResource.getChild(JcrConstants.JCR_CONTENT);
 
         ValueMap properties;

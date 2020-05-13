@@ -180,6 +180,7 @@
                         <addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
                         <excludes>
                             <exclude>target/*</exclude>
+                            <exclude>**/SLING-INF/**/*</exclude>
                         </excludes>
                     </configuration>
                     <executions>
