@@ -337,7 +337,6 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     }
 
     @Test
-    @Ignore
     public void testOmnisearch() throws Exception {
 
         // Prepare
@@ -369,6 +368,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     }
 
     @Test
+    @Ignore
     public void testOmnisearchSuggestions() throws Exception {
 
         // Prepare
