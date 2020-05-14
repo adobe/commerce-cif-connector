@@ -35,8 +35,8 @@ try {
             --bundle com.adobe.commerce.cif:graphql-client:1.5.0:jar \
             --bundle com.adobe.commerce.cif:magento-graphql:5.1.0-magento234:jar \
             --bundle com.adobe.cq:core.wcm.components.all:2.4.0:zip \
-            --bundle com.adobe.commerce.cif:cif-virtual-catalog:${config.modules['cif-virtual-catalog'].version}:jar::50 \
-            --bundle com.adobe.commerce.cif:cif-connector-graphql:${config.modules['cif-connector-graphql'].version}:jar::60 \
+            ${ci.addQpFileDependency(config.modules['cif-connector-graphql'])} \
+            ${ci.addQpFileDependency(config.modules['cif-virtual-catalog'])} \
             ${ci.addQpFileDependency(config.modules['cif-connector-content'])} \
             ${ci.addQpFileDependency(config.modules['cif-virtual-catalog-content'])} \
             ${ci.addQpFileDependency(config.modules['it-test-content'])} \

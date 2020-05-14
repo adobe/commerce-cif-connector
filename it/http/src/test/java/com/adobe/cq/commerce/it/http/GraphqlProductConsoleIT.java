@@ -33,6 +33,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.adobe.cq.testing.mockserver.RequestResponseRule;
@@ -336,6 +337,7 @@ public class GraphqlProductConsoleIT extends CommerceTestBase {
     }
 
     @Test
+    @Ignore
     public void testOmnisearch() throws Exception {
 
         // Prepare
