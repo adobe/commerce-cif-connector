@@ -25,6 +25,7 @@ const qpPath = '/home/circleci/cq';
 
 try {
     ci.stage("Integration Tests");
+    ci.sh(`CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)`);
     ci.dir(qpPath, () => {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
@@ -35,8 +36,8 @@ try {
             --bundle com.adobe.commerce.cif:graphql-client:1.5.0:jar \
             --bundle com.adobe.commerce.cif:magento-graphql:5.1.0-magento234:jar \
             --bundle com.adobe.cq:core.wcm.components.all:2.4.0:zip \
-            ${ci.addQpFileDependency(config.modules['cif-connector-graphql'])} \
-            ${ci.addQpFileDependency(config.modules['cif-virtual-catalog'])} \
+            --bundle com.adobe.commerce.cif:cif-virtual-catalog:${process.env.CURRENT_VERSION}:jar::50 \
+            --bundle com.adobe.commerce.cif:cif-connector-graphql:${process.env.CURRENT_VERSION}:jar::60 \
             ${ci.addQpFileDependency(config.modules['cif-connector-content'])} \
             ${ci.addQpFileDependency(config.modules['cif-virtual-catalog-content'])} \
             ${ci.addQpFileDependency(config.modules['it-test-content'])} \
