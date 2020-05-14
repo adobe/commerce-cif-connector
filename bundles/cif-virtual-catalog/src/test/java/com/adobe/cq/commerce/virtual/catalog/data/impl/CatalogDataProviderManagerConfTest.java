@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.serviceusermapping.ServiceUserMapped;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.resourceresolver.MockResourceResolverFactory;
@@ -40,6 +41,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderFactory;
 import com.adobe.cq.commerce.virtual.catalog.data.CatalogDataResourceProviderManager;
+import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import io.wcm.testing.mock.aem.junit.AemContextBuilder;
 
@@ -90,6 +92,10 @@ public class CatalogDataProviderManagerConfTest {
 
         Map<String, String> properties = factoryConfig.properties;
         context.registerService(CatalogDataResourceProviderFactory.class, factoryConfig.factory, properties);
+
+        ServiceUserMapped serviceUserMapped = Mockito.mock(ServiceUserMapped.class);
+        context.registerService(ServiceUserMapped.class, serviceUserMapped, ImmutableMap.of(ServiceUserMapped.SUBSERVICENAME,
+            "virtual-products-service"));
 
         manager = context.registerInjectActivateService(new CatalogDataResourceProviderManagerImpl());
     }

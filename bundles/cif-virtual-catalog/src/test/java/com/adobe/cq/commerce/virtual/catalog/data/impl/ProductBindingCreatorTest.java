@@ -22,14 +22,17 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.observation.ResourceChange;
+import org.apache.sling.serviceusermapping.ServiceUserMapped;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.day.cq.wcm.api.WCMException;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import io.wcm.testing.mock.aem.junit.AemContextBuilder;
 
@@ -43,6 +46,10 @@ public class ProductBindingCreatorTest {
     public void setup() throws ParseException, RepositoryException, IOException {
         context.load().json("/context/jcr-conf-page.json", "/conf/testing/settings");
         context.load().json("/context/jcr-catalog-bindings.json", "/var/commerce");
+
+        ServiceUserMapped serviceUserMapped = Mockito.mock(ServiceUserMapped.class);
+        context.registerService(ServiceUserMapped.class, serviceUserMapped, ImmutableMap.of(ServiceUserMapped.SUBSERVICENAME,
+            "product-binding-service"));
 
         creator = new ProductBindingCreator();
         context.registerInjectActivateService(creator);

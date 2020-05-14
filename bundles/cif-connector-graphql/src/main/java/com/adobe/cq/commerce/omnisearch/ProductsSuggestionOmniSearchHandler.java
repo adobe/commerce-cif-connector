@@ -45,6 +45,7 @@ import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.serviceusermapping.ServiceUserMapped;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -73,6 +74,9 @@ public class ProductsSuggestionOmniSearchHandler extends AbstractOmniSearchHandl
     private static final String VIRTUAL_PRODUCT_QUERY_LANGUAGE = "virtualProductOmnisearchQuery";
     private static final String PARAMETER_OFFSET = "_commerce_offset";
     private static final String PARAMETER_LIMIT = "_commerce_limit";
+
+    @Reference(target = "(" + ServiceUserMapped.SUBSERVICENAME + "=omnisearch-service)")
+    private ServiceUserMapped serviceUserMapped;
 
     @Reference
     private ResourceResolverFactory resolverFactory = null;
