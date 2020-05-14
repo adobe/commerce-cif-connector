@@ -47,6 +47,7 @@ import com.adobe.cq.commerce.virtual.catalog.data.Constants;
 import com.day.cq.commons.jcr.JcrConstants;
 
 @Component(
+    immediate = true,
     service = ResourceChangeListener.class,
     property = { ResourceChangeListener.PATHS + "=glob:/conf/**/*",
         ResourceChangeListener.CHANGES + "=REMOVED",
