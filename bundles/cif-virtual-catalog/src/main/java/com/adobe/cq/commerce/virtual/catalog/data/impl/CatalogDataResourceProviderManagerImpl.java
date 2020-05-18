@@ -45,6 +45,7 @@ import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.apache.sling.serviceusermapping.ServiceUserMapped;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -102,6 +103,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     private EventListener[] observationEventListeners;
 
     private volatile List<Resource> dataRoots;
+
+    @Reference(target = "(" + ServiceUserMapped.SUBSERVICENAME + "=" + VIRTUAL_PRODUCTS_SERVICE + ")")
+    private ServiceUserMapped serviceUserMapped;
 
     /**
      * Map for holding the virtual catalog data resource provider registrations, with the catalog provider as key and the registration as
@@ -223,6 +227,10 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             }
             log.debug("Configured provider id is {}", providerId);
             factory = providerFactories.get(providerId);
+            if (factory == null) {
+                log.warn("No factory for provider id {}, nothing to do here", providerId);
+                return false;
+            }
         } else {
 
             if (StringUtils.isBlank(rootPath)) {

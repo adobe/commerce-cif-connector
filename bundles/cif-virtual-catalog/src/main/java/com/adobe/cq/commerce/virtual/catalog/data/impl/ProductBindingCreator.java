@@ -37,6 +37,7 @@ import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
+import org.apache.sling.serviceusermapping.ServiceUserMapped;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -58,6 +59,9 @@ public class ProductBindingCreator implements ResourceChangeListener {
     private static final String BINDINGS_PARENT_PATH = "/var/commerce/products";
 
     private ResourceResolver resolver;
+
+    @Reference(target = "(" + ServiceUserMapped.SUBSERVICENAME + "=product-binding-service)")
+    private ServiceUserMapped serviceUserMapped;
 
     @Reference
     private ResourceResolverFactory resolverFactory = null;
@@ -127,10 +131,15 @@ public class ProductBindingCreator implements ResourceChangeListener {
     }
 
     private void processAddition(ResourceChange change) {
+        resolver.refresh();
         String path = change.getPath();
         LOG.debug("Process resource addition at path {}", path);
 
         Resource changedResource = resolver.getResource(path);
+        if (changedResource == null) {
+            LOG.warn("Cannot retrieve resource at {}. Does the user have the require privileges?", path);
+            return;
+        }
         Resource contentResource = changedResource.getChild(JcrConstants.JCR_CONTENT);
 
         ValueMap properties;
