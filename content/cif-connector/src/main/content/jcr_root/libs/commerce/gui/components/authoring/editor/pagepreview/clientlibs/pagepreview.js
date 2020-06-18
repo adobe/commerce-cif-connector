@@ -36,7 +36,7 @@ window.CIF.PagePreview = {};
     };
 
     var handlePreview = function(data, previewServletUrl) {
-        if (!data || ![productPreviewServletUrl, categoryPreviewServletUrl].includes(previewServletUrl)) {
+        if (!data) {
             return;
         }
 
@@ -71,5 +71,8 @@ window.CIF.PagePreview = {};
     Granite.$(document).on('cifProductPickerSelection', relPdpPreview, handleProductPreview);
     Granite.$(document).on('cifCategoryPickerSelection', relPlpPreview, handleCategoryPreview);
 
-    window.CIF.PagePreview = { handlePreview: handlePreview };
+    window.CIF.PagePreview = {
+        handleProductPreview: handleProductPreview,
+        handleCategoryPreview: handleCategoryPreview
+    };
 })(window, document, Granite);

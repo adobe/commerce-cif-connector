@@ -15,59 +15,59 @@
 'use strict';
 
 describe('PagePreview', () => {
-    var handlePreview = window.CIF.PagePreview.handlePreview;
+    var handleProductPreview = window.CIF.PagePreview.handleProductPreview;
+    var handleCategoryPreview = window.CIF.PagePreview.handleCategoryPreview;
     var productPreviewServletUrl = '/bin/wcm/cif.previewproduct.html';
     var categoryPreviewServletUrl = '/bin/wcm/cif.previewcategory.html';
 
     it('handlePreview() does nothing for invalid selections or invalid preview Urls', () => {
         sinon.spy(window, 'open');
 
-        handlePreview(null, productPreviewServletUrl);
+        handleProductPreview(null, null);
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview({}, productPreviewServletUrl);
+        handleProductPreview(null, {});
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview({ selections: [] }, productPreviewServletUrl);
+        handleProductPreview(null, { selections: [] });
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview({ selections: 'any' }, categoryPreviewServletUrl);
-        assert.isFalse(window.open.calledOnce);
-
-        handlePreview({ selections: { value: 'slug' } }, 'invalidPreviewUrl');
+        handleCategoryPreview(null, { selections: 'any' });
         assert.isFalse(window.open.calledOnce);
 
         window.open.restore();
     });
 
-    it('handlePreview() opens product page preview for the first selection', () => {
+    it('handleProductPreview() opens product page preview for the first selection', () => {
+        var handleProductPreview = window.CIF.PagePreview.handleProductPreview;
+
         sinon.spy(window, 'open');
 
-        handlePreview({ selections: { value: 'slug' } }, productPreviewServletUrl);
+        handleProductPreview(null, { selections: { value: 'slug' } });
         assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
 
-        handlePreview({ selections: { value: 'slug#variant' } }, productPreviewServletUrl);
+        handleProductPreview(null, { selections: { value: 'slug#variant' } });
         assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug&variant_sku=variant'));
 
-        handlePreview({ selections: [{ value: 'slug' }] }, productPreviewServletUrl);
+        handleProductPreview(null, { selections: [{ value: 'slug' }] });
         assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
 
-        handlePreview({ selections: [{ value: 'slug' }, { value: 'slug2' }] }, productPreviewServletUrl);
+        handleProductPreview(null, { selections: [{ value: 'slug' }, { value: 'slug2' }] });
         assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
 
         window.open.restore();
     });
 
-    it('handlePreview() opens category page preview for the first selection', () => {
+    it('handleCategoryPreview() opens category page preview for the first selection', () => {
         sinon.spy(window, 'open');
 
-        handlePreview({ selections: { value: 'slug' } }, categoryPreviewServletUrl);
+        handleCategoryPreview(null, { selections: { value: 'slug' } });
         assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
 
-        handlePreview({ selections: [{ value: 'slug' }] }, categoryPreviewServletUrl);
+        handleCategoryPreview(null, { selections: [{ value: 'slug' }] });
         assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
 
-        handlePreview({ selections: [{ value: 'slug' }, { value: 'slug2' }] }, categoryPreviewServletUrl);
+        handleCategoryPreview(null, { selections: [{ value: 'slug' }, { value: 'slug2' }] });
         assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
 
         window.open.restore();
