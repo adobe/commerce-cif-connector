@@ -15,57 +15,60 @@
 'use strict';
 
 describe('PagePreview', () => {
-    it('createPreviewUrl() returns null for invalid parameters', () => {
-        var createPreviewUrl = window.CIF.PagePreview.createPreviewUrl;
+    var handlePreview = window.CIF.PagePreview.handlePreview;
+    var productPreviewServletUrl = '/bin/wcm/cif.previewproduct.html';
+    var categoryPreviewServletUrl = '/bin/wcm/cif.previewcategory.html';
 
-        assert.equal(null, createPreviewUrl(null, null));
-        assert.equal(null, createPreviewUrl('editor.html', null));
-        assert.equal(null, createPreviewUrl('editor.html', 'slug'));
-        assert.equal(null, createPreviewUrl('/editor', 'slug'));
-    });
-
-    it('createPreviewUrl() adds selector as new URL selector or replaces old selector with new selector', () => {
-        var createPreviewUrl = window.CIF.PagePreview.createPreviewUrl;
-        assert.equal('/editor.slug.html', createPreviewUrl('/editor.html', 'slug'));
-        assert.equal('/editor.slug.html', createPreviewUrl('/editor.any.html', 'slug'));
-    });
-
-    it('handlePreview() does nothing for invalid selections', () => {
-        var handlePreview = window.CIF.PagePreview.handlePreview;
+    it('handlePreview() does nothing for invalid selections or invalid preview Urls', () => {
         sinon.spy(window, 'open');
 
-        handlePreview(null, null);
+        handlePreview(null, productPreviewServletUrl);
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview(null, {});
+        handlePreview({}, productPreviewServletUrl);
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview(null, { selections: [] });
+        handlePreview({ selections: [] }, productPreviewServletUrl);
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview(null, { selections: 'any' });
+        handlePreview({ selections: 'any' }, categoryPreviewServletUrl);
+        assert.isFalse(window.open.calledOnce);
+
+        handlePreview({ selections: { value: 'slug' } }, 'invalidPreviewUrl');
         assert.isFalse(window.open.calledOnce);
 
         window.open.restore();
     });
 
-    it('handlePreview() opens page preview for the first selection', () => {
-        var handlePreview = window.CIF.PagePreview.handlePreview;
+    it('handlePreview() opens product page preview for the first selection', () => {
         sinon.spy(window, 'open');
-        Granite.author.ContentFrame.location = '/editor.html/products/product-page.html';
 
-        handlePreview(null, { selections: { value: 'slug' } });
-        assert.isTrue(window.open.calledOnce);
-        assert.equal('/editor.html/products/product-page.slug.html', window.open.getCall(0).args[0]);
+        handlePreview({ selections: { value: 'slug' } }, productPreviewServletUrl);
+        assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
 
-        handlePreview(null, { selections: [{ value: 'slug' }] });
-        assert.isTrue(window.open.calledTwice);
-        assert.equal('/editor.html/products/product-page.slug.html', window.open.getCall(1).args[0]);
+        handlePreview({ selections: { value: 'slug#variant' } }, productPreviewServletUrl);
+        assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug&variant_sku=variant'));
 
-        Granite.author.ContentFrame.location = '/editor.html/products/page.html';
-        handlePreview(null, { selections: [{ value: 'slug' }, { value: 'slug2' }] });
-        assert.isTrue(window.open.calledThrice);
-        assert.equal('/editor.html/products/page.slug.html', window.open.getCall(2).args[0]);
+        handlePreview({ selections: [{ value: 'slug' }] }, productPreviewServletUrl);
+        assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
+
+        handlePreview({ selections: [{ value: 'slug' }, { value: 'slug2' }] }, productPreviewServletUrl);
+        assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
+
+        window.open.restore();
+    });
+
+    it('handlePreview() opens category page preview for the first selection', () => {
+        sinon.spy(window, 'open');
+
+        handlePreview({ selections: { value: 'slug' } }, categoryPreviewServletUrl);
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
+
+        handlePreview({ selections: [{ value: 'slug' }] }, categoryPreviewServletUrl);
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
+
+        handlePreview({ selections: [{ value: 'slug' }, { value: 'slug2' }] }, categoryPreviewServletUrl);
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
 
         window.open.restore();
     });
