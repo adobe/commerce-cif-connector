@@ -184,6 +184,9 @@ public class MultiFieldDropTargetPostProcessor implements SlingPostProcessor {
                 } else {
                     properties.put(propertyName, propertyValue);
                 }
+                // These properties are added by the drag and drop, they do not belong to the component configuration
+                properties.remove(MULTIPLE.replace(PROPERTY_PREFIX, StringUtils.EMPTY));
+                properties.remove(SELECTION_ID.replace(PROPERTY_PREFIX, StringUtils.EMPTY));
             } else if (path.equals(COMPOSITE_VARIABLE)) {
                 // create new subNode
                 int count = Iterators.size(currentResource.getChildren().iterator());
