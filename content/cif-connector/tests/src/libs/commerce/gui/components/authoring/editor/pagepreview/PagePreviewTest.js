@@ -17,10 +17,8 @@
 describe('PagePreview', () => {
     var handleProductPreview = window.CIF.PagePreview.handleProductPreview;
     var handleCategoryPreview = window.CIF.PagePreview.handleCategoryPreview;
-    var productPreviewServletUrl = '/bin/wcm/cif.previewproduct.html';
-    var categoryPreviewServletUrl = '/bin/wcm/cif.previewcategory.html';
 
-    it('handlePreview() does nothing for invalid selections or invalid preview Urls', () => {
+    it('Handling preview does nothing for invalid selections', () => {
         sinon.spy(window, 'open');
 
         handleProductPreview(null, null);
@@ -39,7 +37,7 @@ describe('PagePreview', () => {
     });
 
     it('handleProductPreview() opens product page preview for the first selection', () => {
-        var handleProductPreview = window.CIF.PagePreview.handleProductPreview;
+        var productPreviewServletUrl = '/bin/wcm/cif.previewproduct.html';
 
         sinon.spy(window, 'open');
 
@@ -59,6 +57,8 @@ describe('PagePreview', () => {
     });
 
     it('handleCategoryPreview() opens category page preview for the first selection', () => {
+        var categoryPreviewServletUrl = '/bin/wcm/cif.previewcategory.html';
+
         sinon.spy(window, 'open');
 
         handleCategoryPreview(null, { selections: { value: 'slug' } });
