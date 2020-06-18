@@ -50,6 +50,8 @@ import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlets.post.Modification;
+import org.apache.sling.servlets.post.ModificationType;
+import org.apache.sling.servlets.post.SlingPostConstants;
 import org.apache.sling.servlets.post.SlingPostProcessor;
 import org.osgi.service.component.annotations.Component;
 
@@ -86,6 +88,7 @@ public class MultiFieldDropTargetPostProcessor implements SlingPostProcessor {
     private static final String SLING_PROPERTY_PREFIX = "./";
     private static final String SELECTION_ID = "./selectionId";
     private static final String MULTIPLE = "./multiple";
+    private static final String SLING_COPY_FROM = SLING_PROPERTY_PREFIX + SlingPostConstants.SUFFIX_COPY_FROM;
 
     private static final String SKU = "sku";
     private static final String SLUG = "slug";
@@ -102,6 +105,21 @@ public class MultiFieldDropTargetPostProcessor implements SlingPostProcessor {
                     String target = key.replace(DROP_TARGET_PREFIX, StringUtils.EMPTY);
                     String propertyValue = requestParameter.getString();
                     Resource resource = request.getResource();
+
+                    // If it's actually a drag and drop, the POST contains a Sling './@CopyFrom' parameter
+                    // and the modifications map will already contain the COPY operation done by the D'n'D
+                    if (requestParameterMap.containsKey(SLING_COPY_FROM)) {
+                        Modification copyFrom = modifications
+                            .stream()
+                            .filter(m -> ModificationType.COPY.equals(m.getType()))
+                            .findFirst().orElseGet(null);
+                        if (copyFrom != null) {
+                            Resource dropComponent = resource.getResourceResolver().getResource(copyFrom.getDestination());
+                            ModifiableValueMap properties = dropComponent.adaptTo(ModifiableValueMap.class);
+                            properties.remove(target);
+                            resource = dropComponent; // The property changes will be done on the D'n'D target resource
+                        }
+                    }
 
                     RequestParameter selectionTypeParameter = requestParameterMap.getValue(SELECTION_ID);
                     String selectionType = selectionTypeParameter != null ? selectionTypeParameter.getString() : null;
@@ -166,6 +184,9 @@ public class MultiFieldDropTargetPostProcessor implements SlingPostProcessor {
                 } else {
                     properties.put(propertyName, propertyValue);
                 }
+                // These properties are added by the drag and drop, they do not belong to the component configuration
+                properties.remove(MULTIPLE.replace(PROPERTY_PREFIX, StringUtils.EMPTY));
+                properties.remove(SELECTION_ID.replace(PROPERTY_PREFIX, StringUtils.EMPTY));
             } else if (path.equals(COMPOSITE_VARIABLE)) {
                 // create new subNode
                 int count = Iterators.size(currentResource.getChildren().iterator());

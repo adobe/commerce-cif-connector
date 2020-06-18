@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.servlethelpers.MockSlingHttpServletRequest;
 import org.apache.sling.servlets.post.Modification;
 import org.junit.Rule;
@@ -91,6 +92,40 @@ public class MultiFieldDropTargetPostProcessorTest {
         map.put("./selectionId", "slug");
         map.put("./multiple", Boolean.TRUE);
         testAppendToExistingMultiValue(map, "a", "/content/missingslug");
+    }
+
+    @Test
+    public void testDropTargetWithSkuSelection() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("./multiDropTarget->@items", "/var/commerce/products/a");
+        map.put("./selectionId", "sku");
+        map.put("./multiple", Boolean.FALSE);
+        map.put("./@CopyFrom", "/does/not/matter");
+
+        // During an AEM drag and drop, the Sling POST will contain a COPY modification with the target component
+        // In this test, we mock that something is copied to /content/postprocessor/jcr:content/noExistingMultiValue
+        List<Modification> modifications = new ArrayList<>();
+        modifications.add(Modification.onCopied("/does/not/matter", "/content/postprocessor/jcr:content/noExistingMultiValue"));
+
+        // During an AEM drag and drop, the Sling POST is typically sent to the responsivegrid
+        // In this test, we just set to any location, we'll just have to check that the dropped properties are not added there
+        MockSlingHttpServletRequest request = new MockSlingHttpServletRequest(context.resourceResolver());
+        request.setResource(context.resourceResolver().resolve("/content/postprocessor/jcr:content/noExistingComposite"));
+        request.setParameterMap(map);
+
+        MultiFieldDropTargetPostProcessor dropTargetPostProcessor = new MultiFieldDropTargetPostProcessor();
+        dropTargetPostProcessor.process(request, modifications);
+
+        assertThat(modifications).hasSize(2); // there is an extra modification to /content/postprocessor/jcr:content/noExistingMultiValue
+
+        // The target resource of the POST should NOT have the new property
+        Resource resource = request.getResource();
+        assertThat(resource.getValueMap()).hasSize(1); // just {"jcr:primaryType"="nt:unstructured"}
+
+        // The "copy" resource of the POST MUST contain the new property
+        Resource dropTargetResource = resource.getResourceResolver().getResource("/content/postprocessor/jcr:content/noExistingMultiValue");
+        ValueMap targetValueMap = dropTargetResource.getValueMap();
+        assertThat(targetValueMap.get("items", String.class)).isEqualTo("a");
     }
 
     private void testAppendToExistingMultiValue(Map<String, Object> parameterMap, String... expectedValues) throws Exception {
