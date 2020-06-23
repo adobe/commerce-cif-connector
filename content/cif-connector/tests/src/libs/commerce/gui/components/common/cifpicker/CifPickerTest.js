@@ -171,6 +171,30 @@ describe('CifPicker', () => {
         assert.isTrue(callbackSpy.calledOnce);
     });
 
+    it('show picker and call selection handler', () => {
+        var show = window.CIF.CifPicker.show;
+        var state = getState(control);
+        state.api = {
+            attach: function() {},
+            detach: function() {},
+            pick: function() {
+                return {
+                    then: function(resolve, reject) {
+                        resolve();
+                    }
+                };
+            }
+        };
+
+        state.el = { focus: function() {} };
+
+        var selectionHandler = function() {};
+        var selectionHandlerSpy = sinon.spy(selectionHandler);
+
+        show(control, state, selectionHandlerSpy);
+        assert.isTrue(selectionHandlerSpy.calledOnce);
+    });
+
     function verifyCall(url) {
         assert.isTrue(dollar.ajax.calledOnce);
         assert.equal(url, dollar.ajax.getCall(0).args[0].url);
