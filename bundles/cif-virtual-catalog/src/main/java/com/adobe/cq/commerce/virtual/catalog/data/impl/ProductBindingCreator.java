@@ -29,6 +29,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.LoginException;
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -176,8 +177,15 @@ public class ProductBindingCreator implements ResourceChangeListener {
         LOG.debug("Check if we already have a binding at {}", bindingPath);
 
         try {
-            LOG.debug("Creating a new resource at {}", parent.getPath() + "/" + bindingName);
+            LOG.debug("Creating a new resource at {}", bindingPath);
             ResourceUtil.getOrCreateResource(resolver, bindingPath, mappingProperties, "", true);
+
+            if (contentResource != null) {
+                LOG.debug("Adding {} property at {}", Constants.PN_CATALOG_PATH, contentResource.getPath());
+                ModifiableValueMap map = contentResource.adaptTo(ModifiableValueMap.class);
+                map.put(Constants.PN_CATALOG_PATH, bindingPath);
+                resolver.commit();
+            }
         } catch (PersistenceException e) {
             LOG.error(e.getMessage(), e);
         }
