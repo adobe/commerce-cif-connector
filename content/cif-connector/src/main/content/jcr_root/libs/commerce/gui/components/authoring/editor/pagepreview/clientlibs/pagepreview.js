@@ -41,19 +41,19 @@ window.CIF.PagePreview = {};
         }
 
         var selections = data.selections;
-        var slugValue = null;
+        var identifier = null;
         if (Array.isArray(selections)) {
             if (selections.length > 0 && selections[0]) {
-                slugValue = selections[0].value;
+                identifier = selections[0].value;
             }
         } else if (selections) {
-            slugValue = selections.value;
+            identifier = selections.value;
         }
 
-        // slugValue can be: <id>, <slug>, <path>, <sku>, <sku>#<variant_sku>
-        // depending on picker's selectionId & filter parameters.
-        // However the selection data should contain all available attributes of the selected item
-        var [slug, variantSku] = slugValue ? slugValue.split('#') : [];
+        // Currently the picker returns only one identifier for the selected item.
+        // It can be one of the following: <id>, <url_key>, <path>, <sku>, <sku>#<variant_sku>
+        // This needs to be fixed in the future version so the picker will return multiple identifiers
+        var [slug, variantSku] = identifier ? identifier.split('#') : [];
         if (!slug) {
             return null;
         }
