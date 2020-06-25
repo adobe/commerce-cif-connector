@@ -15,6 +15,7 @@
 package com.adobe.cq.commerce.gui.components.common;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.script.SimpleBindings;
 
@@ -26,6 +27,8 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.wrappers.ModifiableValueMapDecorator;
+import org.apache.sling.api.wrappers.ValueMapDecorator;
+import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.junit.Before;
 
 import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
@@ -46,6 +49,7 @@ public class FieldInitializerTest {
     protected SimpleBindings bindings = new SimpleBindings();
     protected Resource includedResourceSample;
     protected ModifiableValueMapDecorator valueMap;
+    protected Resource contentResource;
     protected ValueMap contentResourceProperties;
     protected SlingHttpServletRequest request;
     protected RequestPathInfo requestPathInfo;
@@ -79,9 +83,16 @@ public class FieldInitializerTest {
         when(resourceResolver.adaptTo(PageManager.class)).thenReturn(pageManager);
         Page page = mock(Page.class);
         when(pageManager.getContainingPage(anyString())).thenReturn(page);
-        Resource contentResource = mock(Resource.class);
+        contentResource = mock(Resource.class);
         contentResourceProperties = new ModifiableValueMapDecorator(new HashMap<>());
         when(contentResource.getValueMap()).thenReturn(contentResourceProperties);
         when(page.getContentResource()).thenReturn(contentResource);
+    }
+
+    protected void setupContextAwareConfiguration(Map<String, Object> properties) {
+        ConfigurationBuilder configurationBuilder = mock(ConfigurationBuilder.class);
+        when(contentResource.adaptTo(ConfigurationBuilder.class)).thenReturn(configurationBuilder);
+        when(configurationBuilder.name("cloudconfigs/commerce")).thenReturn(configurationBuilder);
+        when(configurationBuilder.asValueMap()).thenReturn(new ValueMapDecorator(properties));
     }
 }
