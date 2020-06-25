@@ -51,7 +51,7 @@ window.CIF.PagePreview = {};
         }
 
         // Currently the picker returns only one identifier for the selected item.
-        // It can be one of the following: <id>, <url_key>, <sku>, <sku>#<variant_sku>, <url_key>#<variant_sku>
+        // It can be one of the following: <id>, <url_key>, <sku>, <sku>#<variant_sku>
         // This needs to be fixed in the future version so the picker will return multiple identifiers
         var [itemIdentifier, itemVariant] = identifier ? identifier.split('#') : [];
         if (!itemIdentifier) {
