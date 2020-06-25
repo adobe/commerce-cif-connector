@@ -41,17 +41,27 @@ describe('PagePreview', () => {
 
         sinon.spy(window, 'open');
 
-        handleProductPreview(null, { selections: { value: 'slug' } });
-        assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
+        handleProductPreview(null, { selections: { value: 'item-identifier' } });
+        assert.isTrue(
+            window.open.calledWith(productPreviewServletUrl + '?url_key=item-identifier&sku=item-identifier')
+        );
 
-        handleProductPreview(null, { selections: { value: 'slug#variant' } });
-        assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug&variant_sku=variant'));
+        handleProductPreview(null, { selections: { value: 'item-identifier#item-variant' } });
+        assert.isTrue(
+            window.open.calledWith(
+                productPreviewServletUrl + '?url_key=item-identifier&sku=item-identifier&variant_sku=item-variant'
+            )
+        );
 
-        handleProductPreview(null, { selections: [{ value: 'slug' }] });
-        assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
+        handleProductPreview(null, { selections: [{ value: 'item-identifier' }] });
+        assert.isTrue(
+            window.open.calledWith(productPreviewServletUrl + '?url_key=item-identifier&sku=item-identifier')
+        );
 
-        handleProductPreview(null, { selections: [{ value: 'slug' }, { value: 'slug2' }] });
-        assert.isTrue(window.open.calledWith(productPreviewServletUrl + '?url_key=slug&sku=slug'));
+        handleProductPreview(null, { selections: [{ value: 'item-identifier' }, { value: 'item-identifier-2' }] });
+        assert.isTrue(
+            window.open.calledWith(productPreviewServletUrl + '?url_key=item-identifier&sku=item-identifier')
+        );
 
         window.open.restore();
     });
@@ -61,14 +71,14 @@ describe('PagePreview', () => {
 
         sinon.spy(window, 'open');
 
-        handleCategoryPreview(null, { selections: { value: 'slug' } });
-        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
+        handleCategoryPreview(null, { selections: { value: 'item-identifier' } });
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=item-identifier'));
 
-        handleCategoryPreview(null, { selections: [{ value: 'slug' }] });
-        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
+        handleCategoryPreview(null, { selections: [{ value: 'item-identifier' }] });
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=item-identifier'));
 
-        handleCategoryPreview(null, { selections: [{ value: 'slug' }, { value: 'slug2' }] });
-        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=slug'));
+        handleCategoryPreview(null, { selections: [{ value: 'item-identifier' }, { value: 'item-identifier-2' }] });
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=item-identifier'));
 
         window.open.restore();
     });
