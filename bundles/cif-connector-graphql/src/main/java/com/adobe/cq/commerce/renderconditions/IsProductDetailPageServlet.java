@@ -107,7 +107,7 @@ public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Finds the the {@code cq:catalogPath} property at the given path and exposes its value in the property
+     * Finds the {@code cq:catalogPath} property at the given path and exposes its value in the property
      * {@link #CATALOG_PATH_PROPERTY} to Granite UI expressions.
      *
      * @param path a Sling resource path
