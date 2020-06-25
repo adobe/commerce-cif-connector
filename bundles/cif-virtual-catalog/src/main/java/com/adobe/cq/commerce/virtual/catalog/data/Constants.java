@@ -22,25 +22,26 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class Constants {
 
-    public static String CONF_ROOT = "/conf";
+    public static final String CONF_ROOT = "/conf";
 
-    public static String CONF_CONTAINER_BUCKET_NAME = "settings";
+    public static final String CONF_CONTAINER_BUCKET_NAME = "settings";
 
-    public static String CLOUDCONFIGS_BUCKET_NAME = "cloudconfigs";
+    public static final String CLOUDCONFIGS_BUCKET_NAME = "cloudconfigs";
 
-    public static String COMMERCE_CONFIG_NAME = "commerce";
+    public static final String COMMERCE_CONFIG_NAME = "commerce";
 
-    public static String COMMERCE_BUCKET_PATH = StringUtils.join(new String[] { CONF_CONTAINER_BUCKET_NAME, CLOUDCONFIGS_BUCKET_NAME,
+    public static final String COMMERCE_BUCKET_PATH = StringUtils.join(new String[] { CONF_CONTAINER_BUCKET_NAME, CLOUDCONFIGS_BUCKET_NAME,
         COMMERCE_CONFIG_NAME }, "/");
 
-    public static String CONFIGURATION_NAME = StringUtils.join(new String[] { CLOUDCONFIGS_BUCKET_NAME, COMMERCE_CONFIG_NAME }, "/");
+    public static final String CONFIGURATION_NAME = StringUtils.join(new String[] { CLOUDCONFIGS_BUCKET_NAME, COMMERCE_CONFIG_NAME }, "/");
 
-    public static String PN_CONF = "cq:conf";
-    public static String PN_MAGENTO_ROOT_CATEGORY_ID = "magentoRootCategoryId";
-    public static String PN_CATALOG_PROVIDER_FACTORY = "cq:catalogDataResourceProviderFactory";
+    public static final String PN_CONF = "cq:conf";
+    public static final String PN_MAGENTO_ROOT_CATEGORY_ID = "magentoRootCategoryId";
+    public static final String PN_CATALOG_PROVIDER_FACTORY = "cq:catalogDataResourceProviderFactory";
     public static final String PN_CATALOG_IDENTIFIER = "cq:catalogIdentifier";
     public static final String PN_GRAPHQL_CLIENT = "cq:graphqlClient";
     public static final String PN_MAGENTO_STORE = "magentoStore";
+    public static final String PN_CATALOG_PATH = "cq:catalogPath";
 
     private Constants() {
 

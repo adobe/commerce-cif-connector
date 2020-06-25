@@ -14,6 +14,9 @@
 
 package com.adobe.cq.commerce.gui.components.common.cifcategoryfield;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.sling.api.resource.ValueMap;
 import org.junit.Test;
 
@@ -49,14 +52,8 @@ public class InitializerTest extends FieldInitializerTest {
         assertEquals(pickerSrc, properties.get("pickerSrc", String.class));
     }
 
-    @Test
-    public void testCatalogPathForComponentDialog() {
-        when(request.getRequestURI()).thenReturn(CatalogSearchSupport.COMPONENT_DIALIG_URI_MARKER);
-        when(requestPathInfo.getSuffix()).thenReturn("component/path");
-        contentResourceProperties.put("cq:catalogPath", "catalog/path");
-
+    private void testRootPath() {
         initializer.init(bindings);
-
         assertNotNull(includedResourceSample);
         ValueMap properties = includedResourceSample.getValueMap();
         assertNotNull(properties);
@@ -64,16 +61,40 @@ public class InitializerTest extends FieldInitializerTest {
     }
 
     @Test
+    public void testCatalogPathForComponentDialog() {
+        when(request.getRequestURI()).thenReturn(CatalogSearchSupport.COMPONENT_DIALOG_URI_MARKER);
+        when(requestPathInfo.getSuffix()).thenReturn("component/path");
+        contentResourceProperties.put(CatalogSearchSupport.PN_CATALOG_PATH, "catalog/path");
+        testRootPath();
+    }
+
+    @Test
     public void testCatalogPathForPageProperties() {
         when(request.getRequestURI()).thenReturn(CatalogSearchSupport.PAGE_PROPERTIES_URI_MARKER);
         when(request.getParameter("item")).thenReturn("component/path");
         contentResourceProperties.put(CatalogSearchSupport.PN_CATALOG_PATH, "catalog/path");
+        testRootPath();
+    }
 
-        initializer.init(bindings);
+    @Test
+    public void testContextAwareConfiguration() {
+        when(request.getRequestURI()).thenReturn(CatalogSearchSupport.COMPONENT_DIALOG_URI_MARKER);
+        when(requestPathInfo.getSuffix()).thenReturn("component/path");
+        Map<String, Object> map = Collections.singletonMap(CatalogSearchSupport.PN_CATALOG_PATH, "catalog/path");
+        setupContextAwareConfiguration(map);
+        testRootPath();
+    }
 
-        assertNotNull(includedResourceSample);
-        ValueMap properties = includedResourceSample.getValueMap();
-        assertNotNull(properties);
-        assertEquals("catalog/path", properties.get("rootPath", String.class));
+    @Test
+    public void testContextAwareConfigurationWithoutCatalogPath() {
+        when(request.getRequestURI()).thenReturn(CatalogSearchSupport.COMPONENT_DIALOG_URI_MARKER);
+        when(requestPathInfo.getSuffix()).thenReturn("component/path");
+
+        // The implementation will fallback to the "old" way of getting the property
+        Map<String, Object> map = Collections.emptyMap();
+        contentResourceProperties.put(CatalogSearchSupport.PN_CATALOG_PATH, "catalog/path");
+
+        setupContextAwareConfiguration(map);
+        testRootPath();
     }
 }

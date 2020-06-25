@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.serviceusermapping.ServiceUserMapped;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -64,7 +65,10 @@ public class ProductBindingCreatorTest {
         creator.onChange(ImmutableList.of(change));
 
         Assert.assertNotNull(context.resourceResolver().getResource("/var/commerce/products/testing-english"));
-        Assert.assertTrue(true);
+
+        // Test that the cq:catalogPath property was added to the configuration
+        Resource config = context.resourceResolver().getResource("/conf/testing/settings/cloudconfigs/commerce/jcr:content");
+        Assert.assertEquals("/var/commerce/products/testing-english", config.getValueMap().get("cq:catalogPath"));
     }
 
     @Test
