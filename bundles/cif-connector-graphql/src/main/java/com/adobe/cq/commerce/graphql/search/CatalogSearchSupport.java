@@ -18,6 +18,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.caconfig.ConfigurationBuilder;
 
 import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.graphql.resource.Constants;
@@ -27,9 +29,13 @@ import com.day.cq.commons.inherit.InheritanceValueMap;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.CLOUDCONFIGS_BUCKET_NAME;
+import static com.adobe.cq.commerce.virtual.catalog.data.Constants.COMMERCE_CONFIG_NAME;
+
 public class CatalogSearchSupport {
+
     public static final String PN_CATALOG_PATH = "cq:catalogPath";
-    public static final String COMPONENT_DIALIG_URI_MARKER = "/_cq_dialog.html/";
+    public static final String COMPONENT_DIALOG_URI_MARKER = "/_cq_dialog.html/";
     public static final String PAGE_PROPERTIES_URI_MARKER = "/sites/properties.html";
     private ResourceResolver resolver;
 
@@ -84,6 +90,15 @@ public class CatalogSearchSupport {
         if (parentPage == null) {
             return null;
         }
+
+        ConfigurationBuilder configBuilder = parentPage.getContentResource().adaptTo(ConfigurationBuilder.class);
+        if (configBuilder != null) {
+            ValueMap properties = configBuilder.name(CLOUDCONFIGS_BUCKET_NAME + "/" + COMMERCE_CONFIG_NAME).asValueMap();
+            if (properties.containsKey(PN_CATALOG_PATH)) {
+                return properties.get(PN_CATALOG_PATH, String.class);
+            }
+        }
+
         InheritanceValueMap inheritedProperties = new HierarchyNodeInheritanceValueMap(parentPage.getContentResource());
         return inheritedProperties.getInherited(PN_CATALOG_PATH, String.class);
     }
@@ -97,7 +112,7 @@ public class CatalogSearchSupport {
      */
     public String findCatalogPathForPicker(SlingHttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        if (requestURI.contains(COMPONENT_DIALIG_URI_MARKER)) {
+        if (requestURI.contains(COMPONENT_DIALOG_URI_MARKER)) {
             String suffix = request.getRequestPathInfo().getSuffix();
             return findCatalogPath(suffix);
         } else if (requestURI.contains(PAGE_PROPERTIES_URI_MARKER)) {
