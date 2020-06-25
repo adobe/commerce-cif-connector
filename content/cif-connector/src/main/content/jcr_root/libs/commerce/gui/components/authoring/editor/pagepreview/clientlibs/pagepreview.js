@@ -51,17 +51,20 @@ window.CIF.PagePreview = {};
         }
 
         // Currently the picker returns only one identifier for the selected item.
-        // It can be one of the following: <id>, <url_key>, <path>, <sku>, <sku>#<variant_sku>
+        // It can be one of the following: <id>, <url_key>, <sku>, <sku>#<variant_sku>, <url_key>#<variant_sku>
         // This needs to be fixed in the future version so the picker will return multiple identifiers
-        var [slug, variantSku] = identifier ? identifier.split('#') : [];
-        if (!slug) {
+        var [itemIdentifier, itemVariant] = identifier ? identifier.split('#') : [];
+        if (!itemIdentifier) {
             return null;
         }
 
         // prepare all possible parameters
-        var params = previewServletUrl === productPreviewServletUrl ? { url_key: slug, sku: slug } : { id: slug };
-        if (variantSku) {
-            params.variant_sku = variantSku;
+        var params =
+            previewServletUrl === productPreviewServletUrl
+                ? { url_key: itemIdentifier, sku: itemIdentifier }
+                : { id: itemIdentifier };
+        if (itemVariant) {
+            params.variant_sku = itemVariant;
         }
         const qs = new URLSearchParams(params);
 
