@@ -36,6 +36,7 @@ import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
 import static com.adobe.cq.commerce.renderconditions.IsProductDetailPageServlet.containsComponent;
+import static com.adobe.cq.commerce.renderconditions.IsProductDetailPageServlet.prepareCatalogPathProperty;
 
 @Component(
     service = Servlet.class,
@@ -56,6 +57,9 @@ public class IsProductListPageServlet extends SlingSafeMethodsServlet {
         final String path = ex.getString(cfg.get("path", String.class));
         boolean decision = isProductListPage(path, request.getResourceResolver());
         request.setAttribute(RenderCondition.class.getName(), new SimpleRenderCondition(decision));
+        if (decision) {
+            prepareCatalogPathProperty(path, request);
+        }
     }
 
     private boolean isProductListPage(String path, ResourceResolver resourceResolver) {
