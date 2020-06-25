@@ -22,8 +22,14 @@ describe('CifPicker', () => {
     var getState;
 
     before(() => {
+        var promise = {
+            then: f => {
+                f('elem');
+                return promise;
+            }
+        };
         dollar.ajax = function(asd) {
-            return Promise.resolve(asd);
+            return promise;
         };
         getState = window.CIF.CifPicker.getState;
     });
