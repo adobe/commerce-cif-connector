@@ -17,6 +17,7 @@
                                         text="View with Product">
                                         <granite:data
                                             jcr:primaryType="nt:unstructured"
+                                            root="${catalogPath}"
                                             selectionid="slug"/>
                                         <granite:rendercondition
                                             jcr:primaryType="nt:unstructured"
@@ -31,6 +32,7 @@
                                             text="View with Category">
                                         <granite:data
                                                 jcr:primaryType="nt:unstructured"
+                                                root="${catalogPath}"
                                                 selectionid="id"/>
                                         <granite:rendercondition
                                                 jcr:primaryType="nt:unstructured"

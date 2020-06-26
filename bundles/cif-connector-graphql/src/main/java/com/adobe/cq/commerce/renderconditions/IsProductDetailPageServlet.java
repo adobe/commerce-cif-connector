@@ -27,7 +27,10 @@ import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 
+import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
+import com.adobe.cq.commerce.graphql.search.CatalogSearchSupport;
 import com.adobe.granite.ui.components.Config;
+import com.adobe.granite.ui.components.ExpressionCustomizer;
 import com.adobe.granite.ui.components.ExpressionHelper;
 import com.adobe.granite.ui.components.ExpressionResolver;
 import com.adobe.granite.ui.components.rendercondition.RenderCondition;
@@ -46,6 +49,7 @@ import com.day.cq.wcm.api.PageManager;
 public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
 
     static final String PRODUCT_RT = "core/cif/components/commerce/product/v1/product";
+    static final String CATALOG_PATH_PROPERTY = "catalogPath";
 
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
         final Config cfg = new Config(request.getResource());
@@ -54,6 +58,9 @@ public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
         final String path = ex.getString(cfg.get("path", String.class));
         boolean decision = isProductDetailPage(path, request.getResourceResolver());
         request.setAttribute(RenderCondition.class.getName(), new SimpleRenderCondition(decision));
+        if (decision) {
+            prepareCatalogPathProperty(path, request);
+        }
     }
 
     private boolean isProductDetailPage(String path, ResourceResolver resourceResolver) {
@@ -97,5 +104,24 @@ public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
         }
 
         return false;
+    }
+
+    /**
+     * Finds the {@code cq:catalogPath} property at the given path and exposes its value in the property
+     * {@link #CATALOG_PATH_PROPERTY} to Granite UI expressions.
+     *
+     * @param path a Sling resource path
+     * @param request the current request
+     */
+    static void prepareCatalogPathProperty(String path, SlingHttpServletRequest request) {
+        ResourceResolver resourceResolver = request.getResourceResolver();
+        CatalogSearchSupport catalogSearchSupport = new CatalogSearchSupport(resourceResolver);
+        String catalogPath = catalogSearchSupport.findCatalogPath(path);
+        if (StringUtils.isBlank(catalogPath)) {
+            CommerceBasePathsService pathsService = resourceResolver.adaptTo(CommerceBasePathsService.class);
+            catalogPath = pathsService.getProductsBasePath();
+        }
+        ExpressionCustomizer customizer = ExpressionCustomizer.from(request);
+        customizer.setVariable(CATALOG_PATH_PROPERTY, catalogPath);
     }
 }
