@@ -31,12 +31,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 
+import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
 import com.adobe.granite.rest.utils.ModifiableMappedValueMapDecorator;
+import com.adobe.granite.ui.components.ExpressionCustomizer;
 import com.adobe.granite.ui.components.ExpressionResolver;
 import com.adobe.granite.ui.components.rendercondition.RenderCondition;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import io.wcm.testing.mock.aem.junit.AemContextCallback;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -44,6 +47,7 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class IsProductListPageServletTest {
@@ -76,8 +80,11 @@ public class IsProductListPageServletTest {
         when(request.getResource()).thenReturn(resource);
         resourceProperties = new ModifiableMappedValueMapDecorator(new HashMap<>());
         when(resource.getValueMap()).thenReturn(resourceProperties);
-        ResourceResolver resourceResolver = context.resourceResolver();
+        ResourceResolver resourceResolver = spy(context.resourceResolver());
         when(request.getResourceResolver()).thenReturn(resourceResolver);
+        CommerceBasePathsService pathsService = mock(CommerceBasePathsService.class);
+        when(pathsService.getProductsBasePath()).thenReturn("/var/commerce/products");
+        when(resourceResolver.adaptTo(CommerceBasePathsService.class)).thenReturn(pathsService);
 
         when(expressionResolver.resolve(anyString(), (Locale) anyObject(), (Class<? extends Object>) anyObject(),
             (SlingHttpServletRequest) anyObject())).thenAnswer((Answer<Object>) invocation -> long.class.equals(invocation
@@ -148,6 +155,10 @@ public class IsProductListPageServletTest {
         RenderCondition renderCondition = (RenderCondition) request.getAttribute(RenderCondition.class.getName());
         assertNotNull(renderCondition);
         assertTrue(renderCondition.check());
+
+        ExpressionCustomizer expressionCustomizer = ExpressionCustomizer.from(request);
+        assertEquals(IsProductDetailPageServletTest.DEFAULT_CATALOGPATH,
+            expressionCustomizer.getVariable(IsProductDetailPageServlet.CATALOG_PATH_PROPERTY));
     }
 
     private AemContext createContext(String contentPath) {
