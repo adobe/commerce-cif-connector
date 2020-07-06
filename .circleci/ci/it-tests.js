@@ -33,7 +33,7 @@ try {
         ci.sh(`./qp.sh -v start --id author --runmode author --port 4502 --qs-jar /home/circleci/cq/author/cq-quickstart.jar \
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             --bundle com.adobe.commerce.cif:graphql-client:1.6.0:jar \
-            --bundle com.adobe.commerce.cif:magento-graphql:5.1.0-magento234:jar \
+            --bundle com.adobe.commerce.cif:magento-graphql:6.0.0-magento235:jar \
             --bundle com.adobe.cq:core.wcm.components.all:2.4.0:zip \
             ${ci.addQpFileDependency(config.modules['cif-connector-graphql'])} \
             ${ci.addQpFileDependency(config.modules['cif-virtual-catalog'])} \
