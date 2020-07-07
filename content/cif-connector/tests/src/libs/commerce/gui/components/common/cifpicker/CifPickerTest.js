@@ -22,8 +22,14 @@ describe('CifPicker', () => {
     var getState;
 
     before(() => {
+        var promise = {
+            then: f => {
+                f('elem');
+                return promise;
+            }
+        };
         dollar.ajax = function(asd) {
-            return Promise.resolve(asd);
+            return promise;
         };
         getState = window.CIF.CifPicker.getState;
     });
@@ -169,6 +175,30 @@ describe('CifPicker', () => {
         close(control, state, callbackSpy);
 
         assert.isTrue(callbackSpy.calledOnce);
+    });
+
+    it('show picker and call selection handler', () => {
+        var show = window.CIF.CifPicker.show;
+        var state = getState(control);
+        state.api = {
+            attach: function() {},
+            detach: function() {},
+            pick: function() {
+                return {
+                    then: function(resolve, reject) {
+                        resolve();
+                    }
+                };
+            }
+        };
+
+        state.el = { focus: function() {} };
+
+        var selectionHandler = function() {};
+        var selectionHandlerSpy = sinon.spy(selectionHandler);
+
+        show(control, state, selectionHandlerSpy);
+        assert.isTrue(selectionHandlerSpy.calledOnce);
     });
 
     function verifyCall(url) {
