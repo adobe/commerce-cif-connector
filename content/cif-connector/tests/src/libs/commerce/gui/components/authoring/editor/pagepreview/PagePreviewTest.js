@@ -15,57 +15,70 @@
 'use strict';
 
 describe('PagePreview', () => {
-    it('createPreviewUrl() returns null for invalid parameters', () => {
-        var createPreviewUrl = window.CIF.PagePreview.createPreviewUrl;
+    var handleProductPreview = window.CIF.PagePreview.handleProductPreview;
+    var handleCategoryPreview = window.CIF.PagePreview.handleCategoryPreview;
 
-        assert.equal(null, createPreviewUrl(null, null));
-        assert.equal(null, createPreviewUrl('editor.html', null));
-        assert.equal(null, createPreviewUrl('editor.html', 'slug'));
-        assert.equal(null, createPreviewUrl('/editor', 'slug'));
-    });
-
-    it('createPreviewUrl() adds selector as new URL selector or replaces old selector with new selector', () => {
-        var createPreviewUrl = window.CIF.PagePreview.createPreviewUrl;
-        assert.equal('/editor.slug.html', createPreviewUrl('/editor.html', 'slug'));
-        assert.equal('/editor.slug.html', createPreviewUrl('/editor.any.html', 'slug'));
-    });
-
-    it('handlePreview() does nothing for invalid selections', () => {
-        var handlePreview = window.CIF.PagePreview.handlePreview;
+    it('Handling preview does nothing for invalid selections', () => {
         sinon.spy(window, 'open');
 
-        handlePreview(null, null);
+        handleProductPreview(null, null);
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview(null, {});
+        handleProductPreview(null, {});
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview(null, { selections: [] });
+        handleProductPreview(null, { selections: [] });
         assert.isFalse(window.open.calledOnce);
 
-        handlePreview(null, { selections: 'any' });
+        handleCategoryPreview(null, { selections: 'any' });
         assert.isFalse(window.open.calledOnce);
 
         window.open.restore();
     });
 
-    it('handlePreview() opens page preview for the first selection', () => {
-        var handlePreview = window.CIF.PagePreview.handlePreview;
+    it('handleProductPreview() opens product page preview for the first selection', () => {
+        var productPreviewServletUrl = '/bin/wcm/cif.previewproduct.html';
+
         sinon.spy(window, 'open');
-        Granite.author.ContentFrame.location = '/editor.html/products/product-page.html';
 
-        handlePreview(null, { selections: { value: 'slug' } });
-        assert.isTrue(window.open.calledOnce);
-        assert.equal('/editor.html/products/product-page.slug.html', window.open.getCall(0).args[0]);
+        handleProductPreview(null, { selections: { value: 'item-identifier' } });
+        assert.isTrue(
+            window.open.calledWith(productPreviewServletUrl + '?url_key=item-identifier&sku=item-identifier')
+        );
 
-        handlePreview(null, { selections: [{ value: 'slug' }] });
-        assert.isTrue(window.open.calledTwice);
-        assert.equal('/editor.html/products/product-page.slug.html', window.open.getCall(1).args[0]);
+        handleProductPreview(null, { selections: { value: 'item-identifier#item-variant' } });
+        assert.isTrue(
+            window.open.calledWith(
+                productPreviewServletUrl + '?url_key=item-identifier&sku=item-identifier&variant_sku=item-variant'
+            )
+        );
 
-        Granite.author.ContentFrame.location = '/editor.html/products/page.html';
-        handlePreview(null, { selections: [{ value: 'slug' }, { value: 'slug2' }] });
-        assert.isTrue(window.open.calledThrice);
-        assert.equal('/editor.html/products/page.slug.html', window.open.getCall(2).args[0]);
+        handleProductPreview(null, { selections: [{ value: 'item-identifier' }] });
+        assert.isTrue(
+            window.open.calledWith(productPreviewServletUrl + '?url_key=item-identifier&sku=item-identifier')
+        );
+
+        handleProductPreview(null, { selections: [{ value: 'item-identifier' }, { value: 'item-identifier-2' }] });
+        assert.isTrue(
+            window.open.calledWith(productPreviewServletUrl + '?url_key=item-identifier&sku=item-identifier')
+        );
+
+        window.open.restore();
+    });
+
+    it('handleCategoryPreview() opens category page preview for the first selection', () => {
+        var categoryPreviewServletUrl = '/bin/wcm/cif.previewcategory.html';
+
+        sinon.spy(window, 'open');
+
+        handleCategoryPreview(null, { selections: { value: 'item-identifier' } });
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=item-identifier'));
+
+        handleCategoryPreview(null, { selections: [{ value: 'item-identifier' }] });
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=item-identifier'));
+
+        handleCategoryPreview(null, { selections: [{ value: 'item-identifier' }, { value: 'item-identifier-2' }] });
+        assert.isTrue(window.open.calledWith(categoryPreviewServletUrl + '?id=item-identifier'));
 
         window.open.restore();
     });
