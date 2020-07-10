@@ -37,7 +37,7 @@
                                         fieldLabel="Title"
                                         name="./jcr:title"
                                         required="{Boolean}true"
-                                        renderRedOnly="{Boolean}true"
+                                        renderReadOnly="{Boolean}true"
                                         disabled="{Boolean}true"/>
                                     <customfields
                                             jcr:primaryType="nt:unstructured"
