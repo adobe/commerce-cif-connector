@@ -110,7 +110,8 @@ The product picker field supports the following optional properties:
 * `selectionId` (id, sku, slug, path, combinedSku) - allows to choose the product attribute to be returned by the picker (default = id). Using `sku` returns the sku of the selected product, while using `combinedSku` returns a string like `base#variant` with the skus of the base product and the selected variant, or a single sku if a base product is selected.
 * `filter` (folderOrProduct, folderOrProductOrVariant) - filters the content to be rendered by the picker while navigating the product tree. `folderOrProduct` - renders folders and products. `folderOrProductOrVariant` - renders folders, product and product variants. If a product or product variant is rendered it becomes also selectable in the picker. (default = `folderOrProduct`) 
 
-The `cifproductfield` component requires the `cif.shell.picker` clientlib. To add a clientlib to a dialog, you can use the `extraClientlibs` property. See also https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/developing-components.html#customizing-dialog-fields.
+The `cifproductfield` component requires the `cif.shell.picker` clientlib. To add a clientlib to a dialog, you can use the `extraClientlibs` property. See also [Customizing Dialog Fields
+](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/developing-components.html#customizing-dialog-fields).
 
 ### Product Drag'n'drop (DnD)
 The connector includes a Sling post-processor that makes it possible to DnD a Product on a component, and configure the behavior of the DnD functionality. For example, you can refer to the `cq:dropTarget` configuration of the `productcarousel` and `productteaser` components in the [AEM CIF Core Components](https://github.com/adobe/aem-core-cif-components). The following parameters can be configured:
@@ -131,7 +132,8 @@ The category picker field supports the following optional properties:
 * `emptyText` - to configure the empty text value of the picker field
 * `selectionId`(id, path, sku, slug) - allows to choose the category attribute to be returned by the picker (default = id)
 
-The `cifcategoryfield` component requires the `cif.shell.picker` clientlib. To add a clientlib to a dialog, you can use the `extraClientlibs` property. See also https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/developing-components.html#customizing-dialog-fields.
+The `cifcategoryfield` component requires the `cif.shell.picker` clientlib. To add a clientlib to a dialog, you can use the `extraClientlibs` property. See also [Customizing Dialog Fields
+](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/developing-components.html#customizing-dialog-fields).
  
 ### Using a scaffolding to display the product properties page
 
@@ -155,7 +157,7 @@ To build all the modules run in the project root directory the following command
 ```
 mvn clean install
 ```
-π∏
+
 If you have a running AEM instance, you can also build and deploy all sub-projects into AEM with
 
 ```
