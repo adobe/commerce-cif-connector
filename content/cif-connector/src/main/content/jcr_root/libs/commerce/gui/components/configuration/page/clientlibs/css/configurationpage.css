@@ -30,7 +30,8 @@
     float: right;
 }
 
-.foundation-form input.cif-lockable-field, .foundation-form coral-select.cif-lockable-field {
+.foundation-form input.cif-lockable-field,
+.foundation-form coral-select.cif-lockable-field {
     display: inline-block !important;
     width: 94% !important;
 }

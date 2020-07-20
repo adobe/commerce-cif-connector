@@ -99,9 +99,11 @@
     function init() {
         formElement = $('#cq-commerce-products-bindproducttree-form');
         catalogIdentifierCoralSelectComponent = $('#cq-commerce-products-bindproducttree-catalog-select').get(0);
-        catalogIdentifierDataCoralSelectComponent = $('#cq-commerce-products-bindproducttree-catalog-select-data').get(0);
+        catalogIdentifierDataCoralSelectComponent = $('#cq-commerce-products-bindproducttree-catalog-select-data').get(
+            0
+        );
         commerceProviderCoralSelectComponent = $('#cq-commerce-products-bindproducttree-provider-select').get(0);
-        graphQlClient = $("#cq-commerce-graphql-client").get(0);
+        graphQlClient = $('#cq-commerce-graphql-client').get(0);
         storeView = $('input[name="./magentoStore"]').get(0);
         graphQlProxyPath = $('input[name="./magentoGraphqlEndpoint"]').get(0);
         magentoRootCategoryId = $('input[name="./magentoRootCategoryId"]').get(0);
@@ -113,35 +115,35 @@
         catalogIdentifierHidden = $('#cq-commerce-products-bindproducttree-catalog-hidden').get(0);
 
         propertiesMap = {
-            "cq:catalogDataResourceProviderFactory": {
+            'cq:catalogDataResourceProviderFactory': {
                 element: commerceProviderCoralSelectComponent,
                 locked: false
             },
-            "cq:catalogIdentifier": {
+            'cq:catalogIdentifier': {
                 element: catalogIdentifierCoralSelectComponent,
                 locked: false
             },
-            "cq:graphqlClient": {
+            'cq:graphqlClient': {
                 element: graphQlClient,
                 locked: false
             },
-            "magentoStore": {
+            magentoStore: {
                 element: storeView,
                 locked: false
             },
-            "magentoGraphqlEndpoint": {
+            magentoGraphqlEndpoint: {
                 element: graphQlProxyPath,
                 locked: false
             },
-            "magentoRootCategoryId": {
+            magentoRootCategoryId: {
                 element: magentoRootCategoryId,
                 locked: false
             },
-            "jcr:language": {
+            'jcr:language': {
                 element: language,
                 locked: false
             }
-        }
+        };
     }
 
     /**
@@ -181,7 +183,7 @@
                 content: {
                     textContent: catalog
                 },
-                selected: (catalog === selected)
+                selected: catalog === selected
             };
         });
     }
@@ -221,7 +223,7 @@
      * Populates the commerce identifier select component after the commerce provider is selected.
      */
     function commerceProviderSelectedHandler() {
-        const catalogIdentifierLocked = getLockStatus("cq:catalogIdentifier");
+        const catalogIdentifierLocked = getLockStatus('cq:catalogIdentifier');
         const commerceProvider = getSelectedCommerceProvider();
 
         if (!catalogIdentifierLocked && commerceProvider !== '') {
@@ -229,7 +231,7 @@
         }
 
         if (inheritanceHandled === 0) {
-            catalogIdentifierCoralSelectComponent.disabled = (commerceProvider === '');
+            catalogIdentifierCoralSelectComponent.disabled = commerceProvider === '';
         }
     }
 
@@ -263,9 +265,10 @@
     function showInheritanceDialog(linkElement) {
         const dialog = document.getElementById('inheritance-dialog');
         dialog.header.innerHTML = linkElement.title;
-        dialog.content.innerHTML = '<p>Do you really want to '+linkElement.title.split(" ")[0].toLowerCase()+' the inheritance?</p>';
+        dialog.content.innerHTML =
+            '<p>Do you really want to ' + linkElement.title.split(' ')[0].toLowerCase() + ' the inheritance?</p>';
 
-        const confirmButton = dialog.footer.querySelector("#inheritance-change");
+        const confirmButton = dialog.footer.querySelector('#inheritance-change');
         confirmButton.dataset.targetProperty = linkElement.dataset.togglePropertyInheritance;
         confirmButton.dataset.locked = linkElement.dataset.inheritanceLocked;
 
@@ -282,13 +285,26 @@
         const iconSuffix = data.locked ? '' : 'Off';
         return $(
             '<a class="cif-toggle-inheritance" ' +
-                    'data-toggle-property-inheritance="' + data.property + '" ' +
-                    'data-inheritance-locked="' + data.locked + '" ' +
-                    'title="' + (data.locked ? 'Cancel inheritance' : 'Revert inheritance') + '" href="#">' +
-                '<coral-icon class="coral3-Icon coral3-Icon--link' + iconSuffix + ' coral3-Icon--sizeS" ' +
-                        'icon="link' + iconSuffix + '" size="S" role="img" aria-label="link ' + iconSuffix.toLowerCase() + '">' +
+                'data-toggle-property-inheritance="' +
+                data.property +
+                '" ' +
+                'data-inheritance-locked="' +
+                data.locked +
+                '" ' +
+                'title="' +
+                (data.locked ? 'Cancel inheritance' : 'Revert inheritance') +
+                '" href="#">' +
+                '<coral-icon class="coral3-Icon coral3-Icon--link' +
+                iconSuffix +
+                ' coral3-Icon--sizeS" ' +
+                'icon="link' +
+                iconSuffix +
+                '" size="S" role="img" aria-label="link ' +
+                iconSuffix.toLowerCase() +
+                '">' +
                 '</coral-icon>' +
-            '</a>').get(0);
+                '</a>'
+        ).get(0);
     }
 
     /**
@@ -307,14 +323,14 @@
         }
 
         linkElement.dataset.inheritanceLocked = status.toString();
-        linkElement.title = (!status ? 'Cancel inheritance' : 'Revert inheritance');
+        linkElement.title = !status ? 'Cancel inheritance' : 'Revert inheritance';
 
         const iconElement = linkElement.querySelector('coral-icon');
 
-        iconElement.classList.remove((status ? "coral3-Icon--linkOff" : "coral3-Icon--link"));
-        iconElement.classList.add((status ? "coral3-Icon--link" : "coral3-Icon--linkOff"));
-        iconElement.setAttribute("aria-label", (status ? "link" : "link off"));
-        iconElement.setAttribute("icon", (status ? "link" : "linkOff"));
+        iconElement.classList.remove(status ? 'coral3-Icon--linkOff' : 'coral3-Icon--link');
+        iconElement.classList.add(status ? 'coral3-Icon--link' : 'coral3-Icon--linkOff');
+        iconElement.setAttribute('aria-label', status ? 'link' : 'link off');
+        iconElement.setAttribute('icon', status ? 'link' : 'linkOff');
 
         if (inheritanceHandled === 2 && status) {
             if (propertyName === 'cq:catalogIdentifier') {
@@ -353,14 +369,14 @@
             inheritedValues = data.inheritedProperties;
             Object.keys(propertiesMap).forEach(function(key) {
                 const elem = propertiesMap[key].element;
-                elem.classList.add("cif-lockable-field");
+                elem.classList.add('cif-lockable-field');
                 propertiesMap[key].locked = data.overriddenProperties.indexOf(key) === -1;
                 setInitialValue(key);
                 const lockControl = generateInheritanceControl({
                     locked: propertiesMap[key].locked,
                     property: key
                 });
-                lockControl.addEventListener('click', function (event) {
+                lockControl.addEventListener('click', function(event) {
                     showInheritanceDialog(event.currentTarget);
                 });
 
@@ -369,32 +385,35 @@
             });
 
             const dialog = new Coral.Dialog().set({
-                id: "inheritance-dialog",
+                id: 'inheritance-dialog',
                 header: {
-                    innerHTML: ""
+                    innerHTML: ''
                 },
                 content: {
-                    innerHTML: ""
+                    innerHTML: ''
                 },
                 footer: {
-                    innerHTML: "<button is=\"coral-button\" coral-close=\"\" class=\"coral3-Button coral3-Button--secondary\" size=\"M\" variant=\"secondary\"><coral-button-label>No</coral-button-label></button>"
+                    innerHTML:
+                        '<button is="coral-button" coral-close="" class="coral3-Button coral3-Button--secondary" size="M" variant="secondary"><coral-button-label>No</coral-button-label></button>'
                 },
-                variant: "warning"
+                variant: 'warning'
             });
 
             const actionButton = new Coral.Button().set({
-                id: "inheritance-change",
-                variant: "primary",
+                id: 'inheritance-change',
+                variant: 'primary',
                 label: {
                     innerHTML: '<coral-button-label>Yes</coral-button-label>'
                 }
-            })
+            });
 
-            actionButton.on('click', function () {
-                const linkElement = document.querySelector('a[data-toggle-property-inheritance="'+this.dataset.targetProperty+'"]');
-                setLockStatus(linkElement, (this.dataset.locked !== 'true'));
+            actionButton.on('click', function() {
+                const linkElement = document.querySelector(
+                    'a[data-toggle-property-inheritance="' + this.dataset.targetProperty + '"]'
+                );
+                setLockStatus(linkElement, this.dataset.locked !== 'true');
                 dialog.hide();
-            })
+            });
 
             dialog.footer.appendChild(actionButton);
             document.body.appendChild(dialog);
@@ -408,11 +427,12 @@
      */
     function fetchInheritance() {
         const urlParams = new URLSearchParams(window.location.search);
-        var resourcePath = urlParams.has("item") ?
-            decodeURIComponent(urlParams.get("item")) : document.querySelector('input[name="parentPath"]').value;
+        var resourcePath = urlParams.has('item')
+            ? decodeURIComponent(urlParams.get('item'))
+            : document.querySelector('input[name="parentPath"]').value;
         resourcePath += '.cifconfig.json';
 
-        $.get(resourcePath).done(handleInheritanceReceieved)
+        $.get(resourcePath).done(handleInheritanceReceieved);
     }
 
     $(document).on('foundation-contentloaded', () => {
@@ -438,9 +458,9 @@
                 commerceProviderCoralSelectComponent.on('change', commerceProviderSelectedHandler);
                 catalogIdentifierCoralSelectComponent.on('change', catalogIdentifierSelectedHandler);
 
-                Object.keys(propertiesMap).forEach(function (key) {
+                Object.keys(propertiesMap).forEach(function(key) {
                     document.querySelector('input[name="./' + key + '@Delete"]').disabled = true;
-                })
+                });
 
                 fetchInheritance();
             });
