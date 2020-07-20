@@ -45,6 +45,10 @@
                                              sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                                              name="./cq:catalogIdentifier"
                                              cq:showOnCreate="{Boolean}true"/>
+                    <catalogIdentifierDelete jcr:primaryType="nt:unstructured"
+                                             sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                             name="./cq:catalogIdentifier@Delete"
+                                             cq:showOnCreate="{Boolean}true"/>
                     <catalogidentifierdata
                             granite:id="cq-commerce-products-bindproducttree-catalog-select-data"
                             jcr:primaryType="nt:unstructured"
@@ -75,6 +79,12 @@
                                     fieldDescription="The Store View identifier, empty will automatically fall back to 'default'."
                                     name="./magentoStore"
                                     cq:showOnCreate="{Boolean}true"/>
+
+                    <magentoStoreDelete jcr:primaryType="nt:unstructured"
+                                         sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                         name="./magentoStore@Delete"
+                                         cq:showOnCreate="{Boolean}true"/>
+
                     <graphqlEndpoint jcr:primaryType="nt:unstructured"
                                      sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                      fieldLabel="GraphQL Proxy Path"
@@ -84,11 +94,22 @@
                                      value="/magento/graphql"
                                      defaultValue="/magento/graphql"
                                      cq:showOnCreate="{Boolean}true"/>
+
+                    <graphqlEndpointDelete jcr:primaryType="nt:unstructured"
+                                           sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                           name="./magentoGraphqlEndpoint@Delete"
+                                           cq:showOnCreate="{Boolean}true"/>
+
                     <magentoRootCategoryId jcr:primaryType="nt:unstructured"
                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                            name="./magentoRootCategoryId"
                                            fieldLabel="Catalog Root Category Id"
                                            required="{Boolean}true"/>
+
+                    <magentoRootCategoryIdDelete jcr:primaryType="nt:unstructured"
+                                                 sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                                 name="./magentoRootCategoryId@Delete"
+                                                 cq:showOnCreate="{Boolean}true"/>
 
                     <language
                             granite:class="language"
