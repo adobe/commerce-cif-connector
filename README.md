@@ -23,7 +23,8 @@ The main parts of the project are:
 
 For local development and on-prem customer deployments you can install all the modules of the connector and also its required dependencies with the [all](all) content package.
 
-For AEM AMS customers please contact the SRE to deploy the CIF Connector.
+For AEM AMS and AMS Magento customers please contact the CSE to deploy the CIF Connector manually, externally from Cloud Manager. 
+Known Issue: At present, if the CIF connector is included in the Cloud Manager Git repository, the Code Quality check will fail due a SonarQube scan on the CIF connector source code.
 
 ### Via "all" package
 
