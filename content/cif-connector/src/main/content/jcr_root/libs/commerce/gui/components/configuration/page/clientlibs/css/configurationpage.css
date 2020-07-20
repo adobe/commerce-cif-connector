@@ -20,3 +20,17 @@
 .bindproducttreewizard-customfields.hide {
     display: none;
 }
+
+.cif-toggle-inheritance coral-icon {
+    color: #4b4b4b;
+}
+.cif-toggle-inheritance coral-icon {
+    margin-top: 0.5rem;
+    margin-left: 0.4rem;
+    float: right;
+}
+
+.foundation-form input.cif-lockable-field, .foundation-form coral-select.cif-lockable-field {
+    display: inline-block !important;
+    width: 94% !important;
+}
