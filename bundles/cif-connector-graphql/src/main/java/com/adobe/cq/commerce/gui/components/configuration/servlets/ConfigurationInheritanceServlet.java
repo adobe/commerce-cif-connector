@@ -67,8 +67,10 @@ public class ConfigurationInheritanceServlet extends SlingSafeMethodsServlet {
             // Get the container resource
             Resource configContainerResource = request.getResourceResolver().getResource(configContainerPath);
 
-            if (configContainerResource == null)
+            if (configContainerResource == null) {
                 response.sendError(500, "Unable to load configuration container resource");
+                return;
+            }
 
             // Start with a JSON documents that assumes no inheritance
             JSONObject config = new JSONObject();
@@ -94,7 +96,8 @@ public class ConfigurationInheritanceServlet extends SlingSafeMethodsServlet {
                         ValueMap vm = parentConfig.getValueMap();
                         // Iterate through properties relevant for the configuration
                         for (String key : CONFIG_KEYS) {
-                            // Check if the property was already set in a "deeper" configuration. The nodes further from root take precedence
+                            // Check if the property was already set in a "deeper" configuration. The nodes further from root take
+                            // precedence
                             if (!inheritedProps.has(key) && vm.containsKey(key)) {
                                 JSONObject propMeta = new JSONObject();
                                 propMeta.put("value", vm.get(key));
