@@ -6,6 +6,8 @@
 
 This is an AEM Commerce connector for Magento and GraphQL, that provides some integration of Magento products and categories in the AEM Commerce console, and some authoring features like product and category pickers.
 
+**Attention**: This project is for AEM 6.4/6.5 projects only and works with AEM quickstart. It is not intended to be used for AEM as a Cloud Service or with the AEM Cloud SDK.
+
 This connector only provides authoring features, this is not meant to be used to develop frontend components. To develop AEM frontend components, refer to the [AEM CIF Core Components](https://github.com/adobe/aem-core-cif-components) project.
 
 ## Modules
@@ -21,9 +23,9 @@ The main parts of the project are:
 
 ## Installation
 
-For local development and on-prem customer deployments you can install all the modules of the connector and also its required dependencies with the [all](all) content package.
+For local development and on-prem self-hosted customer deployments you can install all the modules of the connector and also its required dependencies with the [all](all) content package.
 
-For AEM AMS customers please contact the SRE to deploy the CIF Connector.
+For AEM AMS customers the CIF Connector is installed like other AEM Feature Packs as it _can not_ be deployed via Cloud Manager, please contact the SRE.
 
 ### Via "all" package
 
