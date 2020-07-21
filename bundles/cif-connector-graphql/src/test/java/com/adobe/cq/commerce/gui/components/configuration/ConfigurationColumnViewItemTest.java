@@ -30,6 +30,8 @@ import static com.adobe.cq.commerce.gui.components.configuration.ConfigurationCo
 import static com.adobe.cq.commerce.gui.components.configuration.ConfigurationColumnViewItem.CREATE_PULLDOWN_ACTIVATOR;
 import static com.adobe.cq.commerce.gui.components.configuration.ConfigurationColumnViewItem.DELETE_ACTIVATOR;
 import static com.adobe.cq.commerce.gui.components.configuration.ConfigurationColumnViewItem.PROPERTIES_ACTIVATOR;
+import static com.adobe.cq.commerce.gui.components.configuration.ConfigurationColumnViewItem.PUBLISH_ACTIVATOR;
+import static com.adobe.cq.commerce.gui.components.configuration.ConfigurationColumnViewItem.UNPUBLISH_ACTIVATOR;
 
 public class ConfigurationColumnViewItemTest {
 
@@ -198,6 +200,8 @@ public class ConfigurationColumnViewItemTest {
 
         String[] expectedActions = new String[] {
             PROPERTIES_ACTIVATOR,
+            PUBLISH_ACTIVATOR,
+            UNPUBLISH_ACTIVATOR,
             DELETE_ACTIVATOR
         };
 

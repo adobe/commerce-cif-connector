@@ -51,6 +51,8 @@ public class ConfigurationColumnViewItem {
     static final String PROPERTIES_ACTIVATOR = "cq-confadmin-actions-properties-activator";
     static final String CREATE_FOLDER_ACTIVATOR = "cq-confadmin-actions-create-folder-activator";
     static final String DELETE_ACTIVATOR = "cq-confadmin-actions-delete-activator";
+    static final String PUBLISH_ACTIVATOR = "cq-confadmin-actions-publish-activator";
+    static final String UNPUBLISH_ACTIVATOR = "cq-confadmin-actions-unpublish-activator";
 
     @Inject
     private Resource resource;
@@ -99,6 +101,8 @@ public class ConfigurationColumnViewItem {
         if (isCommerceBucket()) {
             // for items which are not configuration containers (folders)
             actions.add(PROPERTIES_ACTIVATOR);
+            actions.add(PUBLISH_ACTIVATOR);
+            actions.add(UNPUBLISH_ACTIVATOR);
         } else {
             if (!actions.contains(CREATE_PULLDOWN_ACTIVATOR)) {
                 actions.add(CREATE_PULLDOWN_ACTIVATOR);
