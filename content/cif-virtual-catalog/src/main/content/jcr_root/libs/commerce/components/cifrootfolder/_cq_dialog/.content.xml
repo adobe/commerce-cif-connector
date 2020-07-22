@@ -46,8 +46,7 @@
                                     <reference
                                             jcr:primaryType="nt:unstructured"
                                             sling:resourceType="commerce/components/cifrootfolder/reference"
-                                            text="Configuration reference"
-                                            path="${empty param.item ? requestPathInfo.suffix : param.item}"/>
+                                            text="Configuration reference" />
                                 </items>
                             </properties>
                             <systemprops
