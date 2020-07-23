@@ -24,58 +24,58 @@ window.CIF.PagePreview = {};
 
     var relPdpPreview = '.cq-commerce-pdp-preview-activator';
     var relPlpPreview = '.cq-commerce-plp-preview-activator';
+    var productPreviewServletUrl = '/bin/wcm/cif.previewproduct.html';
+    var categoryPreviewServletUrl = '/bin/wcm/cif.previewcategory.html';
 
-    var handlePreview = function(e, data) {
+    var handleProductPreview = function(e, data) {
+        handlePreview(data, productPreviewServletUrl);
+    };
+
+    var handleCategoryPreview = function(e, data) {
+        handlePreview(data, categoryPreviewServletUrl);
+    };
+
+    var handlePreview = function(data, previewServletUrl) {
         if (!data) {
             return;
         }
 
         var selections = data.selections;
-        var productSlug = null;
+        var identifier = null;
         if (Array.isArray(selections)) {
             if (selections.length > 0 && selections[0]) {
-                productSlug = selections[0].value;
+                identifier = selections[0].value;
             }
         } else if (selections) {
-            productSlug = selections.value;
+            identifier = selections.value;
         }
 
-        var url = Granite.author.ContentFrame.location;
-        var previewUrl = createPreviewUrl(url, productSlug);
-
-        if (previewUrl) {
-            window.open(previewUrl);
-        }
-    };
-
-    var createPreviewUrl = function(url, selector) {
-        if (!url || !selector) {
+        // Currently the picker returns only one identifier for the selected item.
+        // It can be one of the following: <id>, <url_key>, <sku>, <sku>#<variant_sku>
+        // This needs to be fixed in the future version so the picker will return multiple identifiers
+        var [itemIdentifier, itemVariant] = identifier ? identifier.split('#') : [];
+        if (!itemIdentifier) {
             return null;
         }
 
-        var indLastSlash = url.lastIndexOf('/');
-        if (indLastSlash < 0 || indLastSlash === url.length - 1) {
-            return null;
+        // prepare all possible parameters
+        var params =
+            previewServletUrl === productPreviewServletUrl
+                ? { url_key: itemIdentifier, sku: itemIdentifier }
+                : { id: itemIdentifier };
+        if (itemVariant) {
+            params.variant_sku = itemVariant;
         }
+        const qs = new URLSearchParams(params);
 
-        var urlPath = url.slice(0, indLastSlash + 1);
-        var urlName = url.substring(indLastSlash + 1);
-        var indHtml = urlName.lastIndexOf('.html');
-        var previewUrl = null;
-        if (indHtml > -1) {
-            var indSelector = urlName.slice(0, indHtml).lastIndexOf('.');
-            if (indSelector > -1) {
-                previewUrl = urlPath + urlName.slice(0, indSelector) + '.' + selector + '.html';
-            } else {
-                previewUrl = urlPath + urlName.slice(0, indHtml) + '.' + selector + '.html';
-            }
-        }
-
-        return previewUrl;
+        window.open(previewServletUrl + '?' + qs.toString());
     };
 
-    Granite.$(document).on('cifProductPickerSelection', relPdpPreview, handlePreview);
-    Granite.$(document).on('cifCategoryPickerSelection', relPlpPreview, handlePreview);
+    Granite.$(document).on('cifProductPickerSelection', relPdpPreview, handleProductPreview);
+    Granite.$(document).on('cifCategoryPickerSelection', relPlpPreview, handleCategoryPreview);
 
-    window.CIF.PagePreview = { handlePreview: handlePreview, createPreviewUrl: createPreviewUrl };
+    window.CIF.PagePreview = {
+        handleProductPreview: handleProductPreview,
+        handleCategoryPreview: handleCategoryPreview
+    };
 })(window, document, Granite);

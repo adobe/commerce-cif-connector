@@ -26,6 +26,8 @@ import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.api.conf.CommerceBasePathsService;
 import com.adobe.cq.commerce.graphql.search.CatalogSearchSupport;
@@ -47,6 +49,7 @@ import com.day.cq.wcm.api.PageManager;
         "sling.servlet.methods=GET"
     })
 public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
+    private static final Logger LOGGER = LoggerFactory.getLogger(IsProductDetailPageServlet.class);
 
     static final String PRODUCT_RT = "core/cif/components/commerce/product/v1/product";
     static final String CATALOG_PATH_PROPERTY = "catalogPath";
@@ -115,11 +118,19 @@ public class IsProductDetailPageServlet extends SlingSafeMethodsServlet {
      */
     static void prepareCatalogPathProperty(String path, SlingHttpServletRequest request) {
         ResourceResolver resourceResolver = request.getResourceResolver();
-        CatalogSearchSupport catalogSearchSupport = new CatalogSearchSupport(resourceResolver);
-        String catalogPath = catalogSearchSupport.findCatalogPath(path);
-        if (StringUtils.isBlank(catalogPath)) {
+        Resource resource = resourceResolver.resolve(path);
+        String catalogPath;
+        if (resource instanceof NonExistingResource) {
             CommerceBasePathsService pathsService = resourceResolver.adaptTo(CommerceBasePathsService.class);
             catalogPath = pathsService.getProductsBasePath();
+        } else {
+            CatalogSearchSupport catalogSearchSupport = new CatalogSearchSupport(resourceResolver);
+            catalogPath = catalogSearchSupport.findCatalogPath(resource.getPath());
+            if (StringUtils.isBlank(catalogPath) || resourceResolver.getResource(catalogPath) == null) {
+                LOGGER.warn("Invalid cq:catalogPath configured for path {}: {}", path, catalogPath);
+                CommerceBasePathsService pathsService = resourceResolver.adaptTo(CommerceBasePathsService.class);
+                catalogPath = pathsService.getProductsBasePath();
+            }
         }
         ExpressionCustomizer customizer = ExpressionCustomizer.from(request);
         customizer.setVariable(CATALOG_PATH_PROPERTY, catalogPath);
