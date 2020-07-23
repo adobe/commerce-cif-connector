@@ -1,0 +1,11 @@
+{
+  "full-reference" : {
+    "jcr:primaryType": "nt:unstructured",
+    "sling:resourceType": "commerce/components/cifrootfolder/reference",
+    "text": "Configuration reference"
+  },
+  "no-text-reference" : {
+    "jcr:primaryType": "nt:unstructured",
+    "sling:resourceType": "commerce/components/cifrootfolder/reference"
+  }
+}

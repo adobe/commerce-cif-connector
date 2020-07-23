@@ -14,7 +14,6 @@
 package com.adobe.cq.commerce.virtual.catalog.models.impl;
 
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -24,8 +23,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.virtual.catalog.models.ConfigurationReference;
 
@@ -34,7 +31,6 @@ import com.adobe.cq.commerce.virtual.catalog.models.ConfigurationReference;
     adapters = { ConfigurationReference.class },
     resourceType = ConfigurationReferenceImpl.RESOURCE_TYPE)
 public class ConfigurationReferenceImpl implements ConfigurationReference {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationReference.class);
     protected static final String RESOURCE_TYPE = "commerce/components/cifrootfolder/reference";
 
     @Self
@@ -43,28 +39,34 @@ public class ConfigurationReferenceImpl implements ConfigurationReference {
     @Inject
     private Resource resource;
 
-    private String text = "Reference";
+    private String text;
     private String configUrl;
 
     @PostConstruct
     private void initModel() {
-        LOGGER.debug("Initiating model with resource {}", resource.getPath());
         ValueMap vm = resource.getValueMap();
+
         if (vm.containsKey("text")) {
             text = vm.get("text", String.class);
+        } else {
+            text = "Reference";
         }
 
         String path = request.getParameter("item") != null ? request.getParameter("item") : request.getRequestPathInfo().getSuffix();
-        LOGGER.debug("target resource path {}", path);
+
         if (path != null) {
             Resource targetResource = request.getResourceResolver().getResource(path);
             if (targetResource != null) {
-                LOGGER.debug("Setting target resource {}", targetResource.getPath());
                 ValueMap targetVm = targetResource.getValueMap();
                 if (targetVm.containsKey("cq:conf")) {
-                    String configPath = vm.get("cq:conf", String.class);
-                    configUrl = "/mnt/overlay/wcm/core/content/sites/properties.html?item=" + URLEncoder.encode(configPath
-                        + "/settings/cloudconfigs/commerce", Charset.defaultCharset());
+                    String configPath = targetVm.get("cq:conf", String.class);
+
+                    Resource configResource = request.getResourceResolver().getResource(configPath + "/settings/cloudconfigs/commerce");
+
+                    if (configResource != null) {
+                        configUrl = "/mnt/overlay/wcm/core/content/sites/properties.html?item=" +
+                            URLEncoder.encode(configResource.getPath());
+                    }
                 }
             }
         }
