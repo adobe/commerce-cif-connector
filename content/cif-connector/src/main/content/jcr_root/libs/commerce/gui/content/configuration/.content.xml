@@ -97,6 +97,39 @@
                     <data jcr:primaryType="nt:unstructured"
                           href.uritemplate="/mnt/overlay/wcm/core/content/sites/properties.html{?item*}"/>
                 </viewproperties>
+                <publish
+                        jcr:primaryType="nt:unstructured"
+                        granite:rel="cq-confadmin-actions-publish-activator"
+                        sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                        action="cq.wcm.publish"
+                        relScope="item"
+                        activeSelectionCount="multiple"
+                        ignoreRel="{Boolean}false"
+                        target=".cq-confadmin-admin-childpages"
+                        icon="globe"
+                        text="Publish"
+                        variant="actionBar">
+                    <data
+                            jcr:primaryType="nt:unstructured"
+                            referenceSrc.url="/libs/wcm/core/content/reference.json?_charset_=utf-8{&amp;path*}"
+                            wizardSrc.uritemplate="/mnt/overlay/wcm/core/content/sites/publishpagewizard.html?_charset_=utf-8{&amp;item*}"/>
+                </publish>
+                <unpublish
+                        jcr:primaryType="nt:unstructured"
+                        granite:rel="cq-confadmin-actions-unpublish-activator"
+                        sling:resourceType="granite/ui/components/coral/foundation/collection/action"
+                        action="cq.wcm.unpublish"
+                        activeSelectionCount="multiple"
+                        ignoreRel="{Boolean}false"
+                        relScope="item"
+                        target=".cq-confadmin-admin-childpages"
+                        icon="globeStrike"
+                        text="Unpublish"
+                        variant="actionBar">
+                    <data
+                            jcr:primaryType="nt:unstructured"
+                            referenceSrc.url="/bin/wcm/references.json?_charset_=utf-8{&amp;path*}"/>
+                </unpublish>
                 <delete jcr:primaryType="nt:unstructured"
                         activeSelectionCount="multiple"
                         granite:rel="cq-confadmin-actions-delete-activator"
