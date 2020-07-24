@@ -17,6 +17,7 @@ package com.adobe.cq.commerce.gui.components.configuration.servlets;
 import java.io.IOException;
 
 import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -67,7 +68,7 @@ public class ConfigurationInheritanceServlet extends SlingSafeMethodsServlet {
             Resource configContainerResource = request.getResourceResolver().getResource(configContainerPath);
 
             if (configContainerResource == null) {
-                response.sendError(500, "Unable to load configuration container resource");
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to load configuration container resource");
                 return;
             }
 
@@ -78,7 +79,7 @@ public class ConfigurationInheritanceServlet extends SlingSafeMethodsServlet {
             response.getWriter().println(config.toString());
         } catch (JSONException e) {
             LOGGER.error("Unable to retrieve config: {}", e.getMessage());
-            response.sendError(500, "Unable to create JSON response");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to create JSON response");
         }
     }
 }
