@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  codecov: codecov/codecov@1.0.5
+  codecov: codecov/codecov@1.1.1
 
 common:
   restore_cache: &restore_cache
@@ -66,7 +66,6 @@ jobs:
       - store_artifacts:
           path: test-results/junit
       - codecov/upload:
-          conf: .circleci/codecov.yml
           flags: unittests
 
   karma:
@@ -90,15 +89,14 @@ jobs:
       - store_artifacts:
           path: content/cif-connector/tests/karma-junit
       - codecov/upload:
-          conf: .circleci/codecov.yml
           flags: karma
 
 
-  integration-test-652:
+  integration-test-655:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.2
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.5
         <<: *docker_auth
     resource_class: large
     working_directory: /home/circleci/build
@@ -146,7 +144,7 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - integration-test-652:
+      - integration-test-655:
           filters:
             tags:
               only: /.*/
