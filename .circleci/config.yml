@@ -105,11 +105,11 @@ jobs:
     <<: *integration_test_steps
 
 
-  integration-test-646:
+  integration-test-648:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk8
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.4.6
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.4.8
         <<: *docker_auth
     resource_class: large
     working_directory: /home/circleci/build
@@ -153,7 +153,7 @@ workflows:
           requires:
             - build
             - karma
-      - integration-test-646:
+      - integration-test-648:
           filters:
             tags:
               only: /.*/
