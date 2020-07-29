@@ -100,6 +100,14 @@ public class ConfigurationInheritanceServletTest {
         verify(mockResponse).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to load configuration container resource");
     }
 
+    @Test
+    public void testExceptionHandling() throws IOException {
+        SlingHttpServletResponse mockResponse = Mockito.mock(SlingHttpServletResponse.class);
+        Mockito.when(request.getResource().getPath()).thenThrow(JSONException.class);
+        servlet.doGet(request, mockResponse);
+        verify(mockResponse).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to create JSON response");
+    }
+
     private JSONObject requestConfigInheritance(String path) throws IOException, JSONException {
         Mockito.when(request.getResource().getPath()).thenReturn(path);
         servlet.doGet(request, response);
