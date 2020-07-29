@@ -293,7 +293,7 @@
             data.locked +
             '" ' +
             'title="' +
-            (data.locked ? 'Cancel inheritance' : 'Revert inheritance') +
+            (data.locked ? 'Apply inheritance' : 'Cancel inheritance') +
             '" href="#">' +
             '<coral-icon class="coral3-Icon coral3-Icon--link' +
             iconSuffix +
