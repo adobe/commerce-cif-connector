@@ -259,7 +259,7 @@
     }
 
     /**
-     * Function for displaying the inheritance break/revert dialog for confirmation
+     * Function for displaying the inheritance break/apply dialog for confirmation
      * @param linkElement
      */
     function showInheritanceDialog(linkElement) {
@@ -286,25 +286,25 @@
         const iconSuffix = data.locked ? '' : 'Off';
         return $(
             '<a class="cif-toggle-inheritance" ' +
-            'data-toggle-property-inheritance="' +
-            data.property +
-            '" ' +
-            'data-inheritance-locked="' +
-            data.locked +
-            '" ' +
-            'title="' +
-            (data.locked ? 'Apply inheritance' : 'Cancel inheritance') +
-            '" href="#">' +
-            '<coral-icon class="coral3-Icon coral3-Icon--link' +
-            iconSuffix +
-            ' coral3-Icon--sizeS" ' +
-            'icon="link' +
-            iconSuffix +
-            '" size="S" role="img" aria-label="link ' +
-            iconSuffix.toLowerCase() +
-            '">' +
-            '</coral-icon>' +
-            '</a>'
+                'data-toggle-property-inheritance="' +
+                data.property +
+                '" ' +
+                'data-inheritance-locked="' +
+                data.locked +
+                '" ' +
+                'title="' +
+                (data.locked ? 'Apply inheritance' : 'Cancel inheritance') +
+                '" href="#">' +
+                '<coral-icon class="coral3-Icon coral3-Icon--link' +
+                iconSuffix +
+                ' coral3-Icon--sizeS" ' +
+                'icon="link' +
+                iconSuffix +
+                '" size="S" role="img" aria-label="link ' +
+                iconSuffix.toLowerCase() +
+                '">' +
+                '</coral-icon>' +
+                '</a>'
         ).get(0);
     }
 
@@ -324,7 +324,7 @@
         }
 
         linkElement.dataset.inheritanceLocked = status.toString();
-        linkElement.title = !status ? 'Cancel inheritance' : 'Revert inheritance';
+        linkElement.title = !status ? 'Apply inheritance' : 'Cancel inheritance';
 
         const iconElement = linkElement.querySelector('coral-icon');
 
@@ -337,7 +337,9 @@
             if (propertyName === 'cq:catalogIdentifier') {
                 updateCatalogIdentifier(inheritedValues[propertyName].value);
             } else {
-                propertiesMap[propertyName].element.value = inheritedValues.hasOwnProperty(propertyName) ? inheritedValues[propertyName].value : '';
+                propertiesMap[propertyName].element.value = inheritedValues.hasOwnProperty(propertyName)
+                    ? inheritedValues[propertyName].value
+                    : '';
             }
 
             propertiesMap[propertyName].element.trigger('change');
@@ -375,7 +377,8 @@
             Object.keys(propertiesMap).forEach(function(key) {
                 const elem = propertiesMap[key].element;
                 elem.classList.add('cif-lockable-field');
-                propertiesMap[key].locked = inheritedValues.hasOwnProperty(key) && data.overriddenProperties.indexOf(key) === -1;
+                propertiesMap[key].locked =
+                    inheritedValues.hasOwnProperty(key) && data.overriddenProperties.indexOf(key) === -1;
                 setInitialValue(key);
                 const lockControl = generateInheritanceControl({
                     locked: propertiesMap[key].locked,
