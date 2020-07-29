@@ -282,28 +282,29 @@
      * @returns {*|jQuery}
      */
     function generateInheritanceControl(data) {
+        console.log(data);
         const iconSuffix = data.locked ? '' : 'Off';
         return $(
             '<a class="cif-toggle-inheritance" ' +
-                'data-toggle-property-inheritance="' +
-                data.property +
-                '" ' +
-                'data-inheritance-locked="' +
-                data.locked +
-                '" ' +
-                'title="' +
-                (data.locked ? 'Cancel inheritance' : 'Revert inheritance') +
-                '" href="#">' +
-                '<coral-icon class="coral3-Icon coral3-Icon--link' +
-                iconSuffix +
-                ' coral3-Icon--sizeS" ' +
-                'icon="link' +
-                iconSuffix +
-                '" size="S" role="img" aria-label="link ' +
-                iconSuffix.toLowerCase() +
-                '">' +
-                '</coral-icon>' +
-                '</a>'
+            'data-toggle-property-inheritance="' +
+            data.property +
+            '" ' +
+            'data-inheritance-locked="' +
+            data.locked +
+            '" ' +
+            'title="' +
+            (data.locked ? 'Cancel inheritance' : 'Revert inheritance') +
+            '" href="#">' +
+            '<coral-icon class="coral3-Icon coral3-Icon--link' +
+            iconSuffix +
+            ' coral3-Icon--sizeS" ' +
+            'icon="link' +
+            iconSuffix +
+            '" size="S" role="img" aria-label="link ' +
+            iconSuffix.toLowerCase() +
+            '">' +
+            '</coral-icon>' +
+            '</a>'
         ).get(0);
     }
 
@@ -336,7 +337,7 @@
             if (propertyName === 'cq:catalogIdentifier') {
                 updateCatalogIdentifier(inheritedValues[propertyName].value);
             } else {
-                propertiesMap[propertyName].element.value = inheritedValues[propertyName].value;
+                propertiesMap[propertyName].element.value = inheritedValues.hasOwnProperty(propertyName) ? inheritedValues[propertyName].value : '';
             }
 
             propertiesMap[propertyName].element.trigger('change');
@@ -348,6 +349,10 @@
      * @param key
      */
     function setInitialValue(key) {
+        if (!inheritedValues.hasOwnProperty(key)) {
+            return;
+        }
+
         const fieldData = propertiesMap[key];
         if (key === 'cq:catalogIdentifier') {
             const value = fieldData.locked ? inheritedValues[key].value : catalogIdentifierHidden.value;
@@ -370,7 +375,7 @@
             Object.keys(propertiesMap).forEach(function(key) {
                 const elem = propertiesMap[key].element;
                 elem.classList.add('cif-lockable-field');
-                propertiesMap[key].locked = data.overriddenProperties.indexOf(key) === -1;
+                propertiesMap[key].locked = inheritedValues.hasOwnProperty(key) && data.overriddenProperties.indexOf(key) === -1;
                 setInitialValue(key);
                 const lockControl = generateInheritanceControl({
                     locked: propertiesMap[key].locked,
