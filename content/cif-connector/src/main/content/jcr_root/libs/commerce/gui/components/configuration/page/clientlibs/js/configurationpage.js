@@ -285,25 +285,25 @@
         const iconSuffix = data.locked ? '' : 'Off';
         return $(
             '<a class="cif-toggle-inheritance" ' +
-            'data-toggle-property-inheritance="' +
-            data.property +
-            '" ' +
-            'data-inheritance-locked="' +
-            data.locked +
-            '" ' +
-            'title="' +
-            (data.locked ? 'Apply inheritance' : 'Cancel inheritance') +
-            '" href="#">' +
-            '<coral-icon class="coral3-Icon coral3-Icon--link' +
-            iconSuffix +
-            ' coral3-Icon--sizeS" ' +
-            'icon="link' +
-            iconSuffix +
-            '" size="S" role="img" aria-label="link ' +
-            iconSuffix.toLowerCase() +
-            '">' +
-            '</coral-icon>' +
-            '</a>'
+                'data-toggle-property-inheritance="' +
+                data.property +
+                '" ' +
+                'data-inheritance-locked="' +
+                data.locked +
+                '" ' +
+                'title="' +
+                (data.locked ? 'Apply inheritance' : 'Cancel inheritance') +
+                '" href="#">' +
+                '<coral-icon class="coral3-Icon coral3-Icon--link' +
+                iconSuffix +
+                ' coral3-Icon--sizeS" ' +
+                'icon="link' +
+                iconSuffix +
+                '" size="S" role="img" aria-label="link ' +
+                iconSuffix.toLowerCase() +
+                '">' +
+                '</coral-icon>' +
+                '</a>'
         ).get(0);
     }
 
