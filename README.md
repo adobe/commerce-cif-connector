@@ -25,7 +25,7 @@ The main parts of the project are:
 
 For local development and on-prem self-hosted customer deployments you can install all the modules of the connector and also its required dependencies with the [all](all) content package.
 
-For AEM AMS customers the CIF Connector is installed like other AEM Feature Packs as it _can not_ be deployed via Cloud Manager, please contact the SRE.
+For AEM AMS customers the CIF Connector is installed like other AEM Feature Packs as it _can not_ be deployed via Cloud Manager, please contact the CSE.
 
 ### Via "all" package
 
