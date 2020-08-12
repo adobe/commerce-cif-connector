@@ -36,29 +36,17 @@
                                         cq-msm-lockable="jcr:title"
                                         fieldLabel="Title"
                                         name="./jcr:title"
-                                        required="{Boolean}true"/>
-                                    <commerceprovider
-                                            jcr:primaryType="nt:unstructured"
-                                            sling:resourceType="granite/ui/components/foundation/form/textfield"
-                                            cq-msm-lockable="cq:catalogDataResourceProviderFactory"
-                                            disabled="{Boolean}true"
-                                            fieldLabel="Commerce provider"
-                                            name="./cq:catalogDataResourceProviderFactory"
-                                            renderReadOnly="{Boolean}true"
-                                            required="{Boolean}true"/>
+                                        required="{Boolean}true"
+                                        renderReadOnly="{Boolean}true"
+                                        disabled="{Boolean}true"/>
                                     <customfields
                                             jcr:primaryType="nt:unstructured"
                                             sling:resourceType="commerce/components/cifrootfolder/include"
                                             path="${empty param.item ? requestPathInfo.suffix : param.item}"/>
-                                    <project
+                                    <reference
                                             jcr:primaryType="nt:unstructured"
-                                            sling:resourceType="granite/ui/components/foundation/form/textfield"
-                                            cq-msm-lockable="cq:catalogIdentifier"
-                                            disabled="{Boolean}true"
-                                            fieldLabel="Catalog identifier"
-                                            name="./cq:catalogIdentifier"
-                                            renderReadOnly="{Boolean}true"
-                                            required="{Boolean}false"/>
+                                            sling:resourceType="commerce/components/cifrootfolder/reference"
+                                            text="Configuration reference" />
                                 </items>
                             </properties>
                             <systemprops

@@ -65,8 +65,14 @@
 
     private List<String> getActionRels(Resource resource, ValueMap properties, Product product, AccessControlManager acm, SlingScriptHelper sling) throws RepositoryException {
         boolean isVirtual = isVirtual(resource) || isCloudBoundFolder(resource);
+        boolean isBinding = isBinding(resource);
         List<String> applicableRelationships = new ArrayList<String>();
         if (!isVirtual) { //creation is disabled for a virtual resource
+            if (isBinding) {
+                applicableRelationships.add("cq-commerce-products-folderproperties-activator");
+                return applicableRelationships;
+            }
+
             if (product != null) {
                 applicableRelationships.add("cq-commerce-products-createvariation-activator");
             } else {
@@ -153,6 +159,19 @@
         }
 
         return false;
+    }
+
+    private boolean isBinding(Resource resource) {
+        if (isVirtual(resource)) {
+            return false;
+        }
+
+        Node node = resource.adaptTo(Node.class);
+        try {
+            return node.hasProperty("cq:conf");
+        } catch (RepositoryException ex) {
+            return false;
+        }
     }
 
     private boolean isVirtual(Resource resource) {
