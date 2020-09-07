@@ -76,7 +76,7 @@
                     <magentoStore jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                     fieldLabel="Store View"
-                                    fieldDescription="The Store View identifier. If empty no store view is included in the requests sent to the GraphQL endpoint."
+                                    fieldDescription="The Store View identifier. If empty, no store view is included in the requests sent to the GraphQL endpoint."
                                     name="./magentoStore"
                                     cq:showOnCreate="{Boolean}true"/>
 
