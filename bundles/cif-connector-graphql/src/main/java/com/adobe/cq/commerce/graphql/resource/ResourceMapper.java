@@ -164,6 +164,7 @@ class ResourceMapper {
                 categoryTree = graphqlDataService.getCategoryById(rootCategoryId, storeView);
             }
         } catch (Exception x) {
+            LOGGER.error("Error while fetching child categories", x);
             List<Resource> list = new ArrayList<>();
             list.add(new ErrorResource(resolver, parent.getPath()));
             return list.iterator();
