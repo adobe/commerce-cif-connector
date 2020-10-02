@@ -45,10 +45,11 @@ Starting with version `0.6.0`, all connector artifacts will be released with the
 
 For previous versions, we only provide the version requirements of the `all` package. If you need to check the versions of other modules, simply checkout the corresponding `cif-connector-all-x.y.z` tag and check the versions of other modules in the corresponding POM files or in the POM of the `all` project.
 
-| CIF Connector | AEM 6.4 | AEM 6.5 | Magento | Java |
-|---------------|---------|---------|---------|------|
-| 1.3.0         | 6.4.4.0 | 6.5.0   | 2.3.4 & 2.3.5  | 1.8  |
-| 0.8.1         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3  | 1.8  |
+| CIF Connector | AEM 6.4 | AEM 6.5 | Magento       | Java |
+|---------------|---------|---------|---------------|------|
+| 1.4.0         | 6.4.4.0 | 6.5.0   | 2.4.0         | 1.8  |
+| 1.3.0         | 6.4.4.0 | 6.5.0   | 2.3.4 & 2.3.5 | 1.8  |
+| 0.8.1         | 6.4.4.0 | 6.5.0   | 2.3.2 & 2.3.3 | 1.8  |
 
 For a list of requirements for previous versions, see [Historical System Requirements](VERSIONS.md).
 
