@@ -68,6 +68,7 @@ import static com.adobe.cq.commerce.graphql.resource.Constants.IS_ERROR;
 import static com.adobe.cq.commerce.graphql.resource.Constants.LEAF_CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.MAGENTO_GRAPHQL_PROVIDER;
 import static com.adobe.cq.commerce.graphql.resource.Constants.PRODUCT;
+import static com.adobe.cq.commerce.graphql.resource.Constants.URL_PATH;
 import static com.adobe.cq.commerce.graphql.resource.GraphqlQueryLanguageProvider.VIRTUAL_PRODUCT_QUERY_LANGUAGE;
 import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
 import static org.junit.Assert.assertEquals;
@@ -213,6 +214,8 @@ public class GraphqlResourceProviderTest {
                 // deep read cifId
                 String cifId = category.getValueMap().get(CIF_ID, String.class);
                 assertEquals(cifId, category.getValueMap().get("./" + CIF_ID, String.class));
+
+                assertEquals("venia-dresses", category.getValueMap().get(URL_PATH, String.class));
             }
         }
     }
