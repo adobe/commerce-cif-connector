@@ -133,7 +133,7 @@ The category picker field supports the following optional properties:
 * `rootPath` - configure the root path of the virtual catalog data tree to be used (default = `/var/commerce/products`)
 * `multiple` (true, false) - allows to select one or multiple categories (default = false)
 * `emptyText` - to configure the empty text value of the picker field
-* `selectionId`(id, path, sku, slug) - allows to choose the category attribute to be returned by the picker (default = id)
+* `selectionId`(id, path, idAndUrlPath) - allows to choose the category attribute to be returned by the picker (default = id). The `idAndUrlPath` is a special option that will store the category `id` and Magento's `url_path` separated by a `|` character like for example `1|men/tops`.
 
 The `cifcategoryfield` component requires the `cif.shell.picker` clientlib. To add a clientlib to a dialog, you can use the `extraClientlibs` property. See also [Customizing Dialog Fields
 ](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/developing-components.html#customizing-dialog-fields).

@@ -33,6 +33,7 @@ import static com.adobe.cq.commerce.graphql.resource.Constants.CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.CIF_ID;
 import static com.adobe.cq.commerce.graphql.resource.Constants.LEAF_CATEGORY;
 import static com.adobe.cq.commerce.graphql.resource.Constants.MAGENTO_GRAPHQL_PROVIDER;
+import static com.adobe.cq.commerce.graphql.resource.Constants.URL_PATH;
 
 class CategoryResource extends SyntheticResource {
 
@@ -56,6 +57,7 @@ class CategoryResource extends SyntheticResource {
         if (category != null) {
             map.put(JcrConstants.JCR_TITLE, category.getName());
             map.put(CIF_ID, category.getId());
+            map.put(URL_PATH, category.getUrlPath());
             String str = category.getChildrenCount();
             int childCount = 0;
             try {
