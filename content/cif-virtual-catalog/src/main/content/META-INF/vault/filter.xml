@@ -31,7 +31,8 @@
     <filter root="/libs/commerce/gui/components/admin/products/childrow/childrow.jsp"/>
     <filter root="/libs/commerce/gui/components/admin/products/childcolumnitem/childcolumnitem.jsp"/>
     <filter root="/libs/commerce/gui/components/admin/products/bindproducttreewizard"/>
-    
+    <filter root="/apps/commerce/gui/content/products/folderproperties"/>
+
     <!-- We delete the cq:tags search field in the product picker -->
     <filter root="/libs/commerce/gui/content/common/productfield/picker/search/form/tagid"/>
     <filter root="/libs/commerce/gui/content/common/productfield/picker/search/form/tagid-property"/>
