@@ -15,6 +15,8 @@
 
 package com.adobe.cq.commerce.gui.components.configuration;
 
+import java.util.Calendar;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -33,6 +35,7 @@ import com.adobe.granite.ui.components.Config;
 import com.adobe.granite.ui.components.ExpressionHelper;
 import com.adobe.granite.ui.components.ExpressionResolver;
 import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.replication.ReplicationStatus;
 
 @Model(
     adaptables = SlingHttpServletRequest.class,
@@ -52,6 +55,10 @@ public class ConfigurationColumnPreview {
     private Resource itemResource;
 
     private ValueMap properties;
+
+    private Calendar modifiedTime = null;
+
+    private Calendar publishedTime = null;
 
     @PostConstruct
     protected void initModel() {
@@ -79,6 +86,14 @@ public class ConfigurationColumnPreview {
             Resource jcrContent = itemResource.getChild(JcrConstants.JCR_CONTENT);
             properties = jcrContent != null ? jcrContent.getValueMap() : itemResource.getValueMap();
         }
+
+        modifiedTime = properties.get("cq:lastModified", Calendar.class);
+        ReplicationStatus replicationStatus = itemResource.adaptTo(ReplicationStatus.class);
+        if (replicationStatus != null && !replicationStatus.isDeactivated()) {
+            publishedTime = replicationStatus.getLastPublished();
+        } else {
+            publishedTime = null;
+        }
     }
 
     public String getTitle() {
@@ -91,5 +106,13 @@ public class ConfigurationColumnPreview {
 
     public String getItemResourcePath() {
         return itemResource != null ? itemResource.getPath() : "";
+    }
+
+    public String getModifiedTime() {
+        return modifiedTime == null ? null : modifiedTime.toInstant().toString();
+    }
+
+    public String getPublishedTime() {
+        return publishedTime == null ? null : publishedTime.toInstant().toString();
     }
 }
