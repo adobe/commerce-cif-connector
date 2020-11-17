@@ -359,7 +359,6 @@
 
     <properties>
         <formatter.config>../../parent/eclipse-formatter.xml</formatter.config>
-        <baseline.skip>false</baseline.skip>
     </properties>
 
 </project>
