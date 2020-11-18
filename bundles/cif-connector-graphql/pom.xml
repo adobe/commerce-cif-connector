@@ -13,7 +13,7 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+
     <parent>
         <groupId>com.adobe.commerce.cif</groupId>
         <artifactId>cif-connector-parent</artifactId>
@@ -58,7 +58,7 @@
                     <instructions>
                         <!-- Enable registration of Sling Models classes via bnd plugin -->
                         <_plugin>org.apache.sling.bnd.models.ModelsScannerPlugin</_plugin>
-                        <Export-Package>!*,
+                        <Export-Package>
                             com.adobe.cq.commerce.gui.components.common.cifcategoryfield,
                             com.adobe.cq.commerce.gui.components.common.cifproductfield,
                             com.adobe.cq.commerce.gui.components.configuration
@@ -211,7 +211,6 @@
             <artifactId>osgi.cmpn</artifactId>
         </dependency>
         
-        <!-- Javax annotations -->
         <dependency>
             <groupId>org.apache.sling</groupId> 
             <artifactId>org.apache.sling.jcr.jcr-wrapper</artifactId>
@@ -229,12 +228,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Javax annotations -->
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
             <version>1.3.2</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>

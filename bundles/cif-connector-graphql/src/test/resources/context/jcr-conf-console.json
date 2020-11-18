@@ -15,6 +15,7 @@
             "cq:catalogIdentifier": "my-catalog",
             "magentoStore": "4",
             "jcr:created": "Thu Feb 06 2020 14:21:13 GMT+0200",
+            "cq:lastModified": "Thu Feb 06 2020 14:21:13 GMT+0200",
             "cq:catalogDataResourceProviderFactory": "magento-graphql"
           }
         }
