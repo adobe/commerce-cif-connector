@@ -32,6 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import com.adobe.cq.commerce.graphql.client.GraphqlClient;
+import com.adobe.cq.commerce.graphql.client.GraphqlClientConfiguration;
 import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.graphql.client.HttpMethod;
@@ -55,7 +56,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 public class GraphqlDataServiceImplTest {
 
@@ -78,11 +81,14 @@ public class GraphqlDataServiceImplTest {
     public void setUp() throws Exception {
         httpClient = Mockito.mock(HttpClient.class);
 
+        GraphqlClientConfiguration graphqlClientConfiguration = mock(GraphqlClientConfiguration.class);
+        when(graphqlClientConfiguration.httpMethod()).thenReturn(HttpMethod.POST);
+        when(graphqlClientConfiguration.identifier()).thenReturn("default");
+
         graphqlClient = new GraphqlClientImpl();
-        Whitebox.setInternalState(graphqlClient, "identifier", "default");
         Whitebox.setInternalState(graphqlClient, "gson", new Gson());
         Whitebox.setInternalState(graphqlClient, "client", httpClient);
-        Whitebox.setInternalState(graphqlClient, "httpMethod", HttpMethod.POST);
+        Whitebox.setInternalState(graphqlClient, "configuration", graphqlClientConfiguration);
 
         MockGraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
 
@@ -151,8 +157,12 @@ public class GraphqlDataServiceImplTest {
     public void testWrongClient() throws Exception {
         dataService.unbindGraphqlClient(graphqlClient, null);
 
+        GraphqlClientConfiguration graphqlClientConfiguration = mock(GraphqlClientConfiguration.class);
+        when(graphqlClientConfiguration.httpMethod()).thenReturn(HttpMethod.POST);
+        when(graphqlClientConfiguration.identifier()).thenReturn("wrongid");
+
         GraphqlClientImpl wrongClient = new GraphqlClientImpl();
-        Whitebox.setInternalState(wrongClient, "identifier", "wrongid");
+        Whitebox.setInternalState(wrongClient, "configuration", graphqlClientConfiguration);
         dataService.bindGraphqlClient(wrongClient, null);
 
         Exception exception = null;
