@@ -44,6 +44,7 @@ import com.adobe.cq.commerce.api.CommerceConstants;
 import com.adobe.cq.commerce.api.CommerceException;
 import com.adobe.cq.commerce.api.Product;
 import com.adobe.cq.commerce.graphql.client.GraphqlClient;
+import com.adobe.cq.commerce.graphql.client.GraphqlClientConfiguration;
 import com.adobe.cq.commerce.graphql.client.HttpMethod;
 import com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl;
 import com.adobe.cq.commerce.graphql.core.MagentoProduct;
@@ -114,10 +115,13 @@ public class GraphqlResourceProviderTest {
     public void setUp() throws Exception {
         httpClient = Mockito.mock(HttpClient.class);
 
+        GraphqlClientConfiguration graphqlClientConfiguration = mock(GraphqlClientConfiguration.class);
+        when(graphqlClientConfiguration.httpMethod()).thenReturn(HttpMethod.POST);
+
         GraphqlClient baseClient = new GraphqlClientImpl();
         Whitebox.setInternalState(baseClient, "gson", new Gson());
         Whitebox.setInternalState(baseClient, "client", httpClient);
-        Whitebox.setInternalState(baseClient, "httpMethod", HttpMethod.POST);
+        Whitebox.setInternalState(baseClient, "configuration", graphqlClientConfiguration);
 
         GraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
         dataService = new GraphqlDataServiceImpl();
