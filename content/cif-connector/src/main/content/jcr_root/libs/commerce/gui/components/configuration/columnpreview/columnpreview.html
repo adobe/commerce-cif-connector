@@ -13,14 +13,29 @@ governing permissions and limitations under the License.
 */-->
 <coral-columnview-preview data-sly-use.configPreview="com.adobe.cq.commerce.gui.components.configuration.ConfigurationColumnPreview">
     <coral-columnview-preview-content>
-        <coral-columnview-preview-asset >
+
+        <coral-columnview-preview-asset>
             <coral-icon  data-sly-test.isFolder="${configPreview.isFolder}" class="foundation-collection-item-thumbnail" icon="folder" size="XL" role="img"></coral-icon>
             <coral-icon data-sly-test="${!isFolder}" class="foundation-collection-item-thumbnail" icon="page" size="XL" role="img"></coral-icon>
         </coral-columnview-preview-asset>
 
         <coral-columnView-preview-label>${'Title' @ i18n}</coral-columnView-preview-label>
-        <coral-columnview-preview-value>${configPreview.title}
+        <coral-columnview-preview-value>${configPreview.title}</coral-columnview-preview-value>
+
+        <sly data-sly-test="${!isFolder}">
+
+        <coral-columnView-preview-label data-sly-test.modified="${configPreview.modifiedTime}">${'Modified' @ i18n}</coral-columnView-preview-label>
+        <coral-columnview-preview-value data-sly-test="${modified}">
+            <foundation-time type="datetime" value="${configPreview.modifiedTime}"></foundation-time>
         </coral-columnview-preview-value>
+
+        <coral-columnView-preview-label>${'Published' @ i18n}</coral-columnView-preview-label>
+        <coral-columnview-preview-value>
+            <foundation-time data-sly-test.published="${configPreview.publishedTime}" type="datetime" value="${configPreview.publishedTime}"></foundation-time>
+            <sly data-sly-test="${!published}">${'Not published' @ i18n}</sly>
+        </coral-columnview-preview-value>
+
+        </sly>
         
     </coral-columnview-preview-content>
 </coral-columnview-preview>

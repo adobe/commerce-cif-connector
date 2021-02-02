@@ -15,6 +15,8 @@
 
 package com.adobe.cq.commerce.gui.components.configuration;
 
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.adobe.granite.ui.components.ExpressionResolver;
+import com.day.cq.replication.ReplicationStatus;
 import com.google.common.collect.ImmutableMap;
 import io.wcm.testing.mock.aem.junit.AemContext;
 
@@ -66,6 +69,30 @@ public class ConfigurationColumnPreviewTest {
         Assert.assertEquals("Returns the correct title", "Mock configuration", preview.getTitle());
         Assert.assertEquals("Returns whether it's folder or not", false, preview.isFolder());
         Assert.assertEquals("Returns the correct path", CONFIGURATION_PATH, preview.getItemResourcePath());
+        Assert.assertEquals("Returns the last modified time", "2020-02-06T12:21:13Z", preview.getModifiedTime());
+        Assert.assertEquals("Returns null for published times if not published", null, preview.getPublishedTime());
+    }
+
+    @Test
+    public void testPublishedTime() {
+        SlingBindings slingBindings = (SlingBindings) context.request().getAttribute(SlingBindings.class.getName());
+        slingBindings.put("resource", columnPreviewDef);
+        context.currentResource(columnPreviewDef);
+
+        final String publishedTime = "2020-02-07T12:21:13Z";
+
+        ReplicationStatus replicationStatus = Mockito.mock(ReplicationStatus.class);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(Instant.parse(publishedTime).toEpochMilli());
+        Mockito.when(replicationStatus.getLastPublished()).thenReturn(calendar);
+        context.registerAdapter(Resource.class, ReplicationStatus.class, replicationStatus);
+
+        ConfigurationColumnPreview preview = context.request().adaptTo(ConfigurationColumnPreview.class);
+        Assert.assertEquals("Returns the published time", publishedTime, preview.getPublishedTime());
+
+        Mockito.when(replicationStatus.isDeactivated()).thenReturn(true);
+        preview = context.request().adaptTo(ConfigurationColumnPreview.class);
+        Assert.assertEquals("Returns null for published time when deactivated", null, preview.getPublishedTime());
     }
 
 }

@@ -36,7 +36,7 @@ public class CIFCategoryFieldHelper extends WCMUsePojo {
         }
 
         String st = getRequest().getParameter("selectionId");
-        if ("id".equals(st) || "path".equals(st)) {
+        if ("id".equals(st) || "path".equals(st) || "idAndUrlPath".contentEquals(st)) {
             selectionId = st;
         } else {
             selectionId = "id";
@@ -83,8 +83,10 @@ public class CIFCategoryFieldHelper extends WCMUsePojo {
     public String getSelectionId() {
         if ("id".equals(selectionId)) {
             return getProperties().get("cifId", String.class);
-        } else if ("path".equals(selectionId)){
+        } else if ("path".equals(selectionId)) {
             return getResource().getPath();
+        } else if ("idAndUrlPath".equals(selectionId)) {
+            return getProperties().get("cifId", String.class) + "|" + getProperties().get("urlPath", String.class);
         } else {
             return getProperties().get("cifId", String.class);
         }
