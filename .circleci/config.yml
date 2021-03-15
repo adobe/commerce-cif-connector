@@ -165,4 +165,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^cif-connector-reactor-\d+\.\d+\.\d+$/
+              only: /^cif-connector-reactor-\d+\.\d+\.\d+-magento242ee$/
