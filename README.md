@@ -8,9 +8,9 @@ This is an AEM Commerce connector for Magento and GraphQL, that provides some in
 
 **Attention**: This project should only be used for AEM 6.4/6.5 projects with Magento up to version 2.4.2 only and works with AEM quickstart. It is compatible with CIF Core Components up to version 1.9.0, see [versions](VERSION.md) overview.
 
-For AEM 6.5 projects using Magento 2.4.2 in combination with CIF 1.10.0 the [AEM Commerce Add-On for AEM 6.5](https://experience.adobe.com/#/downloads/content/software-distribution/en/aem.html) must be used. See AEM 6.5 Commerce documentation for usage instructions, getting started and development guides.
+For AEM projects using Magento 2.4.2 in combination with CIF 1.10.0 or later the [AEM Commerce Add-On for AEM 6.5](https://experience.adobe.com/#/downloads/content/software-distribution/en/aem.html) must be used. See [AEM 6.5 Content and Commerce documentation](https://experienceleague.adobe.com/docs/experience-manager-65/commerce/home.html) for usage instructions, getting started and development guides.
 
-It is also not intended to be used for AEM as a Cloud Service or with the AEM Cloud SDK. For using CIF on AEM as a Cloud Service see [AEM Commerce as a Cloud Service](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content-and-commerce/home.html) documentation.
+It is also not intended to be used for AEM as a Cloud Service or with the AEM Cloud SDK. For using CIF on AEM as a Cloud Service see [AEM Content and Commerce as a Cloud Service](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content-and-commerce/home.html) documentation.
 
 This connector only provides authoring features, this is not meant to be used to develop frontend components. To develop AEM frontend components, refer to the [AEM CIF Core Components](https://github.com/adobe/aem-core-cif-components) project.
 
