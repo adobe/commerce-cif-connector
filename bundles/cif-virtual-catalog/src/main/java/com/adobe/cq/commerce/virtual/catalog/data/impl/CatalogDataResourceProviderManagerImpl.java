@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -102,7 +103,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     private EventListener[] observationEventListeners;
 
-    private final List<Resource> dataRoots = Collections.synchronizedList(new ArrayList<>());
+    private volatile CopyOnWriteArrayList<Resource> dataRoots = new CopyOnWriteArrayList<>();
 
     @Reference(target = "(" + ServiceUserMapped.SUBSERVICENAME + "=" + VIRTUAL_PRODUCTS_SERVICE + ")")
     private ServiceUserMapped serviceUserMapped;
@@ -173,10 +174,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 log.error("Error finding data roots", x);
             }
         }
-        synchronized (dataRoots) {
-            dataRoots.clear();
-            dataRoots.addAll(allResources);
-        }
+        dataRoots = new CopyOnWriteArrayList<>(allResources);
     }
 
     private void registerDataRoots() {
@@ -186,7 +184,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         long countFailed = 0;
 
         findDataRoots(resolver);
-        final List<Resource> existingVirtualCatalogs = getDataRoots();
+        final List<Resource> existingVirtualCatalogs = dataRoots;
         for (Resource virtualCatalogRootResource : existingVirtualCatalogs) {
             boolean success = registerDataRoot(virtualCatalogRootResource);
             if (success) {
@@ -264,11 +262,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 dataRoots.remove(root);
             } else if (provider != null && oldProvider == null) {
                 registerService(rootPath, provider);
-                synchronized (dataRoots) {
-                    if (!dataRoots.contains(root)) {
-                        dataRoots.add(root);
-                    }
-                }
+                dataRoots.addIfAbsent(root);
                 return true;
             } else if (provider != null && !provider.equals(oldProvider)) {
                 log.debug("(Re-)registering resource provider {}.", rootPath);
@@ -449,7 +443,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         boolean isRelevant = (path.startsWith(CONF_ROOT) || path.startsWith(OBSERVATION_PATHS_DEFAULT)) &&
             WATCHED_PROPERTIES.stream().anyMatch(path::endsWith);
 
-        return isRelevant || getDataRoots().stream()
+        return isRelevant || dataRoots.stream()
             .map(Resource::getPath)
             .anyMatch(path::startsWith);
     }
@@ -489,11 +483,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     @Override
     public List<Resource> getDataRoots() {
-        List<Resource> roots = new ArrayList<>();
-        synchronized (dataRoots) {
-            roots.addAll(dataRoots);
-        }
-        return roots;
+        return dataRoots;
     }
 
     private void registerService(String rootPath, ResourceProvider provider) {
