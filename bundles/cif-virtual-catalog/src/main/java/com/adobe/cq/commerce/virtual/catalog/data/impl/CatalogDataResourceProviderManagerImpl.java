@@ -184,8 +184,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         long countFailed = 0;
 
         findDataRoots(resolver);
-        final List<Resource> existingVirtualCatalogs = dataRoots;
-        for (Resource virtualCatalogRootResource : existingVirtualCatalogs) {
+        for (Resource virtualCatalogRootResource : dataRoots) {
             boolean success = registerDataRoot(virtualCatalogRootResource);
             if (success) {
                 countSuccess++;
