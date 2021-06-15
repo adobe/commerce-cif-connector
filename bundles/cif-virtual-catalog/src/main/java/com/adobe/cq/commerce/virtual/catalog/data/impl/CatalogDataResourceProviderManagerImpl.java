@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -99,7 +100,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     private String[] observationPaths = { OBSERVATION_PATHS_DEFAULT, CONF_ROOT };
 
     private static final List<String> WATCHED_PROPERTIES = ImmutableList.of(PN_MAGENTO_STORE, PN_MAGENTO_ROOT_CATEGORY_ID,
-        PN_CATALOG_IDENTIFIER, PN_CATALOG_PROVIDER_FACTORY, PN_GRAPHQL_CLIENT);
+        PN_CATALOG_IDENTIFIER, PN_CATALOG_PROVIDER_FACTORY, PN_GRAPHQL_CLIENT, PN_CONF);
 
     private EventListener[] observationEventListeners;
 
@@ -175,6 +176,10 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             }
         }
         dataRoots = new CopyOnWriteArrayList<>(allResources);
+        if (log.isDebugEnabled()) {
+            List<String> paths = dataRoots.stream().map(Resource::getPath).collect(Collectors.toList());
+            log.debug("Candidate product data roots found: " + paths);
+        }
     }
 
     private void registerDataRoots() {
