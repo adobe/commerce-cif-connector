@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -98,11 +100,11 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     private String[] observationPaths = { OBSERVATION_PATHS_DEFAULT, CONF_ROOT };
 
     private static final List<String> WATCHED_PROPERTIES = ImmutableList.of(PN_MAGENTO_STORE, PN_MAGENTO_ROOT_CATEGORY_ID,
-        PN_CATALOG_IDENTIFIER, PN_CATALOG_PROVIDER_FACTORY, PN_GRAPHQL_CLIENT);
+        PN_CATALOG_IDENTIFIER, PN_CATALOG_PROVIDER_FACTORY, PN_GRAPHQL_CLIENT, PN_CONF);
 
     private EventListener[] observationEventListeners;
 
-    private volatile List<Resource> dataRoots;
+    private volatile CopyOnWriteArrayList<Resource> dataRoots = new CopyOnWriteArrayList<>();
 
     @Reference(target = "(" + ServiceUserMapped.SUBSERVICENAME + "=" + VIRTUAL_PRODUCTS_SERVICE + ")")
     private ServiceUserMapped serviceUserMapped;
@@ -143,10 +145,9 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
      * Find all existing virtual catalog data roots using all query defined in service configuration.
      *
      * @param resolver Resource resolver
-     * @return all virtual catalog roots
      */
     @SuppressWarnings("unchecked")
-    private List<Resource> findDataRoots(ResourceResolver resolver) {
+    void findDataRoots(ResourceResolver resolver) {
         List<Resource> allResources = new ArrayList<>();
         for (String queryString : this.findAllQueries) {
             if (!StringUtils.contains(queryString, "|")) {
@@ -174,8 +175,11 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 log.error("Error finding data roots", x);
             }
         }
-        dataRoots = allResources;
-        return allResources;
+        dataRoots = new CopyOnWriteArrayList<>(allResources);
+        if (log.isDebugEnabled()) {
+            List<String> paths = dataRoots.stream().map(Resource::getPath).collect(Collectors.toList());
+            log.debug("Candidate product data roots found: " + paths);
+        }
     }
 
     private void registerDataRoots() {
@@ -184,8 +188,8 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
         long countSuccess = 0;
         long countFailed = 0;
 
-        final List<Resource> existingVirtualCatalogs = findDataRoots(resolver);
-        for (Resource virtualCatalogRootResource : existingVirtualCatalogs) {
+        findDataRoots(resolver);
+        for (Resource virtualCatalogRootResource : dataRoots) {
             boolean success = registerDataRoot(virtualCatalogRootResource);
             if (success) {
                 countSuccess++;
@@ -223,12 +227,14 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             providerId = properties.get(CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID, String.class);
             if (providerId == null) {
                 log.warn("No {} configured, nothing to register here", CatalogDataResourceProviderFactory.PROPERTY_FACTORY_ID);
+                dataRoots.remove(root);
                 return false;
             }
             log.debug("Configured provider id is {}", providerId);
             factory = providerFactories.get(providerId);
             if (factory == null) {
                 log.warn("No factory for provider id {}, nothing to do here", providerId);
+                dataRoots.remove(root);
                 return false;
             }
         } else {
@@ -257,8 +263,10 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
             // unregister in case there was a provider registered before
             if (provider == null && oldProvider != null) {
                 unregisterService(oldProvider);
+                dataRoots.remove(root);
             } else if (provider != null && oldProvider == null) {
                 registerService(rootPath, provider);
+                dataRoots.addIfAbsent(root);
                 return true;
             } else if (provider != null && !provider.equals(oldProvider)) {
                 log.debug("(Re-)registering resource provider {}.", rootPath);
@@ -275,6 +283,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                 log.debug("Unregistering resource provider {}.", rootPath);
                 unregisterService(oldProvider);
             }
+            dataRoots.remove(root);
             log.warn("Virtual catalog data definition at '{}' is invalid.", rootPath);
         }
 
@@ -372,6 +381,7 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
                     unregisterService(provider);
                 }
             }
+            dataRoots.clear();
         }
     }
 
@@ -434,13 +444,12 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
     }
 
     private boolean isRelevantPath(String path) {
-        boolean isRelevant = path.startsWith(CONF_ROOT) && WATCHED_PROPERTIES.stream().anyMatch(path::endsWith);
-        ;
+        boolean isRelevant = (path.startsWith(CONF_ROOT) || path.startsWith(OBSERVATION_PATHS_DEFAULT)) &&
+            WATCHED_PROPERTIES.stream().anyMatch(path::endsWith);
 
-        return isRelevant || findDataRoots(resolver).stream()
+        return isRelevant || dataRoots.stream()
             .map(Resource::getPath)
             .anyMatch(path::startsWith);
-
     }
 
     @Reference(
@@ -478,11 +487,11 @@ public class CatalogDataResourceProviderManagerImpl implements CatalogDataResour
 
     @Override
     public List<Resource> getDataRoots() {
-        return dataRoots != null ? dataRoots : findDataRoots(resolver);
+        return dataRoots;
     }
 
     private void registerService(String rootPath, ResourceProvider provider) {
-        final Dictionary<String, Object> props = new Hashtable<String, Object>();
+        final Dictionary<String, Object> props = new Hashtable<>();
         props.put(Constants.SERVICE_DESCRIPTION, "Provider of virtual catalog data resources");
         props.put(Constants.SERVICE_VENDOR, "Adobe");
         props.put(PROPERTY_ROOT, new String[] { rootPath });

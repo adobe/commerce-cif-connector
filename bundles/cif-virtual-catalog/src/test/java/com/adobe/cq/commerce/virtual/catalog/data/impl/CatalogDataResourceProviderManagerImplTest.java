@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.commons.testing.jcr.RepositoryUtil;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.After;
@@ -58,7 +59,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         session.getWorkspace().getNamespaceRegistry().registerNamespace("cq", "http://www.day.com/jcr/cq/1.0");
         RepositoryUtil.registerSlingNodeTypes(session);
 
-        manager = new CatalogDataResourceProviderManagerImpl();
+        manager = Mockito.spy(new CatalogDataResourceProviderManagerImpl());
         PrivateAccessor.setField(manager, "resolverFactory", getResourceResolverFactory());
         BundleContext bundleContext = Mockito.mock(BundleContext.class);
         Mockito.when(bundleContext.registerService((Class) Mockito.any(), (ResourceProvider) Mockito.any(), Mockito.any())).thenAnswer(
@@ -86,6 +87,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         FactoryConfig factoryConfig = bindFactory();
         Assert.assertEquals(1, manager.getProviderFactories().values().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertTrue(manager.getDataRoots().isEmpty());
     }
 
     @Test
@@ -96,6 +98,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         unbindFactory(factoryConfig);
 
         Assert.assertTrue(manager.getProviderFactories().values().isEmpty());
+        Assert.assertTrue(manager.getDataRoots().isEmpty());
     }
 
     @Test
@@ -140,6 +143,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertEquals(0, getProviderRegistrations().size());
         Assert.assertEquals(1, manager.getProviderFactories().values().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertEquals(0, manager.getDataRoots().size());
     }
 
     @Test
@@ -197,6 +201,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertEquals(1, getProviderRegistrations().size());
         Assert.assertEquals(1, manager.getProviderFactories().values().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertEquals(1, manager.getDataRoots().size());
 
         Assert.assertTrue(getProviderRegistrations().keySet().iterator().hasNext());
         Object newPovider = getProviderRegistrations().keySet().iterator().next();
@@ -220,6 +225,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertEquals(1, getProviders().size());
         Assert.assertEquals(1, getProviderRegistrations().size());
         Assert.assertEquals(2, manager.getProviderFactories().values().size());
+        Assert.assertEquals(1, manager.getDataRoots().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
         Assert.assertTrue(manager.getProviderFactories().values().contains(nullFactoryConfig.factory));
 
@@ -240,6 +246,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertEquals(0, getProviders().size());
         Assert.assertEquals(0, getProviderRegistrations().size());
         Assert.assertEquals(2, manager.getProviderFactories().values().size());
+        Assert.assertEquals(0, manager.getDataRoots().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
         Assert.assertTrue(manager.getProviderFactories().values().contains(nullFactoryConfig.factory));
 
@@ -255,6 +262,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertEquals(1, getProviders().size());
         Assert.assertEquals(1, getProviderRegistrations().size());
         Assert.assertEquals(2, manager.getProviderFactories().values().size());
+        Assert.assertEquals(1, manager.getDataRoots().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
         Assert.assertTrue(manager.getProviderFactories().values().contains(nullFactoryConfig.factory));
 
@@ -264,6 +272,47 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
 
         // check reregistration: new provider not the same as old provider
         Assert.assertNotSame(oldProvider, newPovider);
+    }
+
+    @Test
+    public void testCreateNodesNextExistingRoots() throws Exception {
+        testBindFactoryCreateRoots(2);
+        List<Resource> dataRoots = manager.getDataRoots();
+
+        // state before
+        Assert.assertEquals(2, dataRoots.size());
+        Mockito.verify(manager, Mockito.times(4)).findDataRoots(Mockito.any());
+
+        // nodes added
+        Resource dataRoot = dataRoots.get(0);
+        Node testNode = null;
+        for (int i = 0; i < 3; i++) {
+            testNode = JcrUtil.createPath(dataRoot.getParent() + "/testNode" + i, "nt:unstructured", session);
+            JcrUtil.createPath(dataRoot.getParent() + "/testFolder" + i, "sling:Folder", session);
+        }
+        session.save();
+
+        Thread.sleep(WAIT_FOR_EVENTS);
+
+        // state after: no new data nodes added, no new findDataRoots() invocation occurred
+        Assert.assertEquals(2, manager.getDataRoots().size());
+        Mockito.verify(manager, Mockito.times(4)).findDataRoots(Mockito.any());
+
+        testNode.setProperty("aProp", "aValue");
+        session.save();
+        Thread.sleep(WAIT_FOR_EVENTS);
+
+        // state after
+        Assert.assertEquals(2, manager.getDataRoots().size());
+        Mockito.verify(manager, Mockito.times(4)).findDataRoots(Mockito.any());
+
+        testNode.remove();
+        session.save();
+        Thread.sleep(WAIT_FOR_EVENTS);
+
+        // state after
+        Assert.assertEquals(2, manager.getDataRoots().size());
+        Mockito.verify(manager, Mockito.times(4)).findDataRoots(Mockito.any());
     }
 
     private void testBindFactoryCreateRemoveRoots(int createCount, int removeCount) throws Exception {
@@ -293,10 +342,12 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         session.save();
         Thread.sleep(WAIT_FOR_EVENTS);
 
-        Assert.assertEquals(createCount - removeCount, getProviders().size());
-        Assert.assertEquals(createCount - removeCount, getProviderRegistrations().size());
+        int remaining = createCount - removeCount;
+        Assert.assertEquals(remaining, getProviders().size());
+        Assert.assertEquals(remaining, getProviderRegistrations().size());
         Assert.assertEquals(1, manager.getProviderFactories().values().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertEquals(remaining, manager.getDataRoots().size());
     }
 
     private void testBindFactoryCreateRoots(int rootCount) throws Exception {
@@ -314,6 +365,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertEquals(rootCount, getProviderRegistrations().size());
         Assert.assertEquals(1, manager.getProviderFactories().values().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertEquals(rootCount, manager.getDataRoots().size());
     }
 
     private void testBindFactoryCreateRoots2(int rootCount) throws Exception {
@@ -340,6 +392,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertEquals(2, manager.getProviderFactories().values().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig1.factory));
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig2.factory));
+        Assert.assertEquals(2 * rootCount, manager.getDataRoots().size());
     }
 
     private void testUnbindFactoryCreateRoots(int rootCount) throws Exception {
@@ -358,6 +411,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertTrue(getProviders().isEmpty());
         Assert.assertTrue(getProviderRegistrations().isEmpty());
         Assert.assertTrue(manager.getProviderFactories().values().isEmpty());
+        Assert.assertTrue(manager.getDataRoots().isEmpty());
     }
 
     private void testBindFactoryWithExistingRoots(int rootCount) throws Exception {
@@ -375,6 +429,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertEquals(rootCount, getProviderRegistrations().size());
         Assert.assertEquals(1, manager.getProviderFactories().values().size());
         Assert.assertTrue(manager.getProviderFactories().values().contains(factoryConfig.factory));
+        Assert.assertEquals(rootCount, manager.getDataRoots().size());
     }
 
     private void testUnbindFactoryWithExistingRoot(int rootCount) throws Exception {
@@ -392,6 +447,7 @@ public class CatalogDataResourceProviderManagerImplTest extends RepositoryBaseTe
         Assert.assertTrue(getProviders().isEmpty());
         Assert.assertTrue(getProviderRegistrations().isEmpty());
         Assert.assertTrue(manager.getProviderFactories().values().isEmpty());
+        Assert.assertTrue(manager.getDataRoots().isEmpty());
     }
 
     private Map<String, CatalogDataResourceProviderFactory<?>> getProviders() throws NoSuchFieldException {
