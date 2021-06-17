@@ -8,7 +8,7 @@ This is an AEM Commerce connector for Magento and GraphQL, that provides some in
 
 **Attention**: Projects must use [AEM Commerce Add-On for AEM 6.5](https://experience.adobe.com/#/downloads/content/software-distribution/en/aem.html) instead of the connector unless they use Magento 2.3.5 or earlier or CIF Core Components up to version 1.9.0. We strongly recommend to update existing projects to the AEM Commerce Add-on. See [AEM 6.5 Content and Commerce documentation](https://experienceleague.adobe.com/docs/experience-manager-65/commerce/home.html) for usage instructions, getting started and development guides.
 
-This project should only be used for AEM 6.4/6.5 projects with Magento up to version 2.4.2 only and works with AEM quickstart. It is compatible with CIF Core Components up to version 1.9.0. For a compatibility overview see [versions](VERSION.md).
+This project should only be used for AEM 6.4/6.5 projects with Magento up to version 2.4.2 only and works with AEM quickstart. It is compatible with CIF Core Components up to version 1.9.0. For a compatibility overview see [versions](VERSIONS.md).
 
 It is also not intended to be used for AEM as a Cloud Service or with the AEM Cloud SDK. For using CIF on AEM as a Cloud Service see [AEM Content and Commerce as a Cloud Service](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content-and-commerce/home.html) documentation.
 
