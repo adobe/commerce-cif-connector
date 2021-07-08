@@ -36,8 +36,8 @@ common:
 
   docker_auth: &docker_auth
     auth:
-      username: $DOCKER_USER
-      password: $DOCKER_PASS
+      username: $ARTIFACTORY_CLOUD_USER
+      password: $ARTIFACTORY_CLOUD_PASS
 
 jobs:
   build:
@@ -145,6 +145,8 @@ workflows:
             tags:
               only: /.*/
       - integration-test-655:
+          context:
+            - CIF Artifactory Cloud
           filters:
             tags:
               only: /.*/
@@ -152,6 +154,8 @@ workflows:
             - build
             - karma
       - integration-test-648:
+          context:
+            - CIF Artifactory Cloud
           filters:
             tags:
               only: /.*/
@@ -159,6 +163,8 @@ workflows:
             - build
             - karma
       - release:
+          context:
+            - CIF Maven Central
           requires:
             - build
           filters:
