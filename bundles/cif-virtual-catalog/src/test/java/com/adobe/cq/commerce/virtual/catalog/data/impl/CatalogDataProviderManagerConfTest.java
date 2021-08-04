@@ -105,11 +105,10 @@ public class CatalogDataProviderManagerConfTest {
         String expectedDataRootPath = COMMERCE_ROOT + "/products/" + NN_DATA_ROOT;
 
         List<Resource> dataRoots = manager.getDataRoots();
-        Assert.assertEquals("The manager found two data roots", 3, dataRoots.size());
+        Assert.assertEquals("The number of data roots found by the manager is not 1", 1, dataRoots.size());
 
         Resource dataRoot = dataRoots.get(0);
         Assert.assertEquals("The data root points to " + expectedDataRootPath, expectedDataRootPath, dataRoot.getPath());
-
     }
 
     private class FactoryConfig {
