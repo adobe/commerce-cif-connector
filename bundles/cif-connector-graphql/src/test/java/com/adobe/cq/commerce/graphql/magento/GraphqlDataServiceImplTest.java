@@ -84,11 +84,12 @@ public class GraphqlDataServiceImplTest {
         GraphqlClientConfiguration graphqlClientConfiguration = mock(GraphqlClientConfiguration.class);
         when(graphqlClientConfiguration.httpMethod()).thenReturn(HttpMethod.POST);
         when(graphqlClientConfiguration.identifier()).thenReturn("default");
+        when(graphqlClientConfiguration.maxHttpConnections()).thenReturn(1);
 
         graphqlClient = new GraphqlClientImpl();
+        Utils.activateComponent(graphqlClient, GraphqlClientConfiguration.class, graphqlClientConfiguration);
         Whitebox.setInternalState(graphqlClient, "gson", new Gson());
         Whitebox.setInternalState(graphqlClient, "client", httpClient);
-        Whitebox.setInternalState(graphqlClient, "configuration", graphqlClientConfiguration);
 
         MockGraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
 
@@ -160,9 +161,10 @@ public class GraphqlDataServiceImplTest {
         GraphqlClientConfiguration graphqlClientConfiguration = mock(GraphqlClientConfiguration.class);
         when(graphqlClientConfiguration.httpMethod()).thenReturn(HttpMethod.POST);
         when(graphqlClientConfiguration.identifier()).thenReturn("wrongid");
+        when(graphqlClientConfiguration.maxHttpConnections()).thenReturn(1);
 
         GraphqlClientImpl wrongClient = new GraphqlClientImpl();
-        Whitebox.setInternalState(wrongClient, "configuration", graphqlClientConfiguration);
+        Utils.activateComponent(wrongClient, GraphqlClientConfiguration.class, graphqlClientConfiguration);
         dataService.bindGraphqlClient(wrongClient, null);
 
         Exception exception = null;

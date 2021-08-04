@@ -17,6 +17,7 @@ package com.adobe.cq.commerce.graphql.testing;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -207,5 +208,15 @@ public class Utils {
         Mockito.when(mockedHttpResponse.getStatusLine()).thenReturn(mockedStatusLine);
 
         return json;
+    }
+
+    /**
+     * Calls the single-argument "activate" osgi lifecycle method on a component instance.
+     */
+    public static <T, C> T activateComponent(T component, Class<C> argumentType, C argument) throws Exception {
+        Method activateMethod = component.getClass().getDeclaredMethod("activate", argumentType);
+        activateMethod.setAccessible(true);
+        activateMethod.invoke(component, argument);
+        return component;
     }
 }

@@ -117,11 +117,12 @@ public class GraphqlResourceProviderTest {
 
         GraphqlClientConfiguration graphqlClientConfiguration = mock(GraphqlClientConfiguration.class);
         when(graphqlClientConfiguration.httpMethod()).thenReturn(HttpMethod.POST);
+        when(graphqlClientConfiguration.maxHttpConnections()).thenReturn(1);
 
         GraphqlClient baseClient = new GraphqlClientImpl();
+        Utils.activateComponent(baseClient, GraphqlClientConfiguration.class, graphqlClientConfiguration);
         Whitebox.setInternalState(baseClient, "gson", new Gson());
         Whitebox.setInternalState(baseClient, "client", httpClient);
-        Whitebox.setInternalState(baseClient, "configuration", graphqlClientConfiguration);
 
         GraphqlDataServiceConfiguration config = new MockGraphqlDataServiceConfiguration();
         dataService = new GraphqlDataServiceImpl();
